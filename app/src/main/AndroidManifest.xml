@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.shaktipumps.shakti.shaktiServiceCenter">
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACROSS_USERS_FULL" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.BROADCAST_STICKY" />
+    <uses-permission android:name="android.permission.ACCESS_GPS" />
+    <uses-permission android:name="android.permission.CAMERA" /> <!-- <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/> -->
+    <!-- <uses-permission android:name="android.permission.READ_CALL_LOG" /> -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.STORAGE" />
+
+    <uses-feature android:name="android.hardware.location.gps" /> <!-- Google Cloud Messaging for Android -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+
+    <application
+        android:label="@string/app_name"
+        android:name="adapter.Controller"
+        android:allowBackup="true"
+        android:appComponentFactory="whateverString"
+        android:configChanges="orientation"
+        android:fullBackupContent="@xml/backup_descriptor"
+        android:hardwareAccelerated="true"
+        android:icon="@drawable/shakti_logo"
+        android:largeHeap="true"
+        android:requestLegacyExternalStorage="true"
+        android:supportsRtl="true"
+        android:theme="@style/MyMaterialTheme"
+        android:usesCleartextTraffic="true"
+        tools:ignore="GoogleAppIndexingWarning,RtlEnabled"
+        tools:replace="android:appComponentFactory"
+        tools:targetApi="q">
+
+        <activity android:name="activity.complainvk.PendingComplainDetailActivity"  android:screenOrientation="portrait" />
+        <activity android:name="activity.complainvk.PendingComplainListActivity"   android:screenOrientation="portrait" /><!-- android:theme="@style/AppTheme" -->
+        <activity android:name="activity.SplashActivity"
+            android:screenOrientation="portrait"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="activity.LoginActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="activity.MainActivity1"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="activity.MainActivity2"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="activity.UpdateActivity"
+            android:screenOrientation="portrait" /> <!-- android:theme="@android:style/Theme.Translucent" -->
+        <activity
+            android:name="activity.FileActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="activity.ReportActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="activity.ShowDocument"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name="activity.complainvk.InstReportImageActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="activity.complainvk.ApproveReportImageActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name="activity.complainvk.ApproveComplainDetailActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name="activity.complainvk.CameraActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name="activity.complainvk.Freelauncer.PendingComplainListFreelauncerActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="activity.complainvk.Freelauncer.PendingComplainFreelauncerDetailActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name="activity.complainvk.ShowPhotograph"
+            android:screenOrientation="portrait" />
+        <!--
+             The API key for Google Maps-based APIs is defined as a string resource.
+             (See the file "res/values/google_maps_api.xml").
+             Note that the API key is linked to the encryption key used to sign the APK.
+             You need a different API key for each encryption key, including the release key that is used to
+             sign the APK for publishing.
+             You can define the keys for the debug and release targets in src/debug/ and src/release/. 
+        -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
+        <activity
+            android:name="activity.complaint.IssueMaterialListComplaintActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="activity.complaint.IssueMaterialComplaintActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="activity.MapsActivity"
+            android:label="@string/title_activity_maps"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="searchlist.SingleItemView"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="customlist.OrderConfirmListview"
+            android:screenOrientation="portrait" />
+        <!--
+ <service
+            android:name="backgroundservice.TimeService"
+            android:screenOrientation="portrait" />
+        -->
+        <!--
+ <service
+            android:name="backgroundservice.AndroidService"
+            android:screenOrientation="portrait" />
+        -->
+        <service
+            android:name="backgroundservice.SyncDataService"
+            android:screenOrientation="portrait"
+            android:exported="true"/>
+
+        <activity
+            android:name="activity.VisitHistoryActivity"
+            android:screenOrientation="portrait" />
+        <!--
+ ATTENTION: This was auto-generated to add Google Play services to your project for
+     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
+        -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <!--
+<activity
+            android:name="activity.Notification"
+            android:screenOrientation="portrait" />
+        -->
+        <activity
+            android:name="activity.VideoSearchActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="activity.complaint.ComplaintDashboard"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="activity.complaint.ComplaintSearchActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="activity.complaint.DealerPendCompActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="activity.complaint.ComplaintDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="activity.complaint.InprocessComplaintActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="activity.complaint.PendingComplaintActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="activity.complaint.ClosureComplaintActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="activity.complaint.ComplaintActionDisplayActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="activity.complaint.DisplayComplaintDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="activity.complaint.ClosedComplaintActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="activity.complaint.ServiceCenterActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="activity.complaint.PendingForApprovalActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="activity.complaint.AwaitingForApprovalActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="activity.complaint.NewServiceCenterActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="activity.complaint.PendAwtComplaintDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="activity.complaint.ComplaintAttachmentActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="activity.complaint.ShowDocument1"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="activity.complaint.ComplaintFrwdAprActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="activity.complaint.ApprovedCompActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="activity.OtherImgActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="activity.complaint.SerailNoHistoryActivity"
+            android:screenOrientation="portrait" /> <!-- &lt;!&ndash; Declare  Alarm Broadcast receiver here &ndash;&gt; -->
+        <receiver
+            android:name="receiver.AlarmReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name="activity.complaint.ComplaintImageActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="activity.complaint.DisplayComplaintImageActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="activity.complaint.ComplaintForwardActivity"
+            android:screenOrientation="portrait" />
+
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.shaktipumps.shakti.shaktiServiceCenter.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+    </application>
+
+</manifest>
