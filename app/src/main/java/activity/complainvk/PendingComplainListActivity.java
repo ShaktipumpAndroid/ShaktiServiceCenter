@@ -1,19 +1,18 @@
 package activity.complainvk;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
@@ -22,7 +21,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,12 +77,7 @@ public class PendingComplainListActivity extends AppCompatActivity {
 
     private void initClickEvent() {
 
-        imgBackID.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
+        imgBackID.setOnClickListener(view -> finish());
 
     }
 
@@ -93,20 +86,11 @@ public class PendingComplainListActivity extends AppCompatActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().build();
         StrictMode.setThreadPolicy(policy);
 
-        //   username = inputName.getText().toString();
-        //   password = inputPassword.getText().toString();
-
         final ArrayList<NameValuePair> param = new ArrayList<NameValuePair>();
         param.clear();
         param.add(new BasicNameValuePair("kunnr", mUserID));//kunur it means user id
         param.add(new BasicNameValuePair("status", mStatusValue));///Pending Complaint
-        // param.add(new BasicNameValuePair("mobno", mLRMobileValue));
 
-        //  jsonObject.addProperty("lrno", mLRNumberValue);
-        // jsonObject.addProperty("mobno", mLRMobileValue);
-
-        //  param.add(new BasicNameValuePair("pernr", username));
-        // param.add(new BasicNameValuePair("pass", password));
         /******************************************************************************************/
 /*                   server connection
 /******************************************************************************************/
@@ -123,20 +107,6 @@ public class PendingComplainListActivity extends AppCompatActivity {
 /******************************************************************************************/
 /*                       get JSONwebservice Data
 /******************************************************************************************/
-                    //      JSONObject jo = new JSONObject(obj);
-                    //  JSONArray ja = new JSONArray(obj);
-                    // JSONObject jo = ja.getJSONObject(0);
-
-                   /* try {
-                        Gson gson = new Gson();
-                        //////////////add model class here
-                        progressDialog.dismiss();
-                        InstallarCustListModel mInstallarCustListModel = gson.fromJson(obj, InstallarCustListModel.class);
-                        getInstallarCustListModel(mInstallarCustListModel);
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }*/
 
                     JSONObject jo = new JSONObject(obj);
 
@@ -233,8 +203,6 @@ public class PendingComplainListActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             public void run() {
                                 Toast.makeText(mContext, mMessage, Toast.LENGTH_SHORT).show();
-                               /* mPendingComplainListAdapter = new PendingComplainListAdapter(mContext, mComplainAllResponse);
-                                rclyPendingComplainList.setAdapter(mPendingComplainListAdapter);*/
                                 progressDialog.dismiss();
                             }
 

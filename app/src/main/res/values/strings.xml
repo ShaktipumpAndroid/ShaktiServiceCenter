@@ -60,7 +60,7 @@
 
     <string name="nav_item_faq"> FAQ </string>
     <string name="nav_item_logout"> Logout </string>
-
+    <string name="nav_time_register">Register SubOrdinate</string>
 
     <!-- navigation drawer item labels  -->
     <!-- <string-array name="nav_drawer_labels">
@@ -89,7 +89,7 @@
         <item>@string/nav_item_home</item>
         <item>@string/nav_item_faq</item>
         <item>@string/nav_item_logout</item>
-
+        <item>@string/nav_time_register</item>
 
     </string-array>
     <string name="action_signout">Sign Out</string>
@@ -133,6 +133,8 @@
     <string name="customer_category_label">"customer category  : "</string>
     <string name="customer_place_label">"customer place  : "</string>
     <string name="customer_distance_label">"customer distance  : "</string>
+    <string name="Please_select_end">Please Select End Date</string>
+    <string name="Please_select_start">Please Select Start Date</string>
 
 
     <string-array name="array_paymnet_by">

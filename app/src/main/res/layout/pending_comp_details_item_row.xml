@@ -120,30 +120,6 @@
                     android:background="@android:color/transparent"
                     />
 
-                <!--    <TextView
-                        android:layout_toStartOf="@+id/txtwarranteeValueID"
-
-                        android:id="@+id/txtwarranteeHeadID"
-                        android:fontFamily="@font/open_sans_regular"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Warrantee: "
-                        android:textSize="@dimen/_12ssp"
-                        android:textColor="@color/black"
-                        />
-
-                    <TextView
-                        android:layout_alignParentEnd="true"
-
-                        android:id="@+id/txtwarranteeValueID"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Under"
-                        android:fontFamily="@font/open_sans_bold"
-                        android:textSize="@dimen/_12ssp"
-                        android:textColor="@color/blue_fb"
-                        android:background="@android:color/transparent"
-                        />-->
 
 
 
@@ -206,6 +182,19 @@ android:singleLine="true"
                     android:textColor="@color/black"
                     android:background="@android:color/transparent"
                     />-->
+                <TextView
+                    android:layout_alignParentEnd="true"
+                    android:gravity="center"
+                    android:background="@drawable/btn_shape_rounded_corner"
+                    android:id="@+id/txtClickHereID"
+                    android:layout_width="@dimen/_70sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:text="Forward"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/_10ssp"
+                    android:textColor="@color/white"
+                    android:fontFamily="@font/open_sans_regular"
+                    />
             </RelativeLayout>
 
             <RelativeLayout
@@ -423,6 +412,8 @@ android:singleLine="true"
                     />
 
             </RelativeLayout>
+
+
 
         </LinearLayout><!--hhhhhhhhhhhhhhhh ggggg-->
 

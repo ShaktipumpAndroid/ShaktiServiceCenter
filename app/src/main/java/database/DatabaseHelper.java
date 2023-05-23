@@ -1,25 +1,16 @@
 package database;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
-
-
 import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
-import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
-
-import androidx.core.app.ActivityCompat;
 
 import java.util.ArrayList;
 
@@ -28,22 +19,9 @@ import activity.CustomUtility;
 import bean.AttendanceBean;
 import bean.BeanProduct;
 import bean.BeanProductFinal;
-import bean.CallLog;
-import bean.CheckInOutBean;
-import bean.ClouserComplaint;
 import bean.CmpReviewImageBean;
-import bean.ComplaintAudio;
-import bean.ComplaintImage;
-import bean.ComplaintStart;
-import bean.DsrEntryBean;
-import bean.EmployeeGPSActivityBean;
-import bean.ForwardForAppEntryBean;
-import bean.InprocessComplaint;
 import bean.LocalConvenienceBean;
 import bean.LoginBean;
-import bean.NewAddedCustomerBean;
-import bean.NoOrderBean;
-import bean.SurveyBean;
 
 /**
  * Created by shakti on 10/19/2016.
@@ -378,6 +356,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String KEY_PHOTO12 = "photo12";
     public static final String KEY_PHOTO13 = "photo13";
 
+    public static final String TABLE_STATE_SEARCH = "tbl_state_detail";
+
+    public static final String KEY_ADD1 = "add1";
+    public static final String KEY_ADD2 = "add2";
+    public static final String KEY_ADD3 = "add3";
+    public static final String KEY_ADD4 = "add4";
+    public static final String KEY_ADD5 = "add5";
+    public static final String KEY_ADD6 = "add6";
+    public static final String KEY_ADD7 = "add7";
+    public static final String KEY_ADD8 = "add8";
+    public static final String KEY_ADD9 = "add9";
+    public static final String KEY_ADD10 = "add10";
+    public static final String KEY_STATE = "state";
+    public static final String KEY_STATE_TEXT = "state_text";
+    public static final String KEY_DISTRICT = "district";
+    public static final String KEY_DISTRICT_TEXT = "district_text";
+    public static final String KEY_TEHSIL = "tehsil";
+    public static final String KEY_TEHSIL_TEXT = "tehsil_text";
+    public static final String KEY_COUNTRY = "country";
+    public static final String KEY_COUNTRY_TEXT = "country_text";
+
     private static final String KEY_TASK_DATE_TO = "date_to";
 
     //  partner type & class search help  table create statement
@@ -426,6 +425,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + KEY_PHOTO12 + " TEXT)";
 
 
+    private static final String CREATE_TABLE_STATE_SEARCH = "CREATE TABLE "
+            + TABLE_STATE_SEARCH + "("
+            + KEY_COUNTRY + " TEXT,"
+            + KEY_COUNTRY_TEXT + " TEXT,"
+            + KEY_STATE + " TEXT,"
+            + KEY_STATE_TEXT + " TEXT,"
+            + KEY_DISTRICT + " TEXT,"
+            + KEY_DISTRICT_TEXT + " TEXT,"
+            + KEY_TEHSIL + " TEXT,"
+            + KEY_ADD1 + " TEXT,"
+            + KEY_ADD2 + " TEXT,"
+            + KEY_ADD3 + " TEXT,"
+            + KEY_ADD4 + " TEXT,"
+            + KEY_ADD5 + " TEXT,"
+            + KEY_ADD6 + " TEXT,"
+            + KEY_ADD7 + " TEXT,"
+            + KEY_ADD8 + " TEXT,"
+            + KEY_ADD9 + " TEXT,"
+            + KEY_ADD10 + " TEXT,"
+            + KEY_TEHSIL_TEXT + " TEXT)";
 
 
     public void insertComaplinPhotoData(ComplainServicePhotoResponse mComplainServicePhotoResponse) {
@@ -594,7 +613,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_LOGIN);
         db.execSQL(CREATE_TABLE_REVIEW_CMP_IMAGES);
         db.execSQL(CREATE_TABLE_COMPLENE_SERVICE);
-
+        db.execSQL(CREATE_TABLE_STATE_SEARCH);
     }
 
 
@@ -608,6 +627,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOGIN);///vikas
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_SERVICE_PHOTO_COMPLAIN);///vikas
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_REVIEW_COMPLAINT_IMAGES);//////vikas
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_STATE_SEARCH);
            // db.execSQL("DROP TABLE IF EXISTS " + TABLE_REVIEW_COMPLAINT_IMAGES);
 
             Log.d("newDatabaseVersion123", "" + newVersion);
@@ -3772,4 +3792,160 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public void deleteStateSearchHelpData() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        if(CustomUtility.doesTableExist(db,TABLE_STATE_SEARCH)) {
+            db.delete(TABLE_STATE_SEARCH, null, null);
+        }
+    }
+
+
+    public void insertStateData(String country, String country_text, String state, String state_text, String district, String district_text, String tehsil, String tehsil_text) {
+        // Open the database for writing
+        SQLiteDatabase db = this.getWritableDatabase();
+        // Start the transaction.
+        db.beginTransaction();
+        ContentValues values;
+
+        try {
+            values = new ContentValues();
+            values.put(KEY_COUNTRY, country);
+            values.put(KEY_COUNTRY_TEXT, country_text);
+            values.put(KEY_STATE, state);
+            values.put(KEY_STATE_TEXT, state_text);
+            values.put(KEY_DISTRICT, district);
+            values.put(KEY_DISTRICT_TEXT, district_text);
+            values.put(KEY_TEHSIL, tehsil);
+            values.put(KEY_TEHSIL_TEXT, tehsil_text);
+
+
+            // Insert Row
+            long i = db.insert(TABLE_STATE_SEARCH, null, values);
+
+            // Insert into database successfully.
+            db.setTransactionSuccessful();
+
+        } catch (SQLiteException e) {
+
+            e.printStackTrace();
+
+        } finally {
+            // End the transaction.
+            db.endTransaction();
+            // Close database
+            db.close();
+        }
+    }
+
+    @SuppressLint("Range")
+    public ArrayList<String> getStateDistrictList(String key, String text) {
+
+        ArrayList<String> list = new ArrayList<String>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+
+        list.clear();
+
+        db.beginTransaction();
+        try {
+
+            String selectQuery = null;
+
+            switch (key) {
+
+                case KEY_STATE_TEXT:
+                    selectQuery = "SELECT  DISTINCT " + KEY_STATE_TEXT + " FROM " + TABLE_STATE_SEARCH;
+                    list.add("Select State");
+                    break;
+                case KEY_DISTRICT_TEXT:
+
+                    selectQuery = "SELECT  DISTINCT " + KEY_DISTRICT_TEXT + " FROM " + TABLE_STATE_SEARCH
+                            + " WHERE " + KEY_STATE_TEXT + " = '" + text + "'";
+                    list.add("Select District");
+                    break;
+
+            }
+
+            Cursor cursor = db.rawQuery(selectQuery, null);
+
+            Log.e("CURSORCOUNT", "&&&&" + cursor.getCount() + " " + selectQuery);
+
+            if (cursor.getCount() > 0) {
+                if (cursor.moveToFirst()) {
+                    while (!cursor.isAfterLast()) {
+                        switch (key) {
+
+                            case KEY_STATE_TEXT:
+                                list.add(cursor.getString(cursor.getColumnIndex(KEY_STATE_TEXT)));
+                                break;
+                            case KEY_DISTRICT_TEXT:
+                                list.add(cursor.getString(cursor.getColumnIndex(KEY_DISTRICT_TEXT)));
+                                break;
+                        }
+                        cursor.moveToNext();
+
+                    }
+                }
+                db.setTransactionSuccessful();
+            }
+
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+
+        } finally {
+            db.endTransaction();
+            // End the transaction.
+            db.close();
+            // Close database
+        }
+        return list;
+    }
+
+    @SuppressLint("Range")
+    public String getStateDistrictValue(String key, String text) {
+        String result = null;
+
+        SQLiteDatabase db = null;
+        String selectQuery = null;
+        Cursor c = null;
+
+        try {
+            db = this.getReadableDatabase();
+            switch (key) {
+
+                case KEY_STATE:
+                    selectQuery = "SELECT  * FROM " + TABLE_STATE_SEARCH + " WHERE " + KEY_STATE_TEXT + " = '" + text + "'";
+                    break;
+                case KEY_DISTRICT:
+                    selectQuery = "SELECT  * FROM " + TABLE_STATE_SEARCH + " WHERE " + KEY_DISTRICT_TEXT + " = '" + text + "'";
+                    break;
+
+            }
+            c = db.rawQuery(selectQuery, null);
+
+            if (c.getCount() > 0) {
+
+                if (c.moveToFirst()) {
+                    switch (key) {
+
+                        case KEY_STATE:
+                            result = c.getString(c.getColumnIndex(KEY_STATE));
+                            break;
+                        case KEY_DISTRICT:
+                            result = c.getString(c.getColumnIndex(KEY_DISTRICT));
+                            break;
+
+                    }
+                }
+
+            }
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+        } finally {
+            c.close();
+            db.close();
+        }
+        return result;
+    }
 }

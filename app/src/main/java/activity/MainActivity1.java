@@ -1,19 +1,12 @@
 package activity;
 
+import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
+
 import android.Manifest;
 import android.app.Activity;
-import android.app.ActivityManager;
-import android.app.AlarmManager;
-import android.app.AlertDialog;
-import android.app.PendingIntent;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -21,13 +14,10 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,43 +26,39 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.multidex.BuildConfig;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
-
+import org.apache.http.NameValuePair;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.File;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Objects;
 
-import activity.complaint.ComplaintDashboard;
 import bean.LoginBean;
 import database.DatabaseHelper;
-import receiver.AlarmReceiver;
-import syncdata.SyncDataToSAP_New;
+import webservice.CustomHttpClient;
 import webservice.SAPWebService;
 import webservice.WebURL;
-
-import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
 
 public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.FragmentDrawerListener, SharedPreferences.OnSharedPreferenceChangeListener {
     //Alarm Request Code
-    private static final int ALARM_REQUEST_CODE = 133;
     private static final String TAG = MainActivity1.class.getSimpleName();
+    private int progressBarStatus = 0;
+    private final Handler progressBarHandler = new Handler();
+    ProgressDialog progressBar;
+    String country, country_text, state, state_text, district, district_text, tehsil, tehsil_text;
 
     // Used in checking for runtime permissions.
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
@@ -81,7 +67,7 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
     private static final int ALL_PERMISSIONS_RESULT = 1011;
 
     FusedLocationProviderClient fusedLocationProviderClient;
-    // The BroadcastReceiver used to listen from broadcasts from the service.
+
 
     /**
      * Provides access to the Fused Location Provider API.
@@ -100,20 +86,16 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
 
     private ArrayList<String> permissions = new ArrayList<>();
     private ArrayList<String> permissionsToRequest;
-    ProgressDialog progressBar;
+
     CustomUtility customUtility;
     ProgressDialog dialog;
-    Context mContex;
+    Context mContext;
     String versionName = "0.0";
     DatabaseHelper dataHelper = null;
     SAPWebService con = null;
     SharedPreferences pref;
     SharedPreferences.Editor editor;
-    String newVersion = "0.0";
-    String logout_value = "";
-    String current_date = "null", current_time;
-    String latitude = "0.0";
-    String longitude = "0.0";
+
     Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -122,13 +104,9 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
         }
     };
     private ProgressDialog progressDialog;
-    private int progressBarStatus = 0;
-    private Handler progressBarHandler = new Handler();
-    private long fileSize = 0;
+
     private Toolbar mToolbar;
     private FragmentDrawer drawerFragment;
-    private PendingIntent pendingIntent;
-    private BroadcastReceiver mRegistrationBroadcastReceiver;
     String userType = "";
 
     @Override
@@ -136,40 +114,33 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mContex = this;
+        mContext = this;
         con = new SAPWebService();
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar =  findViewById(R.id.toolbar);
 
         fusedLocationProviderClient = getFusedLocationProviderClient(this);
 
-        // we add permissions we need to request location of the users
         permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
         permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
 
         permissionsToRequest = permissionsToRequest(permissions);
+        deleteCache(mContext);
 
-
-
-        deleteCache(mContex);
-
-        progressDialog = new ProgressDialog(mContex);
+        progressDialog = new ProgressDialog(mContext);
 
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
         customUtility = new CustomUtility();
 
         dataHelper = new DatabaseHelper(this);
 
         drawerFragment = (FragmentDrawer)
                 getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
-        drawerFragment.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), mToolbar);
+        assert drawerFragment != null;
+        drawerFragment.setUp(R.id.fragment_navigation_drawer,  findViewById(R.id.drawer_layout), mToolbar);
         drawerFragment.setDrawerListener(this);
 
-
-        // int versionCode = BuildConfig.VERSION_CODE;
         versionName = BuildConfig.VERSION_NAME;
-
-       // dataHelper.deletecmpattach();
 
         pref = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
         editor = pref.edit();
@@ -180,39 +151,87 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
         LoginBean.username = pref.getString("key_ename", "username");
 
 
-        // check background service is running or not
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (permissionsToRequest.size() > 0) {
-                requestPermissions(permissionsToRequest.toArray(new String[permissionsToRequest.size()]), ALL_PERMISSIONS_RESULT);
+                requestPermissions(permissionsToRequest.toArray(new String[0]), ALL_PERMISSIONS_RESULT);
             }
         }
 
-        // Check that the user hasn't revoked permissions by going to Settings.
         if (Utils.requestingLocationUpdates(this)) {
             if (!checkPermissions()) {
                 requestPermissions();
             }
         }
 
-        if (checkPlayServices()) {
-
-
-        } else {
-            Toast.makeText(mContex, "You need to install Google Play Services to use the App properly", Toast.LENGTH_SHORT).show();
+        if (!checkPlayServices()) {
+            Toast.makeText(mContext, "You need to install Google Play Services to use the App properly", Toast.LENGTH_SHORT).show();
         }
 
-/******* Create SharedPreferences *******/
-
-// set login person name to navigation drawer
-
-        TextView tv = (TextView) findViewById(R.id.ename);
+        TextView tv =  findViewById(R.id.ename);
         tv.setText("Welcome,  " + LoginBean.getUsername() + "   V " + versionName);
 
-        // delete data from mobile which is save in sa
-        // display the first navigation drawer view on app launch
         displayView(0);
 
+            syncState();
+
+    }
+
+    public void syncState() {
+        progressBar = new ProgressDialog(this);
+        progressBar.setCancelable(false);
+        progressBar.setMessage("Downloading State Data...");
+        progressBar.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressBar.setProgress(0);
+        progressBar.setMax(100);
+        progressBar.show();
+        progressBarStatus = 0;
+
+        new Thread(() -> {
+            while (progressBarStatus < 100) {
+                try {
+
+                        progressBarStatus = 30;
+                        progressBarHandler.post(() -> progressBar.setProgress(progressBarStatus));
+                        getStateData(MainActivity1.this);
+                        progressBarStatus = 100;
+                        progressBarHandler.post(() -> progressBar.setProgress(progressBarStatus));
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            progressBar.dismiss();
+        }).start();
+    }
+
+    public void getStateData(Context context) {
+
+        DatabaseHelper dataHelper = new DatabaseHelper(context);
+        final ArrayList<NameValuePair> param = new ArrayList<>();
+        try {
+            String obj = CustomHttpClient.executeHttpPost1(WebURL.STATE_DATA, param);
+            JSONArray ja_state = new JSONArray(obj);
+            dataHelper.deleteStateSearchHelpData();
+            for (int i = 0; i < ja_state.length(); i++) {
+                JSONObject jo_state = ja_state.getJSONObject(i);
+                country = jo_state.optString("country");
+                country_text = jo_state.optString("countrytext");
+                state = jo_state.optString("state");
+                state_text = jo_state.optString("statetext");
+                district = jo_state.optString("district");
+                district_text = jo_state.optString("districttext");
+                tehsil = jo_state.optString("tehsil");
+                tehsil_text = jo_state.optString("tehsiltext");
+                dataHelper.insertStateData(country, country_text, state, state_text, district, district_text, tehsil, tehsil_text);
+            }
+        } catch (Exception e) {
+            Log.d("msg", "" + e);
+        }
 
     }
 
@@ -244,153 +263,52 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
         }
     }
 
-/*
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        switch (id) {
-
-            case R.id.action_download_complaint:
-                // sync all data
-
-                download();
-
-                return true;
-                case R.id.action_download_service_center:
-                // sync all data
-
-                download();
-
-                return true;
-
-            case R.id.action_sync_offline:
-                // sync all data
-                syncOfflineData("1");
-
-                return true;
-
-          */
-/*  case android.R.id.home:
-
-                // onBackPressed();
-
-                return true;*//*
-
-
-
-            case R.id.action_signout:
-
-
-                new AlertDialog.Builder(this)
-                        .setTitle("Sign Out Alert !")
-                        .setMessage("Do you want to Sign Out this application ?")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                // logout
-
-                               // syncOfflineData("16");
-                                logOut();
-                                dialog.cancel();
-                                dialog.dismiss();
-
-                            }
-                        })
-
-
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                // user doesn't want to logout
-                                dialog.cancel();
-                                dialog.dismiss();
-
-                            }
-                        })
-                        .show();
-
-
-                return true;
-
-
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-*/
-
-
-
-
     public void logOut() {
 
 
         progressDialog = ProgressDialog.show(MainActivity1.this, "", "Sync Offline Data !");
 
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
+        new Thread(() -> {
 
 
-                if (CustomUtility.isOnline(MainActivity1.this)) {
+            if (CustomUtility.isOnline(MainActivity1.this)) {
 
+                editor.putString("key_logout", "logout");
+                editor.commit();
+                  if (progressDialog != null && progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                        progressDialog = null;
+                    }
 
-//           new Capture_employee_gps_location(mContex, "16", "");
+                editor.putString("key_login", "N");
+                editor.putString("key_username", "");
+                editor.putString("key_ename", "");
 
-                    editor.putString("key_logout", "logout");
-                    editor.commit();
+                editor.commit(); //
 
+                CustomUtility.setSharedPreference(mContext,"userID","");
+                CustomUtility.setSharedPreference(mContext,"ServiceCenterName","");
 
-                 //   new SyncDataToSAP_New().SendDataToSap(mContex);
-                      if (progressDialog != null && progressDialog.isShowing()) {
-                            progressDialog.dismiss();
-                            progressDialog = null;
-                        };
-
-                    //delete_data_save_in_sap();
-
-
-                    editor.putString("key_login", "N");
-                    editor.putString("key_username", "");
-                    editor.putString("key_ename", "");
-
-                    editor.commit(); //
-
-                    // CustomUtility.setSharedPreference(mContext,"objs",spinner_login_type_text);
-                    //   CustomUtility.setSharedPreference(mContext,"pernr",username);
-                    CustomUtility.setSharedPreference(mContex,"userID","");
-                    CustomUtility.setSharedPreference(mContex,"ServiceCenterName","");
-
-                    Intent mIntent = new Intent(MainActivity1.this, LoginActivity.class);
-                    startActivity(mIntent);
-                    finish();
+                Intent mIntent = new Intent(MainActivity1.this, LoginActivity.class);
+                startActivity(mIntent);
+                finish();
 
 
 
-                } else {
-                      if (progressDialog != null && progressDialog.isShowing()) {
-                            progressDialog.dismiss();
-                            progressDialog = null;
-                        };
+            } else {
+                  if (progressDialog != null && progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                        progressDialog = null;
+                    }
 
-                    Message msg = new Message();
-                    msg.obj = "No internet Connection. Log Out Failed";
-                    mHandler.sendMessage(msg);
-
-                }
-
+                Message msg = new Message();
+                msg.obj = "No internet Connection. Log Out Failed";
+                mHandler.sendMessage(msg);
 
             }
+
+
         }
         ).start();
 
@@ -404,67 +322,57 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
 
     private void displayView(int position) {
         Fragment fragment = null;
-        // String title = getString(R.string.app_name);
-        //String title = "shakti_white";
-
-        Intent intent = null;
-        Context ctx = null;
         switch (position) {
 
 
             case 0:
 
-                userType = activity.CustomUtility.getSharedPreferences(mContex,"userType");
+                userType = activity.CustomUtility.getSharedPreferences(mContext,"userType");
 
                 if(userType.equalsIgnoreCase("1"))
                     fragment = new HomeFragment();
                 else
                     fragment = new HomeFragmentFreeLauncer();
-
-               // Intent mIntent = new Intent(mContex, ComplaintDashboard.class);
-            //    startActivity(mIntent);
-                //   title = getString(R.string.title_home);
                 break;
 
             case 1:
 
                 progressDialog = ProgressDialog.show(MainActivity1.this, "", "Loading..");
 
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (CustomUtility.isOnline(MainActivity1.this)) {
-                              if (progressDialog != null && progressDialog.isShowing()) {
-                            progressDialog.dismiss();
-                            progressDialog = null;
-                        };
+                new Thread(() -> {
+                    if (CustomUtility.isOnline(MainActivity1.this)) {
+                          if (progressDialog != null && progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                        progressDialog = null;
+                    }
 
-                            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.shaktipumps.com/faq.php"));
-                            startActivity(browserIntent);
+                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.shaktipumps.com/faq.php"));
+                        startActivity(browserIntent);
 
-                        } else {
-                              if (progressDialog != null && progressDialog.isShowing()) {
-                            progressDialog.dismiss();
-                            progressDialog = null;
-                        };
-                            Message msg = new Message();
-                            msg.obj = "Please ON Internet Connection For This Function.";
-                            mHandler.sendMessage(msg);
-
-                        }
+                    } else {
+                          if (progressDialog != null && progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                        progressDialog = null;
+                    }
+                        Message msg = new Message();
+                        msg.obj = "Please ON Internet Connection For This Function.";
+                        mHandler.sendMessage(msg);
 
                     }
+
                 }).start();
 
                 break;
 
             case 2:
                 logOut();
-                // Intent mIntent = new Intent(mContex, ComplaintDashboard.class);
-                //    startActivity(mIntent);
-                //   title = getString(R.string.title_home);
+
                 break;
 
+            case 3:
+                Intent i = new Intent(MainActivity1.this,Register.class);
+                startActivity(i);
+                break;
 
             default:
                 break;
@@ -477,9 +385,7 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
 
             fragmentTransaction.commit();
 
-
-            // set the toolbar title
-            getSupportActionBar().setTitle(" V  " + versionName);
+            Objects.requireNonNull(getSupportActionBar()).setTitle(" V  " + versionName);
             getSupportActionBar().setIcon(R.drawable.new_logo);
 
         }
@@ -536,19 +442,6 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
         super.onStop();
     }
 
-
-
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-        if (s.equals(Utils.KEY_REQUESTING_LOCATION_UPDATES)) {
-
-        }
-    }
-
-
-
-
     private ArrayList<String> permissionsToRequest(ArrayList<String> wantedPermissions) {
         ArrayList<String> result = new ArrayList<>();
 
@@ -571,11 +464,11 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
 
     private boolean checkPlayServices() {
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
-        int resultCode = apiAvailability.isGooglePlayServicesAvailable(mContex);
+        int resultCode = apiAvailability.isGooglePlayServicesAvailable(mContext);
 
         if (resultCode != ConnectionResult.SUCCESS) {
             if (apiAvailability.isUserResolvableError(resultCode)) {
-                apiAvailability.getErrorDialog((Activity) mContex, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST);
+                apiAvailability.getErrorDialog((Activity) mContext, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST);
             } else {
                 finish();
             }
@@ -596,19 +489,14 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
                 // If user interaction was interrupted, the permission request is cancelled and you
                 // receive empty arrays.
                 Log.i(TAG, "User interaction was cancelled.");
-            } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission was granted.
-                //    mService.requestLocationUpdates();
             } else {
-                // Permission denied.
-                Snackbar.make(
-                        findViewById(R.id.lin1),
-                        R.string.permission_denied_explanation,
-                        Snackbar.LENGTH_INDEFINITE)
-                        .setAction(R.string.settings, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                // Build intent that displays the App settings screen.
+                if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    // Permission denied.
+                    Snackbar.make(
+                            findViewById(R.id.lin1),
+                            R.string.permission_denied_explanation,
+                            Snackbar.LENGTH_INDEFINITE)
+                            .setAction(R.string.settings, view -> {
                                 Intent intent = new Intent();
                                 intent.setAction(
                                         Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
@@ -617,9 +505,9 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
                                 intent.setData(uri);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent);
-                            }
-                        })
-                        .show();
+                            })
+                            .show();
+                }
             }
         }
     }
@@ -644,24 +532,25 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
                     findViewById(R.id.lin1),
                     R.string.permission_rationale,
                     Snackbar.LENGTH_INDEFINITE)
-                    .setAction(R.string.ok, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            // Request permission
-                            ActivityCompat.requestPermissions(MainActivity1.this,
-                                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                    REQUEST_PERMISSIONS_REQUEST_CODE);
-                        }
-                    })
+                    .setAction(R.string.ok, view -> ActivityCompat.requestPermissions(MainActivity1.this,
+                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                            REQUEST_PERMISSIONS_REQUEST_CODE))
                     .show();
         } else {
             Log.i(TAG, "Requesting permission");
-            // Request permission. It's possible this can be auto answered if device policy
-            // sets the permission in a given state or the user denied the permission
-            // previously and checked "Never ask again".
             ActivityCompat.requestPermissions(MainActivity1.this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     REQUEST_PERMISSIONS_REQUEST_CODE);
         }
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+
+    }
+
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+        super.onPointerCaptureChanged(hasCapture);
     }
 }

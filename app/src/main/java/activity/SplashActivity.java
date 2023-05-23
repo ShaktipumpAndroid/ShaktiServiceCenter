@@ -9,7 +9,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
-
 import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -18,19 +17,14 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-
 import com.shaktipumps.shakti.shaktiServiceCenter.BuildConfig;
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
-
-
 
 import org.apache.http.NameValuePair;
 
 import java.io.File;
 import java.util.ArrayList;
 
-import activity.complaint.ComplaintDashboard;
-import bean.LoginBean;
 import model.VersionResponse;
 import rest.ApiClient;
 import rest.ApiInterface;
@@ -222,4 +216,6 @@ public class SplashActivity extends Activity implements AnimationListener {
             super.onPostExecute(result);
         }
     }
+
+
 }

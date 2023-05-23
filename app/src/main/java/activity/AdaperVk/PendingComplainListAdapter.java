@@ -1,5 +1,6 @@
 package activity.AdaperVk;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Message;
@@ -14,7 +15,6 @@ import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
 import java.util.List;
@@ -22,7 +22,6 @@ import java.util.List;
 import activity.BeanVk.ComplainAllResponse;
 import activity.complainvk.ApproveComplainDetailActivity;
 import activity.complainvk.PendingComplainDetailActivity;
-import activity.complainvk.PendingComplainListActivity;
 
 
 public class PendingComplainListAdapter extends RecyclerView.Adapter<PendingComplainListAdapter.ViewHolder> {
@@ -56,7 +55,7 @@ public class PendingComplainListAdapter extends RecyclerView.Adapter<PendingComp
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position) {
+    public void onBindViewHolder(final ViewHolder holder, @SuppressLint("RecyclerView") final int position) {
 
 
         holder.txtDealerOEMValueID.setText(mComplainAllResponse.get(position).getName1());

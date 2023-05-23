@@ -119,6 +119,23 @@
         <item name="colorAccent">#5e5e5e</item>
 
     </style>
+    <style name="wrap_text_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:paddingTop">@dimen/space_mid10</item>
+        <item name="android:paddingBottom">@dimen/space_tinny2</item>
+
+    </style>
+
+    <style name="wrap_text_medatory" parent="wrap_text_style">
+        <item name="android:textSize">@dimen/size_small15</item>
+        <item name="android:textColorHint">@color/signup_normal_text_color</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:drawableRight">@drawable/ic_mendotry</item>
+        <item name="android:drawablePadding">@dimen/space_tinny4</item>
+
+    </style>
 
 
 </resources>
