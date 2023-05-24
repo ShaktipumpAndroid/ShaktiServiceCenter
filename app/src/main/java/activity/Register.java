@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -204,67 +203,57 @@ public class Register extends AppCompatActivity {
         });
 
         // Date help for leave to
-        end_date.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Calendar currentDate;
-                int mDay, mMonth, mYear;
-                currentDate = Calendar.getInstance();
+        end_date.setOnClickListener(view -> {
+            Calendar currentDate;
+            int mDay, mMonth, mYear;
+            currentDate = Calendar.getInstance();
 
-                mDay = currentDate.get(Calendar.DAY_OF_MONTH);
-                mMonth = currentDate.get(Calendar.MONTH);
-                mYear = currentDate.get(Calendar.YEAR);
-                DatePickerDialog datePickerDialog = new DatePickerDialog(context, new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
-                        i1 = i1 + 1;
-                        end_date.setText(i2 + "/" + i1 + "/" + i);
-                        mEnd = end_date.getText().toString().trim();
-                        parseDateToddMMyyyy2(mEnd);
-                    }
-                }, mYear, mMonth, mDay);
-                datePickerDialog.setTitle("End Date");
-                datePickerDialog.show();
-            }
+            mDay = currentDate.get(Calendar.DAY_OF_MONTH);
+            mMonth = currentDate.get(Calendar.MONTH);
+            mYear = currentDate.get(Calendar.YEAR);
+            DatePickerDialog datePickerDialog = new DatePickerDialog(context, (datePicker, i, i1, i2) -> {
+                i1 = i1 + 1;
+                end_date.setText(i2 + "/" + i1 + "/" + i);
+                mEnd = end_date.getText().toString().trim();
+                parseDateToddMMyyyy2(mEnd);
+            }, mYear, mMonth, mDay);
+            datePickerDialog.setTitle("End Date");
+            datePickerDialog.show();
         });
-
-
     }
 
-    public String parseDateToddMMyyyy1(String time) {
+    public void parseDateToddMMyyyy1(String time) {
         String inputPattern = "dd/MM/yyyy";
         String outputPattern = "yyyyMMdd";
         SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern);
         SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern);
 
-        Date date = null;
-        String str = null;
-
+        Date date;
         try {
             date = inputFormat.parse(time);
+            assert date != null;
             mStart = outputFormat.format(date);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return str;
     }
 
-    public String parseDateToddMMyyyy2(String time) {
+    public void parseDateToddMMyyyy2(String time) {
         String inputPattern = "dd/MM/yyyy";
         String outputPattern = "yyyyMMdd";
         @SuppressLint("SimpleDateFormat") SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern);
         @SuppressLint("SimpleDateFormat") SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern);
 
-        Date date = null;
+        Date date;
         String str = null;
 
         try {
             date = inputFormat.parse(time);
+            assert date != null;
             mEnd = outputFormat.format(date);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return str;
     }
 
 
