@@ -74,5 +74,5 @@ public class WebURL {
     public static final String TRANS_ENTRY = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmapp_sales_emp/service_transport_entry.htm";
     public static final String CMPLN_ATTACHMENT = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmapp_sales_emp/get_cmp_attachment.htm";
     public static final String STATE_DATA = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmapp_solar/state_data.htm";
-
+    public static final String GET_SUORDINATE = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmap_srv_center/get_subordinate.htm";
 }

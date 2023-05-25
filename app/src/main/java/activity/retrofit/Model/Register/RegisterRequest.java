@@ -1,4 +1,4 @@
-package activity.retrofit;
+package activity.retrofit.Model.Register;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

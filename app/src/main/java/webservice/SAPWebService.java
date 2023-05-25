@@ -7,7 +7,6 @@ import android.graphics.BitmapFactory;
 import android.os.StrictMode;
 import android.util.Base64;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -23,7 +22,7 @@ import java.util.Locale;
 
 import activity.CustomUtility;
 import bean.BeanProduct;
-import bean.LoginBean;
+import bean.SubordinateBean;
 import database.DatabaseHelper;
 
 /**
@@ -35,8 +34,9 @@ public class SAPWebService {
     public static final int MODE_PRIVATE = 0;
     ArrayList<String> al;
     String matnr, kunnr, vkorg, vtweg, extwg, maktx, kbetr, mtart, konwa;
+    String country, country_text, state, state_text, district, district_text, tehsil, tehsil_text;
     //get user id of person
-    String userid = LoginBean.getUseid();
+    String userid ;
     SharedPreferences.Editor editor;
     SharedPreferences pref;
 
@@ -481,7 +481,7 @@ public class SAPWebService {
                 JSONArray chat_app = jsonObj.getJSONArray("chat_app_api");
 
 
-                pref = context.getSharedPreferences("MyPref", MODE_PRIVATE);
+                pref = context.getSharedPreferences("MyPref", Context.MODE_PRIVATE);
                 editor = pref.edit();
 
                 for (int i = 0; i < chat_app.length(); i++) {
@@ -1414,7 +1414,74 @@ public class SAPWebService {
 
 }
 
+    public void getStateData(Context context) {
 
+        @SuppressWarnings("resource") DatabaseHelper dataHelper = new DatabaseHelper(context);
+        final ArrayList<NameValuePair> param = new ArrayList<>();
+        try {
+            String obj = CustomHttpClient.executeHttpPost1(WebURL.STATE_DATA, param);
+            JSONArray ja_state = new JSONArray(obj);
+            dataHelper.deleteStateSearchHelpData();
+            for (int i = 0; i < ja_state.length(); i++) {
+                JSONObject jo_state = ja_state.getJSONObject(i);
+                country = jo_state.optString("country");
+                country_text = jo_state.optString("countrytext");
+                state = jo_state.optString("state");
+                state_text = jo_state.optString("statetext");
+                district = jo_state.optString("district");
+                district_text = jo_state.optString("districttext");
+                tehsil = jo_state.optString("tehsil");
+                tehsil_text = jo_state.optString("tehsiltext");
+                dataHelper.insertStateData(country, country_text, state, state_text, district, district_text, tehsil, tehsil_text);
+            }
+        } catch (Exception e) {
+            Log.d("msg", "" + e);
+        }
+
+    }
+
+    public int getSubordinateData(Context context) {
+        int progressBarStatus = 0;
+        DatabaseHelper dataHelper = new DatabaseHelper(context);
+        userid = CustomUtility.getSharedPreferences(context,"username");
+
+        final ArrayList<NameValuePair> param = new ArrayList<>();
+        param.add(new BasicNameValuePair("kunnr", userid));
+
+        Log.e("UseID===>",param.toString());
+        try {
+            String obj = CustomHttpClient.executeHttpPost1(WebURL.GET_SUORDINATE, param);
+            JSONObject jsonObj = new JSONObject(obj);
+
+            JSONArray ja_sub = jsonObj.getJSONArray("response");
+
+            Log.e("OUTPUT===>", ja_sub.toString());
+            for (int i = 0; i < ja_sub.length(); i++) {
+                JSONObject jo_sub = ja_sub.getJSONObject(i);
+
+                SubordinateBean subordinateBean = new SubordinateBean(
+                        jo_sub.optString("mobile"),
+                        jo_sub.optString("aadhar"),
+                        jo_sub.optString("name"),
+                        jo_sub.optString("date_from"),
+                        jo_sub.optString("date_to"),
+                        jo_sub.optString("state"),
+                        jo_sub.optString("district"),
+                        jo_sub.optString("passward"));
+
+                if (dataHelper.isRecordExist(DatabaseHelper.TABLE_SUBORDINATE, DatabaseHelper.KEY_MOB_NO, subordinateBean.getMobileNo())) {
+                    dataHelper.updateSuboridnateData(dataHelper.KEY_UPDATE, subordinateBean);
+                } else {
+                    dataHelper.updateSuboridnateData(dataHelper.KEY_INSERT, subordinateBean);
+                }
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return progressBarStatus;
+    }
 
 }
 

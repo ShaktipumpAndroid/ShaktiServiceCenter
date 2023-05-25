@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--suppress DeprecatedClassUsageInspection -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.shaktipumps.shakti.shaktiServiceCenter">
@@ -16,7 +15,8 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.BROADCAST_STICKY" />
     <uses-permission android:name="android.permission.ACCESS_GPS" />
-    <uses-permission android:name="android.permission.READ_LOGS"
+    <uses-permission
+        android:name="android.permission.READ_LOGS"
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.CAMERA" /> <!-- <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/> -->
     <!-- <uses-permission android:name="android.permission.READ_CALL_LOG" /> -->
@@ -47,6 +47,12 @@
         tools:ignore="GoogleAppIndexingWarning,RtlEnabled"
         tools:replace="android:appComponentFactory"
         tools:targetApi="q">
+        <activity
+            android:name="activity.EditSubordinate"
+            android:exported="false" />
+        <activity
+            android:name="activity.SubordinateList"
+            android:exported="false" />
         <activity
             android:name="activity.Register"
             android:exported="false" />
@@ -108,7 +114,7 @@
         <activity
             android:name="activity.complainvk.ShowPhotograph"
             android:screenOrientation="portrait" />
-    
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />

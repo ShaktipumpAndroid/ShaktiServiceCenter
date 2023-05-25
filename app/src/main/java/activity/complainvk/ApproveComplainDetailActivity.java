@@ -570,7 +570,7 @@ private String textRemarkValue;
                                 // Toast.makeText(mContext, mComplainDetailListResponse.size(), Toast.LENGTH_SHORT).show();
 
                              //   System.out.println("mComplainDetailListResponse.size()==>"+mComplainDetailListResponse.size());
-                                mPendingComplainDetailsListAdapter = new PendingComplainDetailsListAdapter(mContext, mComplainDetailListResponse, mStatusValue, mMobileNumber);
+                                mPendingComplainDetailsListAdapter = new PendingComplainDetailsListAdapter(mContext, mComplainDetailListResponse, mMobileNumber);
                                 rclyPendingComplainList.setAdapter(mPendingComplainDetailsListAdapter);
                                 progressDialog.dismiss();
                             }

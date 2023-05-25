@@ -22,6 +22,7 @@ import bean.BeanProductFinal;
 import bean.CmpReviewImageBean;
 import bean.LocalConvenienceBean;
 import bean.LoginBean;
+import bean.SubordinateBean;
 
 /**
  * Created by shakti on 10/19/2016.
@@ -85,8 +86,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String TABLE_DATA_SYNC_CHAT_APP = "tbl_data_sync_chat_app";
     public static final String TABLE_COMPLAINT_DISTANCE = "tbl_complaint_distance";
     public static final String TABLE_REVIEW_COMPLAINT_IMAGES = "tbl_review_complaint_images";
-
+    public static final String TABLE_SUBORDINATE = "tbl_subordinate";
     public static final String TABLE_SERVICE_PHOTO_COMPLAIN  = "tbl_complain_service_photo";
+
+
+    public static final String KEY_FR_DATE = "from_date";
+    public static final String KEY_TO_DATE = "to_date";
     // Common column names
     public static final String KEY_ID = "id";
     // attendance Table - column name
@@ -194,6 +199,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String KEY_VIDEO_TYPE = "video_type";
     public static final String KEY_VIDEO_NAME = "video_name";
     public static final String KEY_VIDEO_LINK = "video_link";
+    public static final String KEY_INSERT = "insert";
+    public static final String KEY_UPDATE = "update";
 
 
     // attendance table field
@@ -305,7 +312,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String KEY_PARTNER_CLASS = "partner_class";
     private static final String KEY_ADDRESS = "address";
     private static final String KEY_EMAIL = "email";
-    private static final String KEY_MOB_NO = "mob_no";
+    public  static final String KEY_MOB_NO = "mob_no";
     private static final String KEY_ALT_MOB_NO = "alt_mob_no";
     private static final String KEY_TEL_NUMBER = "tel_number";
     private static final String KEY_PINCODE = "pincode";
@@ -385,7 +392,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + KEY_ENAME + " TEXT)";
     // Attendance table create statement
 
-    // sales Target table create statement
+    private static final String CREATE_TABLE_SUBORDINATE = "CREATE TABLE "
+            + TABLE_SUBORDINATE + "("
+            + KEY_AADHAR_CARD + " TEXT,"
+            + KEY_STATE + " TEXT,"
+            + KEY_DISTRICT + " TEXT,"
+            + KEY_PASSWORD + " TEXT,"
+            + KEY_NAME + " TEXT,"
+            + KEY_MOB_NO + " TEXT,"
+            + KEY_FR_DATE + " TEXT,"
+            + KEY_TO_DATE + " TEXT)";
 
     // Review Images table create statement
     private static final String CREATE_TABLE_REVIEW_CMP_IMAGES = "CREATE TABLE IF NOT EXISTS "
@@ -614,6 +630,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_REVIEW_CMP_IMAGES);
         db.execSQL(CREATE_TABLE_COMPLENE_SERVICE);
         db.execSQL(CREATE_TABLE_STATE_SEARCH);
+        db.execSQL(CREATE_TABLE_SUBORDINATE);
+
     }
 
 
@@ -628,6 +646,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_SERVICE_PHOTO_COMPLAIN);///vikas
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_REVIEW_COMPLAINT_IMAGES);//////vikas
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_STATE_SEARCH);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_SUBORDINATE);
            // db.execSQL("DROP TABLE IF EXISTS " + TABLE_REVIEW_COMPLAINT_IMAGES);
 
             Log.d("newDatabaseVersion123", "" + newVersion);
@@ -3800,6 +3819,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
+
+
+
     public void insertStateData(String country, String country_text, String state, String state_text, String district, String district_text, String tehsil, String tehsil_text) {
         // Open the database for writing
         SQLiteDatabase db = this.getWritableDatabase();
@@ -3948,4 +3970,98 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return result;
     }
+
+    @SuppressLint("Range")
+    public ArrayList<SubordinateBean> getSubordinateList() {
+
+        ArrayList<SubordinateBean> subordinateBeanList = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        db.beginTransaction();
+
+        try {
+            String selectQuery = "";
+            selectQuery = "SELECT * FROM " + TABLE_SUBORDINATE;
+            Cursor cursor = db.rawQuery(selectQuery, null);
+            Log.e("Count", "&&&" + cursor.getCount());
+            if (cursor.getCount() > 0) {
+                if (cursor.moveToFirst()) {
+                    while (!cursor.isAfterLast()) {
+                        SubordinateBean subordinateBean = new SubordinateBean();
+                        subordinateBean.setAadharNo(cursor.getString(cursor.getColumnIndex(KEY_AADHAR_CARD)));
+                        subordinateBean.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
+                        subordinateBean.setMobileNo(cursor.getString(cursor.getColumnIndex(KEY_MOB_NO)));
+                        subordinateBean.setState(cursor.getString(cursor.getColumnIndex(KEY_STATE)));
+                        subordinateBean.setDistrict(cursor.getString(cursor.getColumnIndex(KEY_DISTRICT)));
+                        subordinateBean.setPassword(cursor.getString(cursor.getColumnIndex(KEY_PASSWORD)));
+                        subordinateBean.setFromDate(cursor.getString(cursor.getColumnIndex(KEY_FR_DATE)));
+                        subordinateBean.setToDate(cursor.getString(cursor.getColumnIndex(KEY_TO_DATE)));
+
+                        subordinateBeanList.add(subordinateBean);
+                        cursor.moveToNext();
+                    }
+                }
+                db.setTransactionSuccessful();
+            }
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+        } finally {
+            db.endTransaction();
+            db.close();
+        }
+
+        return subordinateBeanList;
+    }
+
+    public void updateSuboridnateData(String key, SubordinateBean subordinateBean) {
+        long i = 0;
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+        ContentValues values;
+
+
+        try {
+            values = new ContentValues();
+            String where = " ";
+            switch (key) {
+                case KEY_INSERT:
+
+                    values.put(KEY_MOB_NO, subordinateBean.getMobileNo());
+                    values.put(KEY_AADHAR_CARD, subordinateBean.getAadharNo());
+                    values.put(KEY_STATE, subordinateBean.getState());
+                    values.put(KEY_DISTRICT, subordinateBean.getDistrict());
+                    values.put(KEY_NAME, subordinateBean.getName());
+                    values.put(KEY_FR_DATE, subordinateBean.getFromDate());
+                    values.put(KEY_TO_DATE, subordinateBean.getToDate());
+                    values.put(KEY_PASSWORD, subordinateBean.getPassword());
+
+                    i = db.insert(TABLE_SUBORDINATE, null, values);
+                    break;
+
+                case KEY_UPDATE:
+
+                    values.put(KEY_AADHAR_CARD, subordinateBean.getAadharNo());
+                    values.put(KEY_STATE, subordinateBean.getState());
+                    values.put(KEY_DISTRICT, subordinateBean.getDistrict());
+                    values.put(KEY_NAME, subordinateBean.getName());
+                    values.put(KEY_FR_DATE, subordinateBean.getFromDate());
+                    values.put(KEY_TO_DATE, subordinateBean.getToDate());
+                    values.put(KEY_PASSWORD, subordinateBean.getPassword());
+
+                    where = KEY_MOB_NO + "='" + subordinateBean.getMobileNo() + "'";
+
+                    i = db.update(TABLE_SUBORDINATE, values, where, null);
+
+            }
+
+            db.setTransactionSuccessful();
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+        } finally {
+            db.endTransaction();
+            db.close();
+        }
+    }
+
+
 }

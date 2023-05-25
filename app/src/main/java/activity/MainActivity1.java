@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -37,28 +36,23 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.material.snackbar.Snackbar;
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
-import org.apache.http.NameValuePair;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Objects;
 
 import bean.LoginBean;
 import database.DatabaseHelper;
-import webservice.CustomHttpClient;
 import webservice.SAPWebService;
-import webservice.WebURL;
 
 
+@SuppressWarnings("deprecation")
 public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.FragmentDrawerListener, SharedPreferences.OnSharedPreferenceChangeListener {
     //Alarm Request Code
     private static final String TAG = MainActivity1.class.getSimpleName();
     private int progressBarStatus = 0;
     private final Handler progressBarHandler = new Handler();
     ProgressDialog progressBar;
-    String country, country_text, state, state_text, district, district_text, tehsil, tehsil_text;
+
 
     // Used in checking for runtime permissions.
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
@@ -69,26 +63,12 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
     FusedLocationProviderClient fusedLocationProviderClient;
 
 
-    /**
-     * Provides access to the Fused Location Provider API.
-     */
-    private FusedLocationProviderClient mFusedLocationClient;
-    /**
-     * Represents a geographical location.
-     */
-    private Location mCurrentLocation;
-    // A reference to the service used to get location updates.
-
-    // Tracks the bound state of the service.
-    private boolean mBound = false;
 
     // Monitors the state of the connection to the service.
 
-    private ArrayList<String> permissions = new ArrayList<>();
-    private ArrayList<String> permissionsToRequest;
+    private final ArrayList<String> permissions = new ArrayList<>();
 
     CustomUtility customUtility;
-    ProgressDialog dialog;
     Context mContext;
     String versionName = "0.0";
     DatabaseHelper dataHelper = null;
@@ -105,8 +85,6 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
     };
     private ProgressDialog progressDialog;
 
-    private Toolbar mToolbar;
-    private FragmentDrawer drawerFragment;
     String userType = "";
 
     @Override
@@ -116,14 +94,14 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
 
         mContext = this;
         con = new SAPWebService();
-        mToolbar =  findViewById(R.id.toolbar);
+        Toolbar mToolbar = findViewById(R.id.toolbar);
 
         fusedLocationProviderClient = getFusedLocationProviderClient(this);
 
         permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
         permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
 
-        permissionsToRequest = permissionsToRequest(permissions);
+        ArrayList<String> permissionsToRequest = permissionsToRequest(permissions);
         deleteCache(mContext);
 
         progressDialog = new ProgressDialog(mContext);
@@ -134,7 +112,7 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
 
         dataHelper = new DatabaseHelper(this);
 
-        drawerFragment = (FragmentDrawer)
+        FragmentDrawer drawerFragment = (FragmentDrawer)
                 getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
         assert drawerFragment != null;
         drawerFragment.setUp(R.id.fragment_navigation_drawer,  findViewById(R.id.drawer_layout), mToolbar);
@@ -192,7 +170,12 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
 
                         progressBarStatus = 30;
                         progressBarHandler.post(() -> progressBar.setProgress(progressBarStatus));
-                        getStateData(MainActivity1.this);
+                        con.getStateData(MainActivity1.this);
+
+                        progressBarStatus = 46;
+                        progressBarHandler.post(() -> progressBar.setProgress(progressBarStatus));
+                        con.getSubordinateData(MainActivity1.this);
+
                         progressBarStatus = 100;
                         progressBarHandler.post(() -> progressBar.setProgress(progressBarStatus));
 
@@ -209,31 +192,7 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
         }).start();
     }
 
-    public void getStateData(Context context) {
 
-        DatabaseHelper dataHelper = new DatabaseHelper(context);
-        final ArrayList<NameValuePair> param = new ArrayList<>();
-        try {
-            String obj = CustomHttpClient.executeHttpPost1(WebURL.STATE_DATA, param);
-            JSONArray ja_state = new JSONArray(obj);
-            dataHelper.deleteStateSearchHelpData();
-            for (int i = 0; i < ja_state.length(); i++) {
-                JSONObject jo_state = ja_state.getJSONObject(i);
-                country = jo_state.optString("country");
-                country_text = jo_state.optString("countrytext");
-                state = jo_state.optString("state");
-                state_text = jo_state.optString("statetext");
-                district = jo_state.optString("district");
-                district_text = jo_state.optString("districttext");
-                tehsil = jo_state.optString("tehsil");
-                tehsil_text = jo_state.optString("tehsiltext");
-                dataHelper.insertStateData(country, country_text, state, state_text, district, district_text, tehsil, tehsil_text);
-            }
-        } catch (Exception e) {
-            Log.d("msg", "" + e);
-        }
-
-    }
 
 
     public static void deleteCache(Context context) {
@@ -373,6 +332,10 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
                 Intent i = new Intent(MainActivity1.this,Register.class);
                 startActivity(i);
                 break;
+
+            case 4:
+                Intent intent = new Intent(MainActivity1.this,SubordinateList.class);
+                startActivity(intent);
 
             default:
                 break;

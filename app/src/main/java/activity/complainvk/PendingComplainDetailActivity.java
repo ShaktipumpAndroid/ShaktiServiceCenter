@@ -4,21 +4,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Message;
 import android.os.StrictMode;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -30,25 +25,16 @@ import com.shaktipumps.shakti.shaktiServiceCenter.R;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import activity.AdaperVk.PendingComplainDetailsListAdapter;
-import activity.AdaperVk.PendingComplainListAdapter;
-import activity.BeanVk.ComplainAllResponse;
 import activity.BeanVk.ComplainDetailListResponse;
 import activity.CustomUtility;
-import database.DatabaseHelper;
 import webservice.CustomHttpClient;
 import webservice.WebURL;
-
-import static android.os.Environment.getExternalStoragePublicDirectory;
 
 public class PendingComplainDetailActivity extends AppCompatActivity {
 
@@ -424,7 +410,7 @@ private String textRemarkValue;
                         runOnUiThread(new Runnable() {
                             public void run() {
                                 // Toast.makeText(mContext, mMessage, Toast.LENGTH_SHORT).show();
-                                mPendingComplainDetailsListAdapter = new PendingComplainDetailsListAdapter(mContext, mComplainDetailListResponse, mStatusValue, mMobileNumber);
+                                mPendingComplainDetailsListAdapter = new PendingComplainDetailsListAdapter(mContext, mComplainDetailListResponse, mMobileNumber);
                                 rclyPendingComplainList.setAdapter(mPendingComplainDetailsListAdapter);
                                 progressDialog.dismiss();
                             }

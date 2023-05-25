@@ -309,7 +309,7 @@ TextView approved_complaint, closer_complaint, open_complaint, pending_for_Appro
                             new AlertDialog.Builder(context).
                                     setMessage("These permissions are mandatory to get your location. You need to allow them.").
                                     setPositiveButton("OK", (dialogInterface, i) -> requestPermissions(permissionsRejected.
-                                            toArray(new String[permissionsRejected.size()]), ALL_PERMISSIONS_RESULT)).setNegativeButton("Cancel", null).create().show();
+                                            toArray(new String[0]), ALL_PERMISSIONS_RESULT)).setNegativeButton("Cancel", null).create().show();
 
                             return;
                         }

@@ -31,12 +31,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import activity.retrofit.APIInterface;
 import activity.retrofit.ApiCilent;
-import activity.retrofit.RegisterResponse;
+import activity.retrofit.Model.Register.RegisterResponse;
 import database.DatabaseHelper;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -50,10 +48,10 @@ public class Register extends AppCompatActivity {
     EditText name;
     EditText password;
     EditText aadharCard;
-    EditText repassword;
+    EditText rePassword;
     Button send;
     int index, index1;
-    String mobileNo_txt,name_txt,district_txt,password_txt,state_txt,aadharCard_txt,repassword_txt, userid;
+    String mobileNo_txt,name_txt,district_txt,password_txt,state_txt,aadharCard_txt,rePassword_txt, userid;
     private EditText start_date, end_date;
     AlertDialog dialog;
     private String mStart, mEnd;
@@ -90,7 +88,7 @@ public class Register extends AppCompatActivity {
         name =findViewById(R.id.name);
         password = findViewById(R.id.password);
         aadharCard =findViewById(R.id.aadharCard);
-        repassword = findViewById(R.id.repassword);
+        rePassword = findViewById(R.id.repassword);
         spinner_state = (Spinner) findViewById(R.id.spinner_state);
         spinner_district = (Spinner) findViewById(R.id.spinner_district);
 
@@ -245,7 +243,7 @@ public class Register extends AppCompatActivity {
         @SuppressLint("SimpleDateFormat") SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern);
 
         Date date;
-        String str = null;
+
 
         try {
             date = inputFormat.parse(time);
@@ -267,12 +265,12 @@ public class Register extends AppCompatActivity {
             district_txt = spinner_district_txt;
             state_txt = spinner_state_txt;
             password_txt = password.getText().toString().trim();
-            repassword_txt = repassword.getText().toString().trim();
+            rePassword_txt = rePassword.getText().toString().trim();
 
             checkDataValtidation();
-            if(!mobileNo_txt.isEmpty() && !name_txt.isEmpty() && !aadharCard_txt.isEmpty() && !district_txt.isEmpty() && !state_txt.isEmpty() && !password_txt.isEmpty() &&!repassword_txt.isEmpty()){
+            if(!mobileNo_txt.isEmpty() && !name_txt.isEmpty() && !aadharCard_txt.isEmpty() && !district_txt.isEmpty() && !state_txt.isEmpty() && !password_txt.isEmpty() &&!rePassword_txt.isEmpty()){
 
-                     if(password.getText().toString().trim().equals(repassword.getText().toString().trim()))
+                     if(password.getText().toString().trim().equals(rePassword.getText().toString().trim()))
                      {
 
                         Log.e("Info",""+mobileNo_txt );
@@ -296,13 +294,13 @@ public class Register extends AppCompatActivity {
 
     private void checkDataValtidation() {
         try {
-            if (mStart == null || mStart.equalsIgnoreCase("") || mStart.equalsIgnoreCase(null)) {
+            if (mStart == null || mStart.equalsIgnoreCase("")) {
                 start_date.setFocusable(true);
                 start_date.requestFocus();
                 Toast.makeText(context, getResources().getString(R.string.Please_select_start), Toast.LENGTH_SHORT).show();
                 if (dialog != null)
                     dialog.dismiss();
-            } else if (mEnd == null || mEnd.equalsIgnoreCase("") || mEnd.equalsIgnoreCase(null)) {
+            } else if (mEnd == null || mEnd.equalsIgnoreCase("")) {
                 end_date.setFocusable(true);
                 end_date.requestFocus();
                 Toast.makeText(context, getResources().getString(R.string.Please_select_end), Toast.LENGTH_SHORT).show();
@@ -352,6 +350,7 @@ public class Register extends AppCompatActivity {
             public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
 
 
+                assert response.body() != null;
                 if (response.body().status.equalsIgnoreCase("true"))
                 {
                     Toast.makeText(Register.this, response.body().message, Toast.LENGTH_SHORT).show();
@@ -367,31 +366,6 @@ public class Register extends AppCompatActivity {
 
     }
 
-
-    boolean isValidAadhaarNumber(String str)
-    {
-        // Regex to check valid Aadhaar number.
-        String regex
-                = "^[2-9]{1}[0-9]{3}\\s[0-9]{4}\\s[0-9]{4}$";
-
-        // Compile the ReGex
-        Pattern p = Pattern.compile(regex);
-
-        // If the string is empty
-        // return false
-        if (str == null) {
-            return false;
-        }
-
-        // Pattern class contains matcher() method
-        // to find matching between given string
-        // and regular expression.
-        Matcher m = p.matcher(str);
-
-        // Return if the string
-        // matched the ReGex
-        return m.matches();
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

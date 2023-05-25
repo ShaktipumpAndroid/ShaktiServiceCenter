@@ -3,15 +3,12 @@ package activity.AdaperVk;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,11 +23,11 @@ import activity.complainvk.PendingComplainDetailActivity;
 
 public class PendingComplainListAdapter extends RecyclerView.Adapter<PendingComplainListAdapter.ViewHolder> {
 
-    private Context mContext;
-    private String mStatusValue;
+    private final Context mContext;
+    private final String mStatusValue;
 
 
-    private List<ComplainAllResponse> mComplainAllResponse;
+    private final List<ComplainAllResponse> mComplainAllResponse;
 
 
    /* public PendingComplainListAdapter(Context mContext, List<ComplainAllResponse> mComplainAllResponse) {
@@ -47,11 +44,11 @@ public class PendingComplainListAdapter extends RecyclerView.Adapter<PendingComp
         this.mStatusValue = mStatusValue;
     }
 
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view1 = LayoutInflater.from(mContext).inflate(R.layout.pending_comp_item_row, parent, false);
-        ViewHolder viewHolder1 = new ViewHolder(view1);
-        return viewHolder1;
+        return new ViewHolder(view1);
     }
 
     @Override
@@ -73,120 +70,111 @@ public class PendingComplainListAdapter extends RecyclerView.Adapter<PendingComp
       //  holder.lvlMainItemViewID.setTag(mComplainAllResponse.get(position));
 
 
-        holder.imgShareID.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        holder.imgShareID.setOnClickListener(view -> {
 
 
 
-                String shareData = "Complain No.:"+mComplainAllResponse.get(position).getCmpno()+"\nEng. Name:"+mComplainAllResponse.get(position).getEname()+"";
+            String shareData = "Complain No.:"+mComplainAllResponse.get(position).getCmpno()+"\nEng. Name:"+mComplainAllResponse.get(position).getEname()+"";
 
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, shareData);
-                sendIntent.setType("text/plain");
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, shareData);
+            sendIntent.setType("text/plain");
 
-                Intent shareIntent = Intent.createChooser(sendIntent, null);
-                mContext.startActivity(shareIntent);
+            Intent shareIntent = Intent.createChooser(sendIntent, null);
+            mContext.startActivity(shareIntent);
 
-            }
         });
 
-        holder.txtClickHereID.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        holder.txtClickHereID.setOnClickListener(view -> {
 
-                if(mStatusValue.equalsIgnoreCase("01"))
-                {
-                    Intent mIntent = new Intent(mContext, PendingComplainDetailActivity.class);
-                    mIntent.putExtra("Complain_number",mComplainAllResponse.get(position).getCmpno());
-                    mIntent.putExtra("mobile_number",mComplainAllResponse.get(position).getMblno());
-                    mIntent.putExtra("StatusValue","01");
-                    mIntent.putExtra("complaint", "Pending Complaint");
-                    mContext.startActivity(mIntent);
-                }
-                else  if(mStatusValue.equalsIgnoreCase("02"))
-                {
-
-                    Intent mIntent = new Intent(mContext, PendingComplainDetailActivity.class);
-                    mIntent.putExtra("Complain_number",mComplainAllResponse.get(position).getCmpno());
-                    mIntent.putExtra("mobile_number",mComplainAllResponse.get(position).getMblno());
-                    mIntent.putExtra("StatusValue","02");
-                    mIntent.putExtra("complaint", "Pending for Approval");
-                    mContext.startActivity(mIntent);
-                }
-                else  if(mStatusValue.equalsIgnoreCase("03"))
-                {
-
-                    Intent mIntent = new Intent(mContext, ApproveComplainDetailActivity.class);
-                    mIntent.putExtra("Complain_number",mComplainAllResponse.get(position).getCmpno());
-                    mIntent.putExtra("mobile_number",mComplainAllResponse.get(position).getMblno());
-                    mIntent.putExtra("complaint", "Approval Complain");
-                    mIntent.putExtra("StatusValue","03");
-                    mContext.startActivity(mIntent);
-                }
-                else  if(mStatusValue.equalsIgnoreCase("04"))
-                {
-
-                    Intent mIntent = new Intent(mContext, PendingComplainDetailActivity.class);
-                    mIntent.putExtra("Complain_number",mComplainAllResponse.get(position).getCmpno());
-                    mIntent.putExtra("mobile_number",mComplainAllResponse.get(position).getMblno());
-                    mIntent.putExtra("complaint", "Pending for Clouser");
-                    mIntent.putExtra("StatusValue","04");
-                    mContext.startActivity(mIntent);
-                }
-
-
+            if(mStatusValue.equalsIgnoreCase("01"))
+            {
+                Intent mIntent = new Intent(mContext, PendingComplainDetailActivity.class);
+                mIntent.putExtra("Complain_number",mComplainAllResponse.get(position).getCmpno());
+                mIntent.putExtra("mobile_number",mComplainAllResponse.get(position).getMblno());
+                mIntent.putExtra("StatusValue","01");
+                mIntent.putExtra("complaint", "Pending Complaint");
+                mContext.startActivity(mIntent);
             }
+            else  if(mStatusValue.equalsIgnoreCase("02"))
+            {
+
+                Intent mIntent = new Intent(mContext, PendingComplainDetailActivity.class);
+                mIntent.putExtra("Complain_number",mComplainAllResponse.get(position).getCmpno());
+                mIntent.putExtra("mobile_number",mComplainAllResponse.get(position).getMblno());
+                mIntent.putExtra("StatusValue","02");
+                mIntent.putExtra("complaint", "Pending for Approval");
+                mContext.startActivity(mIntent);
+            }
+            else  if(mStatusValue.equalsIgnoreCase("03"))
+            {
+
+                Intent mIntent = new Intent(mContext, ApproveComplainDetailActivity.class);
+                mIntent.putExtra("Complain_number",mComplainAllResponse.get(position).getCmpno());
+                mIntent.putExtra("mobile_number",mComplainAllResponse.get(position).getMblno());
+                mIntent.putExtra("complaint", "Approval Complain");
+                mIntent.putExtra("StatusValue","03");
+                mContext.startActivity(mIntent);
+            }
+            else  if(mStatusValue.equalsIgnoreCase("04"))
+            {
+
+                Intent mIntent = new Intent(mContext, PendingComplainDetailActivity.class);
+                mIntent.putExtra("Complain_number",mComplainAllResponse.get(position).getCmpno());
+                mIntent.putExtra("mobile_number",mComplainAllResponse.get(position).getMblno());
+                mIntent.putExtra("complaint", "Pending for Clouser");
+                mIntent.putExtra("StatusValue","04");
+                mContext.startActivity(mIntent);
+            }
+
+
         });
 
-        holder.lvlMainItemViewID.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        holder.lvlMainItemViewID.setOnClickListener(view -> {
 
-              //  view.getTag();
+          //  view.getTag();
 
-                if(mStatusValue.equalsIgnoreCase("01"))
-                {
-                    Intent mIntent = new Intent(mContext, PendingComplainDetailActivity.class);
-                    mIntent.putExtra("Complain_number",mComplainAllResponse.get(position).getCmpno());
-                    mIntent.putExtra("mobile_number",mComplainAllResponse.get(position).getMblno());
-                    mIntent.putExtra("StatusValue","01");
-                    mIntent.putExtra("complaint", "Pending Complaint");
-                    mContext.startActivity(mIntent);
-                }
-                else  if(mStatusValue.equalsIgnoreCase("02"))
-                {
-
-                    Intent mIntent = new Intent(mContext, PendingComplainDetailActivity.class);
-                    mIntent.putExtra("Complain_number",mComplainAllResponse.get(position).getCmpno());
-                    mIntent.putExtra("mobile_number",mComplainAllResponse.get(position).getMblno());
-                    mIntent.putExtra("StatusValue","02");
-                    mIntent.putExtra("complaint", "Pending for Approval");
-                    mContext.startActivity(mIntent);
-                }
-                else  if(mStatusValue.equalsIgnoreCase("03"))
-                {
-
-                    Intent mIntent = new Intent(mContext, ApproveComplainDetailActivity.class);
-                    mIntent.putExtra("Complain_number",mComplainAllResponse.get(position).getCmpno());
-                    mIntent.putExtra("mobile_number",mComplainAllResponse.get(position).getMblno());
-                    mIntent.putExtra("complaint", "Approval Complain");
-                    mIntent.putExtra("StatusValue","03");
-                    mContext.startActivity(mIntent);
-                }
-                else  if(mStatusValue.equalsIgnoreCase("04"))
-                {
-
-                    Intent mIntent = new Intent(mContext, PendingComplainDetailActivity.class);
-                    mIntent.putExtra("Complain_number",mComplainAllResponse.get(position).getCmpno());
-                    mIntent.putExtra("mobile_number",mComplainAllResponse.get(position).getMblno());
-                    mIntent.putExtra("complaint", "Pending for Clouser");
-                    mIntent.putExtra("StatusValue","04");
-                    mContext.startActivity(mIntent);
-                }
-
+            if(mStatusValue.equalsIgnoreCase("01"))
+            {
+                Intent mIntent = new Intent(mContext, PendingComplainDetailActivity.class);
+                mIntent.putExtra("Complain_number",mComplainAllResponse.get(position).getCmpno());
+                mIntent.putExtra("mobile_number",mComplainAllResponse.get(position).getMblno());
+                mIntent.putExtra("StatusValue","01");
+                mIntent.putExtra("complaint", "Pending Complaint");
+                mContext.startActivity(mIntent);
             }
+            else  if(mStatusValue.equalsIgnoreCase("02"))
+            {
+
+                Intent mIntent = new Intent(mContext, PendingComplainDetailActivity.class);
+                mIntent.putExtra("Complain_number",mComplainAllResponse.get(position).getCmpno());
+                mIntent.putExtra("mobile_number",mComplainAllResponse.get(position).getMblno());
+                mIntent.putExtra("StatusValue","02");
+                mIntent.putExtra("complaint", "Pending for Approval");
+                mContext.startActivity(mIntent);
+            }
+            else  if(mStatusValue.equalsIgnoreCase("03"))
+            {
+
+                Intent mIntent = new Intent(mContext, ApproveComplainDetailActivity.class);
+                mIntent.putExtra("Complain_number",mComplainAllResponse.get(position).getCmpno());
+                mIntent.putExtra("mobile_number",mComplainAllResponse.get(position).getMblno());
+                mIntent.putExtra("complaint", "Approval Complain");
+                mIntent.putExtra("StatusValue","03");
+                mContext.startActivity(mIntent);
+            }
+            else  if(mStatusValue.equalsIgnoreCase("04"))
+            {
+
+                Intent mIntent = new Intent(mContext, PendingComplainDetailActivity.class);
+                mIntent.putExtra("Complain_number",mComplainAllResponse.get(position).getCmpno());
+                mIntent.putExtra("mobile_number",mComplainAllResponse.get(position).getMblno());
+                mIntent.putExtra("complaint", "Pending for Clouser");
+                mIntent.putExtra("StatusValue","04");
+                mContext.startActivity(mIntent);
+            }
+
         });
       //  holder.txtWarrantyValueID.setText(mComplainAllResponse.get(position).getGstBillno());
 
@@ -208,11 +196,11 @@ public class PendingComplainListAdapter extends RecyclerView.Adapter<PendingComp
 
 
         public TextView txtDealerOEMValueID, txtComplainnoValueID, txtComplainDateValueID, txtMOBNumberValueID,txtCustomerNameValueID,txtClickHereID,
-                txtAddressValueID, txtMaterialCodeValueID, txtSeriolNumberValueID, txtMaterialDescValueID, txtEngNameValueID, txtEngMobNoValueID,txtWarrantyValueID;
+                txtAddressValueID,   txtEngNameValueID, txtEngMobNoValueID;
 
 
         public ImageView imgShareID;
-        public RelativeLayout rlvNotifyItemMainViewID;
+
         public LinearLayout lvlMainItemViewID;
 
         public ViewHolder(View v) {
@@ -237,18 +225,6 @@ public class PendingComplainListAdapter extends RecyclerView.Adapter<PendingComp
 
           }
     }
-
-
-
-
-
-    android.os.Handler mHandler = new android.os.Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            String mString = (String) msg.obj;
-            Toast.makeText(mContext, mString, Toast.LENGTH_LONG).show();
-        }
-    };
 
 
 }

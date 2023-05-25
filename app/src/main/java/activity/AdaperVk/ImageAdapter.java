@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
-import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
@@ -21,11 +20,8 @@ import java.util.ArrayList;
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.FileViewHolder> {
 
     private final ArrayList<String> paths;
-    private final Context context;
-    private int imageSize;
 
     public ImageAdapter(Context context, ArrayList<String> paths) {
-        this.context = context;
         this.paths = paths;
         setColumnNumber(context, 3);
     }
@@ -35,8 +31,9 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.FileViewHold
         DisplayMetrics metrics = new DisplayMetrics();
         wm.getDefaultDisplay().getMetrics(metrics);
         int widthPixels = metrics.widthPixels;
-        imageSize = widthPixels / columnNum;
+        int imageSize = widthPixels / columnNum;
     }
+
 
     @Override
     public FileViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -48,15 +45,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.FileViewHold
 
     @Override
     public void onBindViewHolder(FileViewHolder holder, int position) {
-        String path = paths.get(position);
-        /*Glide.with(context)
-                .load(new File(path))
-                .apply(RequestOptions.centerCropTransform()
-                        .dontAnimate()
-                        .override(imageSize, imageSize)
-                        .placeholder(droidninja.filepicker.R.drawable.image_placeholder))
-                .thumbnail(0.5f)
-                .into(holder.imageView);*/
+
     }
 
     @Override
@@ -65,8 +54,6 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.FileViewHold
     }
 
     public static class FileViewHolder extends RecyclerView.ViewHolder {
-
-        AppCompatImageView imageView;
 
         public FileViewHolder(View itemView) {
             super(itemView);

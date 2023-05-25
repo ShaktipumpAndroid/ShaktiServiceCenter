@@ -90,6 +90,7 @@
         <item>@string/nav_item_faq</item>
         <item>@string/nav_item_logout</item>
         <item>@string/nav_time_register</item>
+        <item>@string/nav_time_edit</item>
 
     </string-array>
     <string name="action_signout">Sign Out</string>
@@ -135,6 +136,9 @@
     <string name="customer_distance_label">"customer distance  : "</string>
     <string name="Please_select_end">Please Select End Date</string>
     <string name="Please_select_start">Please Select Start Date</string>
+    <string name="search_doc">Search by mobile no</string>
+    <string name="edit_subordinate">Edit Subordinate</string>
+    <string name="nav_time_edit">Edit Subordinate</string>
 
 
     <string-array name="array_paymnet_by">
@@ -214,4 +218,5 @@
         <item>Other</item>
     </string-array>
 
+    <string name="name_">Name</string>
 </resources>

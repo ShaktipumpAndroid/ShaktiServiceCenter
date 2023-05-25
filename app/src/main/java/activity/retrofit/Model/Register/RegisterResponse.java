@@ -1,4 +1,4 @@
-package activity.retrofit;
+package activity.retrofit.Model.Register;
 
 public class RegisterResponse {
     public String status;
