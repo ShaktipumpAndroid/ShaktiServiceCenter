@@ -1,30 +1,49 @@
 package activity;
 
-/**
- * Created by shakti on 10/3/2016.
- */
+//**
+//* Created by shakti on 10/3/2016.
+//*/
+
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.CAMERA;
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.READ_MEDIA_IMAGES;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static android.app.Activity.RESULT_OK;
+import static android.content.Context.LOCATION_SERVICE;
+import static android.os.Build.VERSION.SDK_INT;
+import static androidx.core.content.ContextCompat.checkSelfPermission;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.os.StrictMode;
 import android.provider.MediaStore;
-import android.util.Base64;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,95 +51,106 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
-import java.io.ByteArrayOutputStream;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.TextUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 
 import activity.complainvk.Freelauncer.PendingComplainListFreelauncerActivity;
 import activity.complainvk.PendingComplainListActivity;
+import activity.services.LocationUpdateService;
+import activity.utility.Constant;
+import activity.utility.Utility;
+import bean.LatLongBeanVK;
+import bean.LocalConvenienceBean;
+import bean.WayPoints;
 import database.DatabaseHelper;
-import other.CameraUtils;
+import models.DistanceResponse;
+import rest.DistanceApiClient;
+import rest.RestUtil;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import webservice.CustomHttpClient;
 import webservice.WebURL;
 
-import static android.app.Activity.RESULT_OK;
-import static androidx.core.content.ContextCompat.checkSelfPermission;
-
+    @SuppressWarnings({"deprecation", "InstantiationOfUtilityClass"})
     public class HomeFragmentFreeLauncer extends Fragment implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
     ProgressDialog progressDialog;
-    public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
-    Context context;
-    TextView btn_unsync;
-
-TextView approved_complaint, closer_complaint, open_complaint, pending_for_Approval, txtServiceCenterID;
-
+        Context context;
+    private static final int REQUEST_CODE_PERMISSION = 123;
+    LocalConvenienceBean localConvenienceBean;
+    LocationManager locationManager;
+    String current_start_date, current_end_date, current_start_time, current_end_time;
+    TextView  pending_site, visted_site;
+    TextView  start, end, offlineData;
 
     boolean start_photo_flag = false,
             end_photo_flag = false;
-
-
-
-
-    String start_photo_text,end_photo_text;
-    public static final int BITMAP_SAMPLE_SIZE = 4;
-
-
-
-    Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            String mString = (String) msg.obj;
-            Toast.makeText(context, mString, Toast.LENGTH_LONG).show();
-        }
-    };
-
-    String current_start_date, current_end_date, current_start_time, current_end_time;
-
     FusedLocationProviderClient fusedLocationClient;
-    protected LocationRequest locationRequest;
+
     protected Location location;
-    protected android.location.LocationListener locationListener;
-    LocationCallback locationCallback;
-
-    private CustomUtility customutility = null;
-
-    DatabaseHelper dataHelper;
-    String fullAddress = null;
-    String fullAddress1 = null;
-
+    String start_photo_text,end_photo_text;
+        WayPoints wayPoints;
 
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+        Handler mHandler = new android.os.Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                String mString = (String) msg.obj;
+                Toast.makeText(getActivity(), mString, Toast.LENGTH_LONG).show();
+            }
+        };
 
-    // lists for permissions
-    private ArrayList<String> permissionsToRequest;
-    private ArrayList<String> permissionsRejected = new ArrayList<>();
-    private ArrayList<String> permissions = new ArrayList<>();
-
-    // integer for permissions results request
+        List<LatLongBeanVK> mLatLongBeanVKList;
+        private Uri fileUri;
+    private final ArrayList<String> permissions = new ArrayList<>();
+        DatabaseHelper dataHelper;
+        String mobile;
+        private CustomUtility customutility = null;
+        String username;
+        String from_lat;
+        String from_lng;
+        String to_lat;
+        String allLatLong = "";
+        String to_lng, value = "1";
+        String fullAddress = null;
+        String fullAddress1 = null;
+        String distance1 = null;
+        String startphoto = null,totalWayPoint="";
     private static final int ALL_PERMISSIONS_RESULT = 1011;
-    public static final int MEDIA_TYPE_IMAGE = 1;
     private static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 100;
-    private static String imageStoragePath;
-     TextView photo1,photo2;
-
-     String mServiceCenterName;
-
-
+    TextView photo1,photo2;
+    String mServiceCenterName;
 
     public HomeFragmentFreeLauncer() {
-        // Required empty public constructor
     }
 
 
@@ -129,16 +159,18 @@ TextView approved_complaint, closer_complaint, open_complaint, pending_for_Appro
         super.onCreate(savedInstanceState);
 
         context = this.getActivity();
+        progressDialog = new ProgressDialog(context);
+         mobile = activity.utility.CustomUtility.getSharedPreferences(context,"username");
 
         customutility = new CustomUtility();
-        progressDialog = new ProgressDialog(context);
-
+        username = CustomUtility.getSharedPreferences(context,"username");
         mServiceCenterName = CustomUtility.getSharedPreferences(context,"ServiceCenterName");
+        mLatLongBeanVKList = new ArrayList<>();
         // we add permissions we need to request location of the users
         permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
         permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
-
-        permissionsToRequest = permissionsToRequest(permissions);
+        locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
+        ArrayList<String> permissionsToRequest = permissionsToRequest(permissions);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (permissionsToRequest.size() > 0) {
@@ -150,84 +182,65 @@ TextView approved_complaint, closer_complaint, open_complaint, pending_for_Appro
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
 
-        if (checkPlayServices()) {
-
-        } else {
+        if (!checkPlayServices()) {
             Toast.makeText(context, "You need to install Google Play Services to use the App properly", Toast.LENGTH_SHORT).show();
         }
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_home, container, false);
-        open_complaint = rootView.findViewById(R.id.open_complaint);
-        txtServiceCenterID = rootView.findViewById(R.id.txtServiceCenterID);
-        closer_complaint =rootView.findViewById(R.id.closer_complaint);
-        pending_for_Approval = rootView.findViewById(R.id.pending_for_Approval);
-        approved_complaint = rootView.findViewById(R.id.approved_complaint);
+        View rootView = inflater.inflate(R.layout.fragment_home_feild, container, false);
 
-        txtServiceCenterID.setText(mServiceCenterName);
-
+        pending_site = rootView.findViewById(R.id.pendingVisit);
+        visted_site = rootView.findViewById(R.id.visitedSite);
+        start = rootView.findViewById(R.id.start);
+        end = rootView.findViewById(R.id.end);
+        offlineData = rootView.findViewById(R.id.offlinedata);
+        dataHelper = new DatabaseHelper(getActivity());
         deleteCache(context);
 
-        open_complaint.setOnClickListener(new View.OnClickListener() {
+        if (CustomUtility.getSharedPreferences(context,Constant.LocalConveyance).equalsIgnoreCase("1")){
+            changeButtonVisibility(false, 0.5f, start);
+            changeButtonVisibility(true, 1f, end);
+        }else {
+            changeButtonVisibility(false, 0.5f, end);
+            changeButtonVisibility(true, 1f, start);
+        }
 
-            @Override
-            public void onClick(View view) {
-                //getNewComplaint();
 
-                WebURL.STATUS_CHECK_FOR_COMPLAIN = "01";
-                Intent intent = new Intent(context, PendingComplainListFreelauncerActivity.class);
-                intent.putExtra("complaint", "Pending Complaint");
-                intent.putExtra("StatusValue", "01");
-                startActivity(intent);
-            }
+    /*    if (CustomUtility.getSharedPreferences(context, Constant.LocalConveyance).equalsIgnoreCase("0")) {
+            changeButtonVisibility(false, 0.5f, end);
+            changeButtonVisibility(true, 1f, start);
+        } else {
+            changeButtonVisibility(false, 0.5f, start);
+            changeButtonVisibility(true, 1f, end);
+            startLocationService();
+        }
+*/
+
+        pending_site.setOnClickListener(view -> {
+
+            WebURL.STATUS_CHECK_FOR_COMPLAIN = "01";
+            Intent intent = new Intent(context, PendingComplainListFreelauncerActivity.class);
+            intent.putExtra("complaint", "Pending Site to Visit");
+            startActivity(intent);
         });
 
-        pending_for_Approval.setOnClickListener(new View.OnClickListener() {
+        visted_site.setOnClickListener(view -> {
+           // getNewComplaint();
+            WebURL.STATUS_CHECK_FOR_COMPLAIN = "02";
+            Intent intent = new Intent(context, PendingComplainListActivity.class);
+            //intent.putExtra("complaint", "Dealer Complaint");
+            intent.putExtra("complaint", "Visited Sites");
 
-            @Override
-            public void onClick(View view) {
-               // getNewComplaint();
-                WebURL.STATUS_CHECK_FOR_COMPLAIN = "02";
-                Intent intent = new Intent(context, PendingComplainListActivity.class);
-                //intent.putExtra("complaint", "Dealer Complaint");
-                intent.putExtra("complaint", "Pending for Approval");
-                intent.putExtra("StatusValue", "02");
-                startActivity(intent);
-            }
+            startActivity(intent);
         });
 
-        approved_complaint.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // complaint count
-             //   getPendingComplaint();
-                WebURL.STATUS_CHECK_FOR_COMPLAIN = "03";
-                Intent intent = new Intent(context, PendingComplainListActivity.class);
-                intent.putExtra("complaint", "Approval Complain");
-                intent.putExtra("StatusValue", "03");
-                startActivity(intent);
-            }
-        });
+        start.setOnClickListener(this);
+        end.setOnClickListener(this);
+        offlineData.setOnClickListener(this);
 
-        closer_complaint.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-               // getClosureComplaint();
-                WebURL.STATUS_CHECK_FOR_COMPLAIN = "04";
-                Intent intent = new Intent(context, PendingComplainListActivity.class);
-                intent.putExtra("complaint", "Pending for Clouser");
-                intent.putExtra("StatusValue", "04");
-                startActivity(intent);
-            }
-        });
-
-        // get unsync data count
-        // Inflate the layout for this fragment
         return rootView;
     }
 
@@ -262,28 +275,6 @@ TextView approved_complaint, closer_complaint, open_complaint, pending_for_Appro
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-    }
-
-
-    private boolean validateDate() {
-        if (CustomUtility.isDateTimeAutoUpdate(context)) {
-
-        } else {
-            CustomUtility.showSettingsAlert(context);
-            return false;
-        }
-        return true;
-    }
-
-
-
-    @Override
-    public void onResume() {
-
-        // get unsync data count
-        super.onResume();
-
-
     }
 
 
@@ -345,96 +336,61 @@ TextView approved_complaint, closer_complaint, open_complaint, pending_for_Appro
 
     }
 
+        private void requestPermission() {
+            if (SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                ActivityCompat.requestPermissions(getActivity(),
+                        new String[]{Manifest.permission.CAMERA, Manifest.permission.MANAGE_EXTERNAL_STORAGE,
+                                Manifest.permission.READ_CONTACTS, Manifest.permission.READ_PHONE_STATE,
+                                Manifest.permission.RECORD_AUDIO, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION,
+                                Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_AUDIO},
+                        REQUEST_CODE_PERMISSION);
+            } else {
+                ActivityCompat.requestPermissions(getActivity(),
+                        new String[]{Manifest.permission.CAMERA,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE,
+                                Manifest.permission.READ_CONTACTS, Manifest.permission.READ_PHONE_STATE,
+                                Manifest.permission.RECORD_AUDIO, Manifest.permission.ACCESS_COARSE_LOCATION,
+                                Manifest.permission.ACCESS_FINE_LOCATION},
+                        REQUEST_CODE_PERMISSION);
 
-    @Override
-    public void onClick(View v) {
-
-        int id = v.getId();
-        switch (id) {
-
-            case R.id.start:
-
-                break;
-
-            case R.id.end:
-
-                break;
-
-
-         /*       Intent intnt = new Intent(context, OfflineDataConveyance.class);
-
-                startActivity(intnt);*/
-
+            }
         }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_ID_MULTIPLE_PERMISSIONS:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // Permission Granted
-
-
-                } else {
-                    // Permission Denied
-
-                    getActivity().finish();
-                    System.exit(0);
-
-                }
-                break;
-            case ALL_PERMISSIONS_RESULT:
-                for (String perm : permissionsToRequest) {
-                    if (!hasPermission(perm)) {
-                        permissionsRejected.add(perm);
-                    }
-                }
-
-                if (permissionsRejected.size() > 0) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        if (shouldShowRequestPermissionRationale(permissionsRejected.get(0))) {
-                            new AlertDialog.Builder(context).
-                                    setMessage("These permissions are mandatory to get your location. You need to allow them.").
-                                    setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                                requestPermissions(permissionsRejected.
-                                                        toArray(new String[permissionsRejected.size()]), ALL_PERMISSIONS_RESULT);
-                                            }
-                                        }
-                                    }).setNegativeButton("Cancel", null).create().show();
-
-                            return;
-                        }
-                    }
-                } /*else {
-                    if (googleApiClient != null) {
-                        googleApiClient.connect();
-                    }
-                }*/
-
-                break;
-            default:
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-
-    }
-
-
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
-
 
     private void changeButtonVisibility(boolean state, float alphaRate, TextView txtSubmiteOrderID) {
         txtSubmiteOrderID.setEnabled(state);
         txtSubmiteOrderID.setAlpha(alphaRate);
     }
 
+        @Override
+        public void onResume() {
+            super.onResume();
+            final LocationManager manager =
+                    (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+            boolean gps_enabled = false;
+            boolean network_enabled = false;
+            try {
+                gps_enabled = manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            try {
+                network_enabled = manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            if (!gps_enabled && !network_enabled) {
+                buildAlertMessageNoGps();
+            } else {
+                if (!checkPermission()) {
+                    requestPermission();
+                } else {
+                    if (CustomUtility.getSharedPreferences(context, Constant.LocalConveyance).equalsIgnoreCase("1")) {
+                        startLocationService();
+                    }
+                }
+            }
 
+        }
 
 
     @Override
@@ -461,13 +417,6 @@ TextView approved_complaint, closer_complaint, open_complaint, pending_for_Appro
                 Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-
-        // Permissions ok, we get last location
-       /* location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-
-        if (location != null) {
-            Log.e("Latitude : ","Longitued" + location.getLatitude()+"  "+location.getLongitude());
-        }*/
 
     }
 
@@ -496,84 +445,81 @@ TextView approved_complaint, closer_complaint, open_complaint, pending_for_Appro
 
     public void showConfirmationGallery(final String keyimage, final String name) {
 
-        final CustomUtility customUtility = new CustomUtility();
-
         final CharSequence[] items = {"Take Photo", "Cancel"};
 
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(context,R.style.MyDialogTheme);
         builder.setTitle("Add Photo!");
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int item) {
-                boolean result = CustomUtility.checkPermission(context);
-                if (items[item].equals("Take Photo")) {
+        builder.setItems(items, (dialog, item) -> {
+            boolean result = CustomUtility.checkPermission(context);
+            if (items[item].equals("Take Photo")) {
 
-                    if (result) {
-                        openCamera(name);
-                        setFlag(keyimage);
-                    }
-
-                } else if (items[item].equals("Cancel")) {
-                    dialog.dismiss();
+                if (result) {
+                    openCamera();
+                    setFlag(keyimage);
                 }
+
+            } else if (items[item].equals("Cancel")) {
+                dialog.dismiss();
             }
         });
         builder.show();
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        // if the result is capturing Image
-        Bitmap bitmap = null;
-        if (requestCode == CAMERA_CAPTURE_IMAGE_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
+        @Override
+        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+            // if the result is capturing Image
+            if (requestCode == CAMERA_CAPTURE_IMAGE_REQUEST_CODE) {
+                if (resultCode == RESULT_OK) {
 
-                try {
+                    try {
+                        Bitmap bitmap =
+                                MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), fileUri);
 
-                    bitmap = CameraUtils.optimizeBitmap(BITMAP_SAMPLE_SIZE, imageStoragePath);
+                        Bitmap UserBitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(),
+                                fileUri);
 
-                    int count = bitmap.getByteCount();
+                        String path = Utils.getPath(context, fileUri);
 
-                    Log.e("Count", "&&&&&" + count);
+                        if (path == null) {
+                            path = data.getData().getPath();
+                        }
 
-                    ByteArrayOutputStream byteArrayBitmapStream = new ByteArrayOutputStream();
+                        Log.e("Activity", "PathHolder22= " + path);
 
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 70, byteArrayBitmapStream);
+                        String filename = path.substring(path.lastIndexOf("/") + 1);
+                        String file;
+                        if (filename.indexOf(".") > 0) {
+                            file = filename.substring(0, filename.lastIndexOf("."));
+                        } else {
+                            file = "";
+                        }
+                        if (android.text.TextUtils.isEmpty(file)) {
+                            CustomUtility.ShowToast("File not valid", getActivity());
+                        } else {
 
-                    byte[] byteArray = byteArrayBitmapStream.toByteArray();
+                            if (start_photo_flag) {
+                                start_photo_text = path;
+                                setIcon(DatabaseHelper.KEY_PHOTO1);
+                            }
 
-                    long size = byteArray.length;
+                            if (end_photo_flag) {
+                                end_photo_text = path;
+                                setIcon(DatabaseHelper.KEY_PHOTO2);
+                            }
+                        }
 
-                    Log.e("SIZE1234", "&&&&" + size);
-
-                    Log.e("SIZE1234", "&&&&" + Arrays.toString(byteArray));
-
-                    if (start_photo_flag) {
-                        start_photo_text = Base64.encodeToString(byteArray, Base64.DEFAULT);
-                        setIcon(DatabaseHelper.KEY_PHOTO1);
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
                     }
 
-                    if (end_photo_flag) {
-                        end_photo_text = Base64.encodeToString(byteArray, Base64.DEFAULT);
-                        setIcon(DatabaseHelper.KEY_PHOTO2);
-                    }
-
-
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
                 }
-
-                File file = new File(imageStoragePath);
-                if (file.exists()) {
-                    file.delete();
-                }
-
-
             }
         }
-
-    }
 
     public void setIcon(String key) {
 
@@ -619,32 +565,814 @@ TextView approved_complaint, closer_complaint, open_complaint, pending_for_Appro
 
     }
 
-    public void openCamera(String keyimage) {
-
-        if (CameraUtils.checkPermissions(context)) {
-
+        public void openCamera() {
+            ContentValues values = new ContentValues();
+            fileUri = getActivity().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-            File file = CameraUtils.getOutputMediaFile(MEDIA_TYPE_IMAGE);
-
-            if (file != null) {
-                imageStoragePath = file.getAbsolutePath();
-                Log.e("PATH","&&&"+imageStoragePath);
-            }
-
-            Uri fileUri = CameraUtils.getOutputMediaFileUri(context, file);
-
-            Log.e("PATH","&&&"+fileUri);
-
             intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-
-            // start the image capture Intent
             startActivityForResult(intent, CAMERA_CAPTURE_IMAGE_REQUEST_CODE);
 
         }
 
 
+        @Override
+        public void onClick(View v) {
+            int id = v.getId();
+            switch (id) {
+                case R.id.start:
+                    if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+                            ||locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+
+                        startLocationUpdates();
+
+                    } else {
+                        buildAlertMessageNoGps();
+                    }
+                    break;
+
+                case R.id.end:
+                    if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+                            || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                        if (checkPermission()) {
+                            startLocationUpdates1();
+                        } else {
+                            requestPermission();
+                        }
+                    } else {
+                        buildAlertMessageNoGps();
+                    }
+                    break;
+
+                case R.id.offlinedata:
+                    Intent intnt = new Intent(context, OfflineDataConveyance.class);
+                    startActivity(intnt);
+                    break;
+            }
+        }
+
+        @SuppressLint("UseRequireInsteadOfGet")
+        public void startLocationUpdates() {
+            start_photo_text = "";
+
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(Objects.requireNonNull(getActivity()));
+            if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+
+            fusedLocationClient.getLastLocation().addOnSuccessListener(requireActivity(), location -> {
+                final Double[] lat = new Double[1];
+                final Double[] lng = new Double[1];
+                from_lat = "";
+                from_lng = "";
+                to_lat = "";
+                to_lng = "";
+                fullAddress = "";
+                fullAddress1 = "";
+                try {
+                    current_start_date =  CustomUtility.getCurrentDate();
+                    current_start_time = CustomUtility.getCurrentTime();
+                    if (location != null) {
+                        from_lat = String.valueOf(location.getLatitude());
+                        from_lng = String.valueOf(location.getLongitude());
+                        lat[0] = location.getLatitude();
+                        lng[0] = location.getLongitude();
+                    } else {
+                        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            // TODO: Consider calling
+                            //    ActivityCompat#requestPermissions
+                            // here to request the missing permissions, and then overriding
+                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                            //                                          int[] grantResults)
+                            // to handle the case where the user grants the permission. See the documentation
+                            // for ActivityCompat#requestPermissions for more details.
+                            return;
+                        }
+                        Location location1 = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                        if (location1 != null) {
+                            from_lat = String.valueOf(location1.getLatitude());
+
+                        from_lng = String.valueOf(location1.getLongitude());
+                        lat[0] = location1.getLatitude();
+                        lng[0] = location1.getLongitude();
+                        }
+                    }
+
+                    progressDialog = ProgressDialog.show(getActivity(), getResources().getString(R.string.loading), getResources().getString(R.string.please_wait_));
+                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            //Do something here
+                            if (!TextUtils.isEmpty(from_lat) && !TextUtils.isEmpty(from_lng)) {
+                                if (progressDialog != null)
+                                    if (progressDialog.isShowing()) {
+                                        progressDialog.dismiss();
+                                        progressDialog = null;
+                                    }
+
+                                final Dialog dialog = new Dialog(getActivity());
+                                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                dialog.setCancelable(false);
+                                dialog.setContentView(R.layout.custom_dialog1);
+                                WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                                lp.copyFrom(dialog.getWindow().getAttributes());
+                                lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+                                lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                                dialog.getWindow().setAttributes(lp);
+
+                                final TextInputEditText etlat = dialog.findViewById(R.id.tiet_lat);
+                                final TextInputEditText etlng = dialog.findViewById(R.id.tiet_lng);
+                                final TextInputEditText etadd = dialog.findViewById(R.id.tiet_add);
+                                final TextView ettxt1 = dialog.findViewById(R.id.txt1);
+                                final TextView ettxt2 = dialog.findViewById(R.id.txt2);
+                                photo1 = dialog.findViewById(R.id.photo1);
+                                final TextView etcncl = dialog.findViewById(R.id.btn_cncl);
+                                final TextView etconfm = dialog.findViewById(R.id.btn_cnfrm);
+
+                                if (CustomUtility.isOnline(getActivity())) {
+                                    Geocoder geo = new Geocoder(getActivity().getApplicationContext(), Locale.getDefault());
+                                    List<Address> addresses = null;
+                                    if (location != null) {
+                                        try {
+                                            addresses = geo.getFromLocation(lat[0], lng[0], 1);
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                    if (addresses != null) {
+                                        if (addresses.isEmpty()) {
+                                            etadd.setText(getResources().getString(R.string.no_location_found));
+                                        } else {
+                                            etadd.setText(addresses.get(0).getAddressLine(0));
+                                        }
+                                    }
+                                }
+                                etlat.setText(from_lat);
+                                etlng.setText(from_lng);
+
+                                ettxt1.setText(getResources().getString(R.string.Current_Location));
+                                ettxt2.setText(getResources().getString(R.string.confirm_));
+
+                                // Toast.makeText(getActivity(), "from_lat="+from_lat+"\nfrom_lng="+from_lng, Toast.LENGTH_SHORT).show();
+
+                                photo1.setOnClickListener(v -> {
+                                    value = "1";
+                                    if (start_photo_text == null || start_photo_text.isEmpty()) {
+                                        if (checkPermission()) {
+                                            showConfirmationGallery(DatabaseHelper.KEY_PHOTO1, "PHOTO1");
+                                        } else {
+                                            requestPermission();
+                                        }
+                                    }
+                                });
+
+                                etcncl.setOnClickListener(v -> dialog.dismiss());
+
+                                etconfm.setOnClickListener(v -> {
+                                    LocalConvenienceBean localConvenienceBean = new LocalConvenienceBean(String.valueOf(username),
+                                            current_start_date,
+                                            "",
+                                            current_start_time,
+                                            "",
+                                            from_lat,
+                                            "",
+                                            from_lng,
+                                            "",
+                                            "",
+                                            "",
+                                            "",
+                                            start_photo_text,
+                                            ""
+                                    );
+                                    dataHelper.insertLocalconvenienceData(localConvenienceBean);
+
+                                    String latlng = "via:" + from_lat + "," + from_lng;
+                                    Log.e("latlng=====>", latlng);
+                                    WayPoints wayPoints = new WayPoints(String.valueOf(username), current_start_date,
+                                            "",
+                                            current_start_time,
+                                            "", latlng);
+
+                                    dataHelper.insertWayPointsData(wayPoints);
+
+                                    CustomUtility.setSharedPreference(getActivity(), Constant.LocalConveyance, "1");
+                                    CustomUtility.setSharedPreference(getActivity(), Constant.FromLatitude, from_lat);
+                                    CustomUtility.setSharedPreference(getActivity(), Constant.FromLongitude, from_lng);
+                                    CustomUtility.setSharedPreference(getActivity(), Constant.DistanceInMeter, "0");
+                                    changeButtonVisibility(false, 0.5f, start);
+                                    changeButtonVisibility(true, 1f, end);
+                                    startLocationService();
+                                    Toast.makeText(getActivity(), getResources().getString(R.string.YourJourney), Toast.LENGTH_LONG).show();
+                                    dialog.dismiss();
+                                });
+
+                                dialog.show();
+                            } else {
+                                if (progressDialog != null)
+                                    if (progressDialog.isShowing()) {
+                                        progressDialog.dismiss();
+                                        progressDialog = null;
+                                    }
+                                Toast.makeText(getActivity(), getResources().getString(R.string.Pleasewaitcurrentlocation), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }, 2000);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+
+        private void startLocationService() {
+            if (!LocationUpdateService.isServiceRunning) {
+                Intent intent = new Intent(getActivity(), LocationUpdateService.class);
+                getActivity().startService(intent);
+            }
+        }
+
+        private boolean checkPermission() {
+            int cameraPermission =
+                    ContextCompat.checkSelfPermission(getActivity(), CAMERA);
+            int writeExternalStorage =
+                    ContextCompat.checkSelfPermission(getActivity(), WRITE_EXTERNAL_STORAGE);
+            int ReadExternalStorage =
+                    ContextCompat.checkSelfPermission(getActivity(), READ_EXTERNAL_STORAGE);
+
+            int AccessCoarseLocation =
+                    ContextCompat.checkSelfPermission(getActivity(), ACCESS_COARSE_LOCATION);
+            int AccessFineLocation =
+                    ContextCompat.checkSelfPermission(getActivity(), ACCESS_FINE_LOCATION);
+            int ReadMediaImage =
+                    ContextCompat.checkSelfPermission(getActivity(), READ_MEDIA_IMAGES);
+
+
+            if (SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                return cameraPermission == PackageManager.PERMISSION_GRANTED
+                        && AccessCoarseLocation == PackageManager.PERMISSION_GRANTED && AccessFineLocation == PackageManager.PERMISSION_GRANTED && ReadMediaImage == PackageManager.PERMISSION_GRANTED;
+            } else {
+                return cameraPermission == PackageManager.PERMISSION_GRANTED && writeExternalStorage == PackageManager.PERMISSION_GRANTED
+                        && ReadExternalStorage == PackageManager.PERMISSION_GRANTED
+                        && AccessCoarseLocation == PackageManager.PERMISSION_GRANTED && AccessFineLocation == PackageManager.PERMISSION_GRANTED;
+            }
+        }
+
+        @Override
+        public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                               @NonNull int[] grantResults) {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            if (requestCode == REQUEST_CODE_PERMISSION) {
+                if (grantResults.length > 0) {
+                    if (SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        boolean ACCESSCAMERA = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                        boolean ReadContact = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                        boolean ReadPhoneState = grantResults[2] == PackageManager.PERMISSION_GRANTED;
+                        boolean RecordAudio = grantResults[3] == PackageManager.PERMISSION_GRANTED;
+                        boolean AccessCoarseLocation = grantResults[4] == PackageManager.PERMISSION_GRANTED;
+                        boolean AccessFineLocation = grantResults[5] == PackageManager.PERMISSION_GRANTED;
+                        boolean ReadMediaImage = grantResults[6] == PackageManager.PERMISSION_GRANTED;
+                        boolean ReadMediaAudio = grantResults[7] == PackageManager.PERMISSION_GRANTED;
+
+                        if (ACCESSCAMERA && ReadContact && ReadPhoneState && RecordAudio
+                                && AccessCoarseLocation && AccessFineLocation && ReadMediaImage && ReadMediaAudio) {
+
+                            if (CustomUtility.getSharedPreferences(context, Constant.LocalConveyance).equalsIgnoreCase("1")) {
+                                startLocationService();
+                            }
+
+                            if(value.equals("1")){
+                                showConfirmationGallery(DatabaseHelper.KEY_PHOTO1, "PHOTO1");
+                            }else {
+                                showConfirmationGallery(DatabaseHelper.KEY_PHOTO2, "PHOTO2");
+                            }
+                        }else {
+                            Toast.makeText(getActivity(), R.string.all_permission, Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        boolean ACCESSCAMERA = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                        boolean writeExternalStorage =
+                                grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                        boolean ReadExternalStorage =
+                                grantResults[2] == PackageManager.PERMISSION_GRANTED;
+                        boolean ReadContact = grantResults[3] == PackageManager.PERMISSION_GRANTED;
+                        boolean ReadPhoneState = grantResults[4] == PackageManager.PERMISSION_GRANTED;
+                        boolean RecordAudio = grantResults[5] == PackageManager.PERMISSION_GRANTED;
+                        boolean AccessCoarseLocation = grantResults[6] == PackageManager.PERMISSION_GRANTED;
+                        boolean AccessFineLocation = grantResults[7] == PackageManager.PERMISSION_GRANTED;
+
+                        if (ACCESSCAMERA && writeExternalStorage && ReadExternalStorage && ReadContact && ReadPhoneState
+                                && RecordAudio && AccessCoarseLocation && AccessFineLocation) {
+
+                            if (CustomUtility.getSharedPreferences(context, Constant.LocalConveyance).equalsIgnoreCase("1")) {
+                                startLocationService();
+                            }
+                            if(value.equals("1")){
+
+                                showConfirmationGallery(DatabaseHelper.KEY_PHOTO1, "PHOTO1");
+                            }else {
+                                showConfirmationGallery(DatabaseHelper.KEY_PHOTO2, "PHOTO2");
+                            }
+                        }else {
+                            Toast.makeText(getActivity(), R.string.all_permission, Toast.LENGTH_LONG).show();
+                        }
+
+                    }
+                }
+            }
+        }
+
+        public void startLocationUpdates1() {
+            end_photo_text = "";
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
+
+            if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+            fusedLocationClient.getLastLocation().addOnSuccessListener(requireActivity(), new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    from_lat = " ";
+                    from_lng = " ";
+                    to_lat = " ";
+                    to_lng = " ";
+                    fullAddress = "";
+                    fullAddress1 = "";
+                    startphoto = "";
+                    try {
+                        localConvenienceBean = dataHelper.getLocalConvinienceData();
+                        current_start_date = localConvenienceBean.getBegda();
+                        current_start_time = localConvenienceBean.getFrom_time();
+
+                        current_end_date = customutility.getCurrentDate();
+                        current_end_time = customutility.getCurrentTime();
+
+                        from_lat = localConvenienceBean.getFrom_lat();
+                        from_lng = localConvenienceBean.getFrom_lng();
+                        startphoto = localConvenienceBean.getPhoto1();
+                        if (location != null) {
+                            to_lat = String.valueOf(location.getLatitude());
+                            to_lng = String.valueOf(location.getLongitude());
+                        } else {
+                            if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                                // TODO: Consider calling
+                                //    ActivityCompat#requestPermissions
+                                // here to request the missing permissions, and then overriding
+                                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                //                                          int[] grantResults)
+                                // to handle the case where the user grants the permission. See the documentation
+                                // for ActivityCompat#requestPermissions for more details.
+                                return;
+                            }
+                            Location location1 = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                            to_lat = String.valueOf(location1.getLatitude());
+                            to_lng = String.valueOf(location1.getLongitude());
+
+
+                        }
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                    }
+
+                    fullAddress = localConvenienceBean.getStart_loc();
+                    if (CustomUtility.isOnline(getActivity())) {
+                        progressDialog = ProgressDialog.show(getActivity(), getResources().getString(R.string.loading), getResources().getString(R.string.please_wait_));
+                        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (!TextUtils.isEmpty(from_lat) && !TextUtils.isEmpty(from_lng) && !TextUtils.isEmpty(to_lat) && !TextUtils.isEmpty(to_lng)) {
+                                    if (progressDialog != null)
+                                        if (progressDialog.isShowing()) {
+                                            progressDialog.dismiss();
+                                            progressDialog = null;
+                                        }
+                                    allLatLong = from_lat + "," + from_lng + "," + to_lat + "," + to_lng;
+                                    getDistanceInfo(from_lat, from_lng, to_lat, to_lng, allLatLong);
+                                } else {
+                                    if (progressDialog != null)
+                                        if (progressDialog.isShowing()) {
+                                            progressDialog.dismiss();
+                                            progressDialog = null;
+                                        }
+                                    Toast.makeText(getActivity(), getResources().getString(R.string.Pleasewaitcurrentlocation), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }, 2000);
+
+                    } else {
+                        Toast.makeText(getActivity(), R.string.saved_travel_data, Toast.LENGTH_SHORT).show();
+                        LocalConvenienceBean localConvenienceBean = new LocalConvenienceBean(String.valueOf(username), current_start_date,
+                                current_end_date,
+                                current_start_time,
+                                current_end_time,
+                                from_lat,
+                                to_lat,
+                                from_lng,
+                                to_lng,
+                                fullAddress,
+                                fullAddress1,
+                                distance1,
+                                startphoto,
+                                end_photo_text
+                        );
+                        dataHelper.updateLocalconvenienceData(localConvenienceBean);
+                        wayPoints = dataHelper.getWayPointsData(localConvenienceBean.getBegda(), localConvenienceBean.getFrom_time());
+                        WayPoints wP = new WayPoints(username, current_start_date,
+                                current_end_date,
+                                current_start_time,
+                                current_end_time, wayPoints.getWayPoints());
+                        dataHelper.updateWayPointData1(wP);
+                        stopLocationService();
+                        CustomUtility.setSharedPreference(getActivity(), Constant.LocalConveyance, "0");
+                        CustomUtility.removeFromSharedPreference(getActivity(), Constant.FromLatitude);
+                        CustomUtility.removeFromSharedPreference(getActivity(), Constant.FromLongitude);
+                        changeButtonVisibility(false, 0.5f, end);
+                        changeButtonVisibility(true, 1f, start);
+
+                    }
+                }
+            });
+        }
+
+        private void stopLocationService() {
+            getActivity().stopService(new Intent(getActivity(), LocationUpdateService.class));
+        }
+
+
+        public void SyncLocalConveneinceDataToSap(String mode, String endat, String endtm, String mFlotDistanceKM, String allLatLong) {
+
+            String docno_sap ;
+            String invc_done ;
+
+            DatabaseHelper db = new DatabaseHelper(this.getActivity());
+
+            LocalConvenienceBean param_invc ;
+
+            param_invc = db.getLocalConvinienceData(endat, endtm);
+
+            JSONArray ja_invc_data = new JSONArray();
+
+            JSONObject jsonObj = new JSONObject();
+
+            try {
+
+                jsonObj.put("mobile",mobile);
+                jsonObj.put("begda", param_invc.getBegda());
+                jsonObj.put("endda", param_invc.getEndda());
+                jsonObj.put("start_time", param_invc.getFrom_time());
+                jsonObj.put("end_time", param_invc.getTo_time());
+                jsonObj.put("start_lat", param_invc.getFrom_lat());
+                jsonObj.put("end_lat", param_invc.getTo_lat());
+                jsonObj.put("start_long", param_invc.getFrom_lng());
+                jsonObj.put("end_long", param_invc.getTo_lng());
+                if (param_invc.getStart_loc() != null && !param_invc.getStart_loc().isEmpty()) {
+                    jsonObj.put("start_location", param_invc.getStart_loc());
+                } else {
+                    jsonObj.put("start_location", Utility.retrieveAddress(param_invc.getFrom_lat(), param_invc.getFrom_lng(), getActivity()));
+                }
+
+                if (param_invc.getEnd_loc() != null && !param_invc.getEnd_loc().isEmpty()) {
+                    jsonObj.put("end_location", param_invc.getEnd_loc());
+                } else {
+                    jsonObj.put("end_location", Utility.retrieveAddress(param_invc.getTo_lat(), param_invc.getTo_lng(), getActivity()));
+                }
+                jsonObj.put("distance", mFlotDistanceKM);
+                jsonObj.put("TRAVEL_MODE", mode);
+                jsonObj.put("LAT_LONG", allLatLong);
+                if (param_invc.getPhoto1() != null && !param_invc.getPhoto1().isEmpty()) {
+                    jsonObj.put("PHOTO1", Utility.getBase64FromBitmap(context, param_invc.getPhoto1()));
+                } else {
+                    jsonObj.put("PHOTO1", "");
+                }
+
+                if (param_invc.getPhoto2() != null && !param_invc.getPhoto2().isEmpty()) {
+                    jsonObj.put("PHOTO2", Utility.getBase64FromBitmap(context, param_invc.getPhoto2()));
+                } else {
+                    jsonObj.put("PHOTO2", "");
+                }
+                ja_invc_data.put(jsonObj);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+            final ArrayList<NameValuePair> param1_invc = new ArrayList<>();
+            param1_invc.add(new BasicNameValuePair("travel_distance", String.valueOf(ja_invc_data)));
+
+
+            try {
+
+                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().build();
+                StrictMode.setThreadPolicy(policy);
+
+                String obj2 = CustomHttpClient.executeHttpPost1(WebURL.LOCAL_CONVENIENVCE, param1_invc);
+
+                if (!obj2.isEmpty()) {
+
+                    JSONArray ja = new JSONArray(obj2);
+
+                    for (int i = 0; i < ja.length(); i++) {
+
+                        JSONObject jo = ja.getJSONObject(i);
+
+
+                        invc_done = jo.getString("msgtyp");
+                        docno_sap = jo.getString("msg");
+                        if (invc_done.equalsIgnoreCase("S")) {
+
+                            if ((progressDialog != null) && progressDialog.isShowing()) {
+                                progressDialog.dismiss();
+                                progressDialog = null;
+                            }
+                            ;
+                            Message msg = new Message();
+                            msg.obj = docno_sap;
+                            mHandler.sendMessage(msg);
+                            db.deleteLocalconvenienceDetail1(endat, endtm);
+                            db.deleteWayPointsDetail1(endat, endtm);
+                            stopLocationService();
+                            CustomUtility.setSharedPreference(getActivity(), Constant.LocalConveyance, "0");
+                            CustomUtility.removeFromSharedPreference(getActivity(), Constant.FromLatitude);
+                            CustomUtility.removeFromSharedPreference(getActivity(), Constant.FromLongitude);
+                            changeButtonVisibility(false, 0.5f, end);
+                            changeButtonVisibility(true, 1f, start);
+
+                        } else if (invc_done.equalsIgnoreCase("E")) {
+
+                            if ((progressDialog != null) && progressDialog.isShowing()) {
+                                progressDialog.dismiss();
+                                progressDialog = null;
+                            }
+                            ;
+                            Message msg = new Message();
+                            msg.obj = docno_sap;
+                            mHandler.sendMessage(msg);
+
+                        }
+
+                    }
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                if ((progressDialog != null) && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                    progressDialog = null;
+                }
+
+            }
+        }
+
+        private void buildAlertMessageNoGps() {
+
+            if (CustomUtility.isInternetOn(context)) {
+
+                final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setMessage("Please turn on the GPRS and keep it on while traveling on tour/trip.")
+                        .setCancelable(false)
+                        .setPositiveButton("Yes", (dialog, id) -> {
+                            CustomUtility.setSharedPreference(context,Constant.LocalConveyance,"1");
+                            startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                            startLocationUpdates();
+
+                            dialog.dismiss();
+
+
+                        })
+                        .setNegativeButton("No", (dialog, id) -> dialog.cancel());
+                final AlertDialog alert = builder.create();
+                alert.show();
+            } else {
+                Toast.makeText(getActivity(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+
+        private void getDistanceInfo(String lat1, String lon1, String lat2, String lon2, String allLatLong) {
+            // http://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=Washington,DC&destinations=New+York+City,NY
+
+            wayPoints = dataHelper.getWayPointsData(current_start_date, current_start_time);
+
+            String Waypoint = wayPoints.getWayPoints();
+            String wp = Waypoint.replaceAll("%3A", ":");
+            wp = wp.replaceAll("%2C", ",");
+            wp = wp.replaceAll("%7C", "|");
+            String[] json = wp.split("\\|");
+
+            Log.e("jsonSize=====>", String.valueOf(json.length));
+            if (json.length > 20) {
+                double position = (double) json.length /8;
+                Log.e("position=====>", String.valueOf(position));
+                position = position*2 ;
+
+                int pos = (int) position;
+                Log.e("position1=====>", String.valueOf(position));
+                Log.e("pos=====>", String.valueOf(Math.round(pos)));
+
+                for (int i = 0; i <= json.length; i++) {
+                    if(i!=0 && i!=json.length-1) {
+                        if (totalWayPoint.isEmpty()) {
+                            if (!totalWayPoint.contains(json[pos * i])) {
+
+                                totalWayPoint = json[pos * i];
+                                Log.e("positi====>", String.valueOf(i) + "=====>" + json[pos * i]);
+                            }
+
+                        } else {
+                            if (pos * i < json.length) {
+                                if (!totalWayPoint.contains(json[pos * i])) {
+                                    totalWayPoint = totalWayPoint + "|" + json[pos * i];
+                                    Log.e("positi====>", String.valueOf(i) + "=====>" + json[pos * i]);
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+            } else {
+                for (int i = 0; i <= json.length; i++) {
+                    if (totalWayPoint.isEmpty()) {
+                        if (!totalWayPoint.contains(json[i])) {
+                            totalWayPoint = json[i];
+                        }
+                    } else {
+                        if (i < json.length) {
+                            if (!totalWayPoint.contains(json[i])) {
+
+                                totalWayPoint = totalWayPoint + "|" + json[i];
+                            }
+                        }
+                    }
+                }
+            }
+
+            Log.e("json", Arrays.toString(json));
+            Log.e("totalWayPoint", totalWayPoint);
+
+            Map<String, String> mapQuery = new HashMap<>();
+            mapQuery.put("origin",lat1+ "," + lon1);
+            mapQuery.put("destination", lat2+ "," + lon2);
+            mapQuery.put("waypoints", totalWayPoint);
+            mapQuery.put("key", getResources().getString(R.string.google_API_KEY));
+
+            DistanceApiClient client = RestUtil.getInstance().getRetrofit().create(DistanceApiClient.class);
+
+            Call<DistanceResponse> call = client.getDistanceInfo(mapQuery);
+            Log.e("URL===>", String.valueOf(call.request().url()));
+            Log.e("URL===>", String.valueOf(call.request().url()));
+
+     /*    totalWayPoint = totalWayPoint.replaceAll("via:","");
+        String newUri =
+                "https://www.google.com/maps/dir/?api=1&origin=" +lat1 + "," + lon1 + "&destination=" +lat2 + "," + lon2+"&waypoints="+totalWayPoint;
+        Log.e("maproute", "Uri: " + newUri);
+
+
+       Uri googleIntentURI = Uri.parse(String.valueOf(call.request().url()));
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, googleIntentURI);
+        mapIntent.setPackage("com.google.android.apps.maps");
+       context.startActivity(mapIntent);*/
+            call.enqueue(new Callback<DistanceResponse>() {
+                @Override
+                public void onResponse(@NonNull Call<DistanceResponse> call, @NonNull Response<DistanceResponse> response) {
+
+                    if (response.body() != null &&
+                            response.body().getRoutes() != null &&
+                            response.body().getRoutes().size() > 0 &&
+                            response.body().getRoutes().get(0) != null &&
+                            response.body().getRoutes().get(0).getLegs() != null &&
+                            response.body().getRoutes().get(0).getLegs().size() > 0 &&
+                            response.body().getRoutes().get(0).getLegs().get(0) != null &&
+                            response.body().getRoutes().get(0).getLegs().get(0).getDistance() != null &&
+                            response.body().getRoutes().get(0).getLegs().get(0).getDuration() != null) {
+                        Log.e("Response======>", String.valueOf(response.body()));
+
+
+                        fullAddress = Utility.retrieveAddress(lat1, lon1, getActivity());
+
+                        fullAddress1 = Utility.retrieveAddress(lat2, lon2, getActivity());
+
+                        distance1 = response.body().getRoutes().get(0).getLegs().get(0).getDistance().getText();
+
+                        if (progressDialog != null)
+                            if (progressDialog.isShowing()) {
+                                progressDialog.dismiss();
+                                progressDialog = null;
+                            }
+                        Log.e("distance1=====>", distance1);
+
+                        final Dialog dialog = new Dialog(getActivity());
+                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                        dialog.setCancelable(false);
+                        dialog.setCanceledOnTouchOutside(false);
+                        dialog.setContentView(R.layout.custom_dialog2);
+                        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                        lp.copyFrom(dialog.getWindow().getAttributes());
+                        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+                        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                        dialog.getWindow().setAttributes(lp);
+
+                        final TextInputEditText etstrdt = dialog.findViewById(R.id.tiet_str_dt);
+                        final TextInputEditText etstrlatlng = dialog.findViewById(R.id.tiet_str_lat_lng);
+                        final TextInputEditText etstrlocadd = dialog.findViewById(R.id.tiet_str_loc_add);
+                        final TextInputEditText etenddt = dialog.findViewById(R.id.tiet_end_dt);
+                        final TextInputEditText etendlatlng = dialog.findViewById(R.id.tiet_end_lat_lng);
+                        final TextInputEditText etendlocadd = dialog.findViewById(R.id.tiet_end_loc_add);
+                        final TextInputEditText ettotdis = dialog.findViewById(R.id.tiet_tot_dis);
+                        final TextInputLayout til_trvl_mod = dialog.findViewById(R.id.til_trvl_mod);
+                        final TextInputEditText ettrvlmod = dialog.findViewById(R.id.tiet_trvl_mod);
+
+
+                        final TextView etcncl = dialog.findViewById(R.id.btn_cncl);
+                        final TextView etconfm = dialog.findViewById(R.id.btn_cnfrm);
+                        final TextView ettxt1 = dialog.findViewById(R.id.txt1);
+                        final TextView ettxt2 = dialog.findViewById(R.id.txt2);
+                        photo2 = dialog.findViewById(R.id.photo2);
+
+
+                        etstrdt.setText(CustomUtility.formateDate1(current_start_date) + " " + CustomUtility.formatTime1(current_start_time));
+                        etstrlatlng.setText(from_lat + "," + from_lng);
+                        etenddt.setText(CustomUtility.formateDate1(current_end_date) + " " + CustomUtility.formatTime1(current_end_time));
+                        etendlatlng.setText(to_lat + "," + to_lng);
+                        etstrlocadd.setText(fullAddress);
+                        etendlocadd.setText(fullAddress1);
+                        ettotdis.setText(distance1);
+
+                        ettxt1.setText(getResources().getString(R.string.localconveniencedetails));
+                        ettxt2.setText(getResources().getString(R.string.endyourJourney));
+
+                        photo2.setOnClickListener(v -> {
+                            if (end_photo_text == null || end_photo_text.isEmpty()) {
+
+                                if (checkPermission()) {
+                                    openCamera();
+                                } else {
+                                    requestPermission();
+                                }
+                            }
+                        });
+
+                        etcncl.setOnClickListener(v -> dialog.dismiss());
+
+                        etconfm.setOnClickListener(v -> {
+                            if (CustomUtility.isOnline(getActivity())) {
+                                if (!ettrvlmod.getText().toString().isEmpty()) {
+
+                                    progressDialog = ProgressDialog.show(getActivity(), "", getResources().getString(R.string.sending_please_wait));
+
+                                    new Thread(() -> getActivity().runOnUiThread(() -> {
+                                        LocalConvenienceBean localConvenienceBean = new LocalConvenienceBean(username, current_start_date,
+                                                current_end_date,
+                                                current_start_time,
+                                                current_end_time,
+                                                from_lat,
+                                                to_lat,
+                                                from_lng,
+                                                to_lng,
+                                                fullAddress,
+                                                fullAddress1,
+                                                distance1,
+                                                startphoto,
+                                                end_photo_text
+                                        );
+
+                                        dataHelper.updateLocalconvenienceData(localConvenienceBean);
+                                        WayPoints  wayPoints = dataHelper.getWayPointsData(localConvenienceBean.getBegda(), localConvenienceBean.getFrom_time());
+
+                                        WayPoints wp1 = new WayPoints(String.valueOf(username), current_start_date,
+                                                current_end_date,
+                                                current_start_time,
+                                                current_end_time, wayPoints.getWayPoints());
+                                        dataHelper.updateWayPointData1(wp1);
+                                        SyncLocalConveneinceDataToSap(ettrvlmod.getText().toString(), current_end_date, current_end_time, distance1, allLatLong);
+                                    })).start();
+
+                                    dialog.dismiss();
+
+                                } else {
+                                    Toast.makeText(getActivity(), getResources().getString(R.string.Please_Enter_Travel_Mode), Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                Toast.makeText(getActivity(), getResources().getString(R.string.ConnectToInternet), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                        dialog.show();
+
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<DistanceResponse> call, @NonNull Throwable t) {
+
+                    Log.e("Failed", "&&&", t);
+
+                    if (progressDialog != null)
+                        if (progressDialog.isShowing()) {
+                            progressDialog.dismiss();
+                            progressDialog = null;
+                        }
+                }
+            });
+        }
+
     }
-
-
-}

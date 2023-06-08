@@ -31,7 +31,6 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_lat"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="Latitude"
@@ -50,7 +49,6 @@
     </com.google.android.material.textfield.TextInputLayout>
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_lng"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="Longitude"
@@ -71,7 +69,6 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_add"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="Address"
@@ -100,7 +97,7 @@
         android:layout_marginTop="@dimen/size_tinny10"
         android:padding="@dimen/space_mid10"
         android:singleLine="true"
-        android:text="Start Photo"
+        android:text="@string/start_photo"
         android:textColor="@color/black"
         android:textSize="@dimen/size_xlarge20"
         app:layout_constraintEnd_toEndOf="parent"
@@ -117,7 +114,7 @@
         android:background="@layout/rounded_corner_blue"
         android:gravity="center"
         android:padding="@dimen/space_mid10"
-        android:text="Cancel"
+        android:text="@string/cancel"
         android:textColor="@color/white"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -134,7 +131,7 @@
         android:background="@layout/rounded_corner_blue"
         android:gravity="center"
         android:padding="@dimen/space_mid10"
-        android:text="Confirm"
+        android:text="@string/confirm_"
         android:textColor="@color/white"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"

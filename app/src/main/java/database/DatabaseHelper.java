@@ -1,8 +1,10 @@
 package database;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
@@ -10,9 +12,13 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
+import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.core.app.ActivityCompat;
+
 import java.util.ArrayList;
+import java.util.List;
 
 import activity.BeanVk.ComplainServicePhotoResponse;
 import activity.CustomUtility;
@@ -20,13 +26,17 @@ import bean.AttendanceBean;
 import bean.BeanProduct;
 import bean.BeanProductFinal;
 import bean.CmpReviewImageBean;
+import bean.ImageModel;
 import bean.LocalConvenienceBean;
 import bean.LoginBean;
+import bean.SubordinateAssginComplainBean;
 import bean.SubordinateBean;
+import bean.WayPoints;
 
 /**
  * Created by shakti on 10/19/2016.
  */
+
 public class DatabaseHelper extends SQLiteOpenHelper {
 
 
@@ -88,6 +98,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String TABLE_REVIEW_COMPLAINT_IMAGES = "tbl_review_complaint_images";
     public static final String TABLE_SUBORDINATE = "tbl_subordinate";
     public static final String TABLE_SERVICE_PHOTO_COMPLAIN  = "tbl_complain_service_photo";
+    public static final String TABLE_ASSGIN_COMPLAIN_SUBORDINATE = "tbl_assgin_complain_suborginate";
+    public static final String TABLE_IMAGES = "tbl_images";
+    private static final String TABLE_WayPoints = "wayPoints";
+
+
+    public static final String KEY_IMAGES_ID = "imagesId",KEY_IMAGES_NAME = "imagesName",KEY_IMAGES_PATH = "imagesPath",KEY_IMAGE_SELECTED = "imagesSelected",KEY_IMAGES_BILL_NO= "imagesBillNo";
 
 
     public static final String KEY_FR_DATE = "from_date";
@@ -205,6 +221,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // attendance table field
     public static final String KEY_CMPNO = "cmpno";
+    public static final String KEY_WARRANTY_DURATION = "w_waranty";
+    public static final String KEY_DEALER_NAME = "delname";
+    public static final String KEY_CUSTOMER_NAME = "cstname";
+    public static final String KEY_ENGG_NAME = "engg_name";
+    public static final String KEY_MOBILE_NO = "cmblno";
+    public static final String KEY_ADDRESS ="caddress";
     public static final String KEY_STATUS = "status";
     public static final String KEY_REMARK = "remark";
     public static final String KEY_CMPDT = "cmpdt";
@@ -310,7 +332,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String KEY_KUNNR = "kunnr";
     private static final String KEY_PARTNER = "partner";
     private static final String KEY_PARTNER_CLASS = "partner_class";
-    private static final String KEY_ADDRESS = "address";
+    private static final String KEY_ADDRESS_ = "address";
     private static final String KEY_EMAIL = "email";
     public  static final String KEY_MOB_NO = "mob_no";
     private static final String KEY_ALT_MOB_NO = "alt_mob_no";
@@ -332,14 +354,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String KEY_KONWA = "konwa";
     private static final String KEY_MENGE = "menge";
     private static final String KEY_TOT_KBETR = "tot_kbetr";
-    private static final String KEY_CUSTOMER_NAME = "customer_name";
+    private static final String KEY_CUSTO_NAME = "customer_name";
     private static final String KEY_CR_DATE = "cr_date";
     private static final String IMAGE = "IMAGE";
     private static final String IMAGE2 = "IMAGE1";
     private static final String KEY_AGENDA = "agenda";
     private static final String KEY_OUTCOMES = "outcomes";
 
-
+    public static final String KEY_WayPoints = "wayPoints";
     public static final String KEY_FROM_TIME = "start_time";
     public static final String KEY_TO_TIME = "end_time";
     private static final String KEY_FROM_LAT = "start_lat";
@@ -440,6 +462,52 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + KEY_PHOTO11 + " TEXT,"
             + KEY_PHOTO12 + " TEXT)";
 
+    private static final String CREATE_TABLE_SITE_AUDIT_IMAGES = "CREATE TABLE "
+            + TABLE_IMAGES + "("  + KEY_IMAGES_ID + " INTEGER PRIMARY KEY AUTOINCREMENT ,"+ KEY_IMAGES_NAME + " TEXT," + KEY_IMAGES_PATH + " TEXT," + KEY_IMAGE_SELECTED + " BOOLEAN," + KEY_IMAGES_BILL_NO + " TEXT)";
+
+    private static final String CREATE_TABLE_WayPoints = "CREATE TABLE IF NOT EXISTS "
+            + TABLE_WayPoints + "(" + KEY_ID + " PRIMARY KEY ,"
+            + KEY_PERNR + " TEXT,"
+            + KEY_BEGDA + " TEXT,"
+            + KEY_ENDDA + " TEXT,"
+            + KEY_FROM_TIME + " TEXT,"
+            + KEY_TO_TIME + " TEXT,"
+            + KEY_WayPoints + " TEXT)";
+
+
+    private static final String CREATE_TABLE_ASSGIN_COMPLAIN_SUBORDINATE = "CREATE TABLE IF NOT EXISTS "
+            + TABLE_ASSGIN_COMPLAIN_SUBORDINATE + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_CMPNO + " TEXT,"
+            + KEY_DEALER_NAME + " TEXT,"
+            + KEY_CUSTOMER_NAME + " TEXT,"
+            + KEY_ENGG_NAME + " TEXT,"
+            + KEY_MOBILE_NO + " TEXT,"
+            + KEY_ADDRESS + " TEXT,"
+            + KEY_MATNR + " TEXT,"
+            + KEY_WARRANTY + " TEXT,"
+            + KEY_MAKTX + " TEXT,"
+            + KEY_SERNR + " TEXT,"
+            + KEY_REASON + " TEXT,"
+            + KEY_WARRANTY_DURATION + " TEXT)";
+
+
+    private static final String CREATE_TABLE_LOCAL_CONVENIENCE = "CREATE TABLE IF NOT EXISTS "
+            + TABLE_LOCAL_CONVENIENCE + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_PERNR + " TEXT,"
+            + KEY_BEGDA + " TEXT,"
+            + KEY_ENDDA + " TEXT,"
+            + KEY_FROM_TIME + " TEXT,"
+            + KEY_TO_TIME + " TEXT,"
+            + KEY_FROM_LAT + " TEXT,"
+            + KEY_FROM_LNG + " TEXT,"
+            + KEY_TO_LAT + " TEXT,"
+            + KEY_TO_LNG + " TEXT,"
+            + KEY_START_LOC + " TEXT,"
+            + KEY_END_LOC + " TEXT,"
+            + KEY_DISTANCE + " TEXT,"
+            + KEY_PHOTO1 + " BLOB,"
+            + KEY_PHOTO2 + " BLOB,"
+            + KEY_TASK_DATE_TO + " TEXT)";
 
     private static final String CREATE_TABLE_STATE_SEARCH = "CREATE TABLE "
             + TABLE_STATE_SEARCH + "("
@@ -630,7 +698,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_REVIEW_CMP_IMAGES);
         db.execSQL(CREATE_TABLE_COMPLENE_SERVICE);
         db.execSQL(CREATE_TABLE_STATE_SEARCH);
+        db.execSQL(CREATE_TABLE_LOCAL_CONVENIENCE);
         db.execSQL(CREATE_TABLE_SUBORDINATE);
+        db.execSQL(CREATE_TABLE_ASSGIN_COMPLAIN_SUBORDINATE);
+        db.execSQL(CREATE_TABLE_SITE_AUDIT_IMAGES);
+        db.execSQL(CREATE_TABLE_WayPoints);
 
     }
 
@@ -646,8 +718,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_SERVICE_PHOTO_COMPLAIN);///vikas
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_REVIEW_COMPLAINT_IMAGES);//////vikas
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_STATE_SEARCH);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOCAL_CONVENIENCE);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_SUBORDINATE);
-           // db.execSQL("DROP TABLE IF EXISTS " + TABLE_REVIEW_COMPLAINT_IMAGES);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_ASSGIN_COMPLAIN_SUBORDINATE);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_IMAGES);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_WayPoints);
+
 
             Log.d("newDatabaseVersion123", "" + newVersion);
             onCreate(db);
@@ -3777,8 +3853,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public boolean isRecordExist(String tablename, String field, String fieldvalue) {
         SQLiteDatabase db = this.getReadableDatabase();
-        String selectQuery = null;
-        Cursor c;
 
         String Query = "SELECT * FROM " + tablename + " WHERE " + field + " = '" + fieldvalue + "'";
         Cursor cursor = db.rawQuery(Query, null);
@@ -4013,6 +4087,52 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return subordinateBeanList;
     }
 
+    @SuppressLint("Range")
+    public ArrayList<SubordinateAssginComplainBean> getSubordinateAssginComplainList() {
+
+        ArrayList<SubordinateAssginComplainBean> subordinateBeanList = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        db.beginTransaction();
+
+        try {
+            String selectQuery = "";
+            selectQuery = "SELECT * FROM " + TABLE_ASSGIN_COMPLAIN_SUBORDINATE;
+            Cursor cursor = db.rawQuery(selectQuery, null);
+            Log.e("Count", "&&&" + cursor.getCount());
+            if (cursor.getCount() > 0) {
+                if (cursor.moveToFirst()) {
+                    while (!cursor.isAfterLast()) {
+                        SubordinateAssginComplainBean subordinateBean = new SubordinateAssginComplainBean();
+                        subordinateBean.setCmpno(cursor.getString(cursor.getColumnIndex(KEY_CMPNO)));
+                        subordinateBean.setDelname(cursor.getString(cursor.getColumnIndex(KEY_DEALER_NAME)));
+                        subordinateBean.setCstname(cursor.getString(cursor.getColumnIndex(KEY_CUSTOMER_NAME)));
+                        subordinateBean.setCaddress(cursor.getString(cursor.getColumnIndex(KEY_ADDRESS)));
+                        subordinateBean.setEngg_name(cursor.getString(cursor.getColumnIndex(KEY_ENGG_NAME)));
+                        subordinateBean.setCmblno(cursor.getString(cursor.getColumnIndex(KEY_MOBILE_NO)));
+                        subordinateBean.setMatnr(cursor.getString(cursor.getColumnIndex(KEY_MATNR)));
+                        subordinateBean.setWarranty(cursor.getString(cursor.getColumnIndex(KEY_WARRANTY)));
+                        subordinateBean.setMaktx(cursor.getString(cursor.getColumnIndex(KEY_MAKTX)));
+                        subordinateBean.setSernr(cursor.getString(cursor.getColumnIndex(KEY_SERNR)));
+                        subordinateBean.setReason(cursor.getString(cursor.getColumnIndex(KEY_REASON)));
+                        subordinateBean.setW_waranty(cursor.getString(cursor.getColumnIndex(KEY_WARRANTY_DURATION)));
+
+                        subordinateBeanList.add(subordinateBean);
+                        cursor.moveToNext();
+                    }
+                }
+                db.setTransactionSuccessful();
+            }
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+        } finally {
+            db.endTransaction();
+            db.close();
+        }
+
+        return subordinateBeanList;
+    }
+
     public void updateSuboridnateData(String key, SubordinateBean subordinateBean) {
         long i = 0;
         SQLiteDatabase db = this.getWritableDatabase();
@@ -4063,5 +4183,622 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public void updateAssginComplainData(String key, SubordinateAssginComplainBean subordinateBean) {
+        long i = 0;
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+        ContentValues values;
+
+        try {
+            values = new ContentValues();
+            String where = " ";
+            switch (key) {
+                case KEY_INSERT:
+
+                    values.put(KEY_CMPNO, subordinateBean.getCmpno());
+                    values.put(KEY_DEALER_NAME, subordinateBean.getDelname());
+                    values.put(KEY_CUSTOMER_NAME, subordinateBean.getCstname());
+                    values.put(KEY_ENGG_NAME, subordinateBean.getEngg_name());
+                    values.put(KEY_MOBILE_NO, subordinateBean.getCmblno());
+                    values.put(KEY_ADDRESS, subordinateBean.getCaddress());
+                    values.put(KEY_MATNR, subordinateBean.getMatnr());
+                    values.put(KEY_WARRANTY, subordinateBean.getWarranty());
+                    values.put(KEY_MAKTX, subordinateBean.getMaktx());
+                    values.put(KEY_SERNR, subordinateBean.getSernr());
+                    values.put(KEY_REASON, subordinateBean.getReason());
+                    values.put(KEY_WARRANTY_DURATION, subordinateBean.getW_waranty());
+
+                     db.insert(TABLE_ASSGIN_COMPLAIN_SUBORDINATE, null, values);
+                    break;
+
+                case KEY_UPDATE:
+
+                    values.put(KEY_CMPNO, subordinateBean.getCmpno());
+                    values.put(KEY_DEALER_NAME, subordinateBean.getDelname());
+                    values.put(KEY_CUSTOMER_NAME, subordinateBean.getCstname());
+                    values.put(KEY_ENGG_NAME, subordinateBean.getEngg_name());
+                    values.put(KEY_MOBILE_NO, subordinateBean.getCmblno());
+                    values.put(KEY_ADDRESS, subordinateBean.getCaddress());
+                    values.put(KEY_MATNR, subordinateBean.getMatnr());
+                    values.put(KEY_WARRANTY, subordinateBean.getWarranty());
+                    values.put(KEY_MAKTX, subordinateBean.getMaktx());
+                    values.put(KEY_SERNR, subordinateBean.getSernr());
+                    values.put(KEY_REASON, subordinateBean.getReason());
+                    values.put(KEY_WARRANTY_DURATION, subordinateBean.getW_waranty());
+
+                    where = KEY_MOBILE_NO + "='" + subordinateBean.getCmpno() + "'";
+
+                    i = db.update(TABLE_ASSGIN_COMPLAIN_SUBORDINATE, values, where, null);
+
+            }
+
+            db.setTransactionSuccessful();
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+        } finally {
+            db.endTransaction();
+            db.close();
+        }
+    }
+
+    /**********************  insert Employee GPS Activity ************************************/
+    public void insertEmployeeGPSActivity(
+            String pernr,
+            String budat,
+            String time,
+            String event,
+            String latitude,
+            String longitude,
+            Context context,
+            String phone_number
+
+
+    ) {
+
+
+//*************  get mobile tower location *******************************
+
+        String cell_id = "0",
+                location_code = "0",
+                mobile_country_code = "0",
+                mobile_network_code = "0";
+
+
+        try {
+
+            telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+            cellLocation = (GsmCellLocation) telephonyManager.getCellLocation();
+
+            if (cellLocation != null) {
+                cid = cellLocation.getCid();
+                lac = cellLocation.getLac();
+            }
+
+            String networkOperator = telephonyManager.getNetworkOperator();
+
+            if (!TextUtils.isEmpty(networkOperator)) {
+                mcc = Integer.parseInt(networkOperator.substring(0, 3));
+                mnc = Integer.parseInt(networkOperator.substring(3));
+            }
+
+
+//        String loc = "cell id: " + String.valueOf(cid) + "location area code:" + String.valueOf(lac) +
+//                "mcc: " + String.valueOf(mcc) +    "mnc: " + String.valueOf(mnc);
+
+
+//            String loc = "ci=: " + String.valueOf(cid) + "lac=:" + String.valueOf(lac) +
+//                    "mcc=: " + String.valueOf(mcc) +    "mnc=: " + String.valueOf(mnc);
+
+
+            cell_id = String.valueOf(cid);
+            location_code = String.valueOf(lac);
+
+            mobile_country_code = String.valueOf(mcc);
+            mobile_network_code = String.valueOf(mnc);
+
+
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+        }
+
+//*************  end mobile tower location *******************************
+
+
+        // Open the database for writing
+        SQLiteDatabase db = this.getWritableDatabase();
+        // Start the transaction.
+        db.beginTransactionNonExclusive();
+        ContentValues values;
+
+        try {
+
+
+            values = new ContentValues();
+            values.put(KEY_PERNR, pernr);
+            values.put(KEY_BUDAT, budat);
+            values.put(KEY_TIME_IN, time);
+            values.put(KEY_EVENT, event);
+            values.put(KEY_LATITUDE, latitude);
+            values.put(KEY_LONGITUDE, longitude);
+            values.put(KEY_PHONE_NUMBER, phone_number);
+            values.put(KEY_SYNC, "NOT");
+            values.put(KEY_CELL_ID, cell_id);
+            values.put(KEY_LOCATION_CODE, location_code);
+            values.put(KEY_MOBILE_COUNTRY_CODE, mobile_country_code);
+            values.put(KEY_MOBILE_NETWORK_CODE, mobile_network_code);
+
+
+            // Insert Row
+            long i = db.insert(TABLE_EMPLOYEE_GPS_ACTIVITY, null, values);
+
+
+            //Toast.makeText(context,String.valueOf( "mayank"+ cell_id +"--"+latitude) , Toast.LENGTH_SHORT).show();
+
+
+            //Log.d("sync", cell_id +"--"+latitude);
+
+
+            // Insert into database successfully.
+            db.setTransactionSuccessful();
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+        } finally {
+            // End the transaction.
+            db.endTransaction();
+            // Close database
+            db.close();
+        }
+    }
+
+    @SuppressLint("Range")
+    public LocalConvenienceBean getLocalConvinienceData() {
+
+        LocalConvenienceBean localConvenienceBean = new LocalConvenienceBean();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String selectQuery = null;
+        Cursor cursordom;
+        db.beginTransactionNonExclusive();
+        try {
+
+            selectQuery = "SELECT * FROM " + TABLE_LOCAL_CONVENIENCE;
+
+            cursordom = db.rawQuery(selectQuery, null);
+
+            Log.e("COUNTSIZE", "%%%%%" + cursordom.getCount());
+
+            if (cursordom.getCount() > 0) {
+                if (cursordom.moveToFirst()) {
+                    while (!cursordom.isAfterLast()) {
+                        localConvenienceBean = new LocalConvenienceBean();
+
+                        localConvenienceBean.setPernr(cursordom.getString(cursordom.getColumnIndex(KEY_PERNR)));
+                        localConvenienceBean.setBegda(cursordom.getString(cursordom.getColumnIndex(KEY_BEGDA)));
+                        localConvenienceBean.setEndda(cursordom.getString(cursordom.getColumnIndex(KEY_ENDDA)));
+                        localConvenienceBean.setFrom_time(cursordom.getString(cursordom.getColumnIndex(KEY_FROM_TIME)));
+                        localConvenienceBean.setTo_time(cursordom.getString(cursordom.getColumnIndex(KEY_TO_TIME)));
+                        localConvenienceBean.setFrom_lat(cursordom.getString(cursordom.getColumnIndex(KEY_FROM_LAT)));
+                        localConvenienceBean.setFrom_lng(cursordom.getString(cursordom.getColumnIndex(KEY_FROM_LNG)));
+                        localConvenienceBean.setTo_lat(cursordom.getString(cursordom.getColumnIndex(KEY_TO_LAT)));
+                        localConvenienceBean.setTo_lng(cursordom.getString(cursordom.getColumnIndex(KEY_TO_LNG)));
+                        localConvenienceBean.setStart_loc(cursordom.getString(cursordom.getColumnIndex(KEY_START_LOC)));
+                        localConvenienceBean.setEnd_loc(cursordom.getString(cursordom.getColumnIndex(KEY_END_LOC)));
+                        localConvenienceBean.setDistance(cursordom.getString(cursordom.getColumnIndex(KEY_DISTANCE)));
+                        localConvenienceBean.setPhoto1(cursordom.getString(cursordom.getColumnIndex(KEY_PHOTO1)));
+                        localConvenienceBean.setPhoto2(cursordom.getString(cursordom.getColumnIndex(KEY_PHOTO2)));
+
+
+                        cursordom.moveToNext();
+
+                    }
+                }
+                db.setTransactionSuccessful();
+            }
+
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+
+        } finally {
+            db.endTransaction();
+            // End the transaction.
+            db.close();
+            // Close database
+        }
+
+        return localConvenienceBean;
+    }
+
+    @SuppressLint("Range")
+    public LocalConvenienceBean getLocalConvinienceData(String endat, String endtm) {
+
+        LocalConvenienceBean localConvenienceBean = new LocalConvenienceBean();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String selectQuery = null;
+        Cursor cursordom;
+        db.beginTransactionNonExclusive();
+        try {
+
+            selectQuery = "SELECT * FROM " + TABLE_LOCAL_CONVENIENCE + " WHERE " + KEY_ENDDA + " = '" + endat + "'" + " AND " + KEY_TO_TIME + " = '" + endtm + "'";
+
+            cursordom = db.rawQuery(selectQuery, null);
+
+            Log.e("COUNTSIZE", "%%%%%" + cursordom.getCount());
+
+            if (cursordom.getCount() > 0) {
+                if (cursordom.moveToFirst()) {
+                    while (!cursordom.isAfterLast()) {
+                        localConvenienceBean = new LocalConvenienceBean();
+
+                        localConvenienceBean.setPernr(cursordom.getString(cursordom.getColumnIndex(KEY_PERNR)));
+                        localConvenienceBean.setBegda(cursordom.getString(cursordom.getColumnIndex(KEY_BEGDA)));
+                        localConvenienceBean.setEndda(cursordom.getString(cursordom.getColumnIndex(KEY_ENDDA)));
+                        localConvenienceBean.setFrom_time(cursordom.getString(cursordom.getColumnIndex(KEY_FROM_TIME)));
+                        localConvenienceBean.setTo_time(cursordom.getString(cursordom.getColumnIndex(KEY_TO_TIME)));
+                        localConvenienceBean.setFrom_lat(cursordom.getString(cursordom.getColumnIndex(KEY_FROM_LAT)));
+                        localConvenienceBean.setFrom_lng(cursordom.getString(cursordom.getColumnIndex(KEY_FROM_LNG)));
+                        localConvenienceBean.setTo_lat(cursordom.getString(cursordom.getColumnIndex(KEY_TO_LAT)));
+                        localConvenienceBean.setTo_lng(cursordom.getString(cursordom.getColumnIndex(KEY_TO_LNG)));
+                        localConvenienceBean.setStart_loc(cursordom.getString(cursordom.getColumnIndex(KEY_START_LOC)));
+                        localConvenienceBean.setEnd_loc(cursordom.getString(cursordom.getColumnIndex(KEY_END_LOC)));
+                        localConvenienceBean.setDistance(cursordom.getString(cursordom.getColumnIndex(KEY_DISTANCE)));
+                        localConvenienceBean.setPhoto1(cursordom.getString(cursordom.getColumnIndex(KEY_PHOTO1)));
+                        localConvenienceBean.setPhoto2(cursordom.getString(cursordom.getColumnIndex(KEY_PHOTO2)));
+
+
+                        cursordom.moveToNext();
+
+                    }
+                }
+                db.setTransactionSuccessful();
+            }
+
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+
+        } finally {
+            db.endTransaction();
+            // End the transaction.
+            db.close();
+            // Close database
+        }
+
+        return localConvenienceBean;
+    }
+
+    public void deleteLocalconvenienceDetail(String strdt, String strtm) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        if (CustomUtility.doesTableExist(db, TABLE_LOCAL_CONVENIENCE)) {
+            db.execSQL("DELETE FROM " + TABLE_LOCAL_CONVENIENCE + " WHERE " + KEY_BEGDA + "='" + strdt + "'" + " AND " + KEY_FROM_TIME + " = '" + strtm + "'");
+        }
+    }
+
+    public void deleteTableData(String table_name) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(table_name, null, null);
+    }
+
+    public void deleteSiteAuditImages() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        if(CustomUtility.doesTableExist(db,TABLE_IMAGES)) {
+            db.delete(TABLE_IMAGES, null, null);
+        }
+    }
+
+
+    public List<ImageModel> getAllImages()  {
+        ArrayList<ImageModel> siteAuditImages = new ArrayList<ImageModel>();
+        SQLiteDatabase  database = this.getWritableDatabase();
+        if(CustomUtility.doesTableExist(database,TABLE_IMAGES)) {
+            Cursor mcursor = database.rawQuery(" SELECT * FROM " + TABLE_IMAGES, null);
+            ImageModel imageModel;
+
+            if (mcursor.getCount() > 0) {
+                for (int i = 0; i < mcursor.getCount(); i++) {
+                    mcursor.moveToNext();
+
+                    imageModel = new ImageModel();
+                    imageModel.setID(mcursor.getString(0));
+                    imageModel.setName(mcursor.getString(1));
+                    imageModel.setImagePath(mcursor.getString(2));
+                    imageModel.setImageSelected(Boolean.parseBoolean(mcursor.getString(3)));
+                    imageModel.setBillNo(mcursor.getString(4));
+                    siteAuditImages.add(imageModel);
+                }
+            }
+            mcursor.close();
+            database.close();
+        }
+        return siteAuditImages;
+    }
+
+    public void insertImageRecord( String name,String path, boolean isSelected, String billno) {
+        SQLiteDatabase  database = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(KEY_IMAGES_NAME, name);
+        contentValues.put(KEY_IMAGES_PATH, path);
+        contentValues.put(KEY_IMAGE_SELECTED, isSelected);
+        contentValues.put(KEY_IMAGES_BILL_NO, billno);
+        database.insert(TABLE_IMAGES, null, contentValues);
+        database.close();
+    }
+
+    public void updateImageRecord( String name, String path, boolean isSelected, String billno) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_IMAGES_NAME, name);
+        values.put(KEY_IMAGES_PATH, path);
+        values.put(KEY_IMAGE_SELECTED, isSelected);
+        values.put(KEY_IMAGES_BILL_NO, billno);
+        // update Row
+        db.update(TABLE_IMAGES,values,"imagesName = '"+name+"'",null);
+        db.close();
+    }
+
+
+    public List<ImageModel> getAllImagesData() {
+        ArrayList<ImageModel> Images = new ArrayList<>();
+        SQLiteDatabase  database = this.getWritableDatabase();
+        if(CustomUtility.doesTableExist(database,TABLE_IMAGES)) {
+            Cursor mcursor = database.rawQuery(" SELECT * FROM " + TABLE_IMAGES, null);
+            ImageModel imageModel;
+
+            if (mcursor.getCount() > 0) {
+                for (int i = 0; i < mcursor.getCount(); i++) {
+                    mcursor.moveToNext();
+
+                    imageModel = new ImageModel();
+                    imageModel.setID(mcursor.getString(0));
+                    imageModel.setName(mcursor.getString(1));
+                    imageModel.setImagePath(mcursor.getString(2));
+                    imageModel.setBillNo(mcursor.getString(3));
+                    imageModel.setImageSelected(Boolean.parseBoolean(mcursor.getString(4)));
+                    Images.add(imageModel);
+                }
+            }
+            mcursor.close();
+            database.close();
+        }
+        return Images;
+    }
+
+    public void deleteWayPointsDetail() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DELETE FROM " + TABLE_WayPoints);
+    }
+
+    public void deleteWayPointsDetail1(String enddt,String endtm) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DELETE FROM " + TABLE_WayPoints + " WHERE " + KEY_ENDDA + "='" + enddt + "'" + " AND " + KEY_TO_TIME + " = '" + endtm + "'");
+
+    }
+
+
+    public void insertWayPointsData(WayPoints wayPoints) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransactionNonExclusive();
+        ContentValues values;
+        Log.e("wayPoint2",wayPoints.getWayPoints());
+        try {
+            values = new ContentValues();
+            values.put(KEY_PERNR, wayPoints.getPernr());
+            values.put(KEY_BEGDA, wayPoints.getBegda());
+            values.put(KEY_ENDDA, wayPoints.getEndda());
+            values.put(KEY_FROM_TIME, wayPoints.getFrom_time());
+            values.put(KEY_TO_TIME, wayPoints.getTo_time());
+            values.put(KEY_WayPoints, wayPoints.getWayPoints());
+            db.insert(TABLE_WayPoints, null, values);
+
+            db.setTransactionSuccessful();
+            Log.e("wayPoint3",wayPoints.getWayPoints());
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+        } finally {
+            db.endTransaction();
+            db.close();
+        }
+    }
+
+    public void updateWayPointData(WayPoints wayPoints) {
+
+        // Open the database for writing
+        SQLiteDatabase db = this.getWritableDatabase();
+        // Start the transaction.
+        db.beginTransactionNonExclusive();
+        String selectQuery = null;
+        ContentValues values;
+        String where = "";
+
+        try {
+            values = new ContentValues();
+
+            values.put(KEY_WayPoints, wayPoints.getWayPoints());
+
+            where = KEY_PERNR + "='" + wayPoints.getPernr() + "'" + " AND " +
+                    KEY_BEGDA + "='" + wayPoints.getBegda() + "'" + " AND " +
+                    KEY_FROM_TIME + "='" + wayPoints.getFrom_time() + "'";
+
+            // update Row
+            long i = db.update(TABLE_WayPoints, values, where, null);
+            // Insert into database successfully.
+            db.setTransactionSuccessful();
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+        } finally {
+            // End the transaction.
+            db.endTransaction();
+            // Close database
+            db.close();
+        }
+
+    }
+
+
+    public void updateWayPointData1(WayPoints wayPoints) {
+
+        // Open the database for writing
+        SQLiteDatabase db = this.getWritableDatabase();
+        // Start the transaction.
+        db.beginTransactionNonExclusive();
+        String selectQuery = null;
+        ContentValues values;
+        String where = "";
+
+        try {
+            values = new ContentValues();
+
+            values.put(KEY_PERNR, wayPoints.getPernr());
+            values.put(KEY_BEGDA, wayPoints.getBegda());
+            values.put(KEY_ENDDA, wayPoints.getEndda());
+            values.put(KEY_FROM_TIME, wayPoints.getFrom_time());
+            values.put(KEY_TO_TIME, wayPoints.getTo_time());
+            values.put(KEY_WayPoints, wayPoints.getWayPoints());
+
+            where = KEY_PERNR + "='" + wayPoints.getPernr() + "'" + " AND " +
+                    KEY_BEGDA + "='" + wayPoints.getBegda() + "'" + " AND " +
+                    KEY_FROM_TIME + "='" + wayPoints.getFrom_time() + "'";
+
+            // update Row
+            db.update(TABLE_WayPoints, values, where, null);
+            // Insert into database successfully.
+            db.setTransactionSuccessful();
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+        } finally {
+            // End the transaction.
+            db.endTransaction();
+            // Close database
+            db.close();
+        }
+
+    }
+
+
+    @SuppressLint("Range")
+    public WayPoints getWayPointsData(String begda, String from_time) {
+
+        WayPoints wayPoints = new WayPoints();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String selectQuery = null;
+        Cursor cursordom;
+        db.beginTransactionNonExclusive();
+        try {
+
+
+            selectQuery = "SELECT * FROM " + TABLE_WayPoints + " WHERE " + KEY_BEGDA + " = '" + begda + "'" + " AND " + KEY_FROM_TIME + " = '" + from_time + "'";
+
+
+            cursordom = db.rawQuery(selectQuery, null);
+
+            Log.e("COUNTSIZE", "%%%%%" + cursordom.getCount());
+
+            if (cursordom.getCount() > 0) {
+                if (cursordom.moveToFirst()) {
+                    while (!cursordom.isAfterLast()) {
+                        wayPoints = new WayPoints();
+                        wayPoints.setPernr(cursordom.getString(cursordom.getColumnIndex(KEY_PERNR)));
+                        wayPoints.setBegda(cursordom.getString(cursordom.getColumnIndex(KEY_BEGDA)));
+                        wayPoints.setEndda(cursordom.getString(cursordom.getColumnIndex(KEY_ENDDA)));
+                        wayPoints.setFrom_time(cursordom.getString(cursordom.getColumnIndex(KEY_FROM_TIME)));
+                        wayPoints.setTo_time(cursordom.getString(cursordom.getColumnIndex(KEY_TO_TIME)));
+                        wayPoints.setWayPoints(cursordom.getString(cursordom.getColumnIndex(KEY_WayPoints)));
+
+                        cursordom.moveToNext();
+
+                    }
+                }
+                db.setTransactionSuccessful();
+            }
+
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+
+        } finally {
+            db.endTransaction();
+            // End the transaction.
+            db.close();
+            // Close database
+        }
+
+        return wayPoints;
+    }
+
+    public void deleteLocalconvenienceDetail1(String enddt,String endtm) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DELETE FROM " + TABLE_LOCAL_CONVENIENCE + " WHERE " + KEY_ENDDA + "='" + enddt + "'" + " AND " + KEY_TO_TIME + " = '" + endtm + "'");
+    }
+
+    @SuppressLint("Range")
+    public ArrayList<LocalConvenienceBean> getLocalConveyance() {
+
+        LocalConvenienceBean localConvenienceBean = new LocalConvenienceBean();
+        ArrayList<LocalConvenienceBean> list_document = new ArrayList<>();
+        list_document.clear();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        db.beginTransactionNonExclusive();
+        try {
+
+            String selectQuery = "SELECT  *  FROM " + TABLE_LOCAL_CONVENIENCE;
+
+
+            Cursor cursor = db.rawQuery(selectQuery, null);
+
+            Log.e("CURSORCOUNT", "&&&&" + cursor.getCount() + " " + selectQuery);
+
+            if (cursor.getCount() > 0) {
+                if (cursor.moveToFirst()) {
+                    while (!cursor.isAfterLast()) {
+                        localConvenienceBean = new LocalConvenienceBean();
+
+                        localConvenienceBean.setPernr(cursor.getString(cursor.getColumnIndex(KEY_PERNR)));
+                        localConvenienceBean.setBegda(cursor.getString(cursor.getColumnIndex(KEY_BEGDA)));
+                        localConvenienceBean.setEndda(cursor.getString(cursor.getColumnIndex(KEY_ENDDA)));
+                        localConvenienceBean.setFrom_time(cursor.getString(cursor.getColumnIndex(KEY_FROM_TIME)));
+                        localConvenienceBean.setTo_time(cursor.getString(cursor.getColumnIndex(KEY_TO_TIME)));
+                        localConvenienceBean.setFrom_lat(cursor.getString(cursor.getColumnIndex(KEY_FROM_LAT)));
+                        localConvenienceBean.setFrom_lng(cursor.getString(cursor.getColumnIndex(KEY_FROM_LNG)));
+                        localConvenienceBean.setTo_lat(cursor.getString(cursor.getColumnIndex(KEY_TO_LAT)));
+                        localConvenienceBean.setTo_lng(cursor.getString(cursor.getColumnIndex(KEY_TO_LNG)));
+                        localConvenienceBean.setStart_loc(cursor.getString(cursor.getColumnIndex(KEY_START_LOC)));
+                        localConvenienceBean.setEnd_loc(cursor.getString(cursor.getColumnIndex(KEY_END_LOC)));
+                        localConvenienceBean.setDistance(cursor.getString(cursor.getColumnIndex(KEY_DISTANCE)));
+                        localConvenienceBean.setPhoto1(cursor.getString(cursor.getColumnIndex(KEY_PHOTO1)));
+                        localConvenienceBean.setPhoto2(cursor.getString(cursor.getColumnIndex(KEY_PHOTO2)));
+
+                        list_document.add(localConvenienceBean);
+
+
+                        cursor.moveToNext();
+
+                    }
+                }
+                db.setTransactionSuccessful();
+            }
+
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+
+        } finally {
+            db.endTransaction();
+            // End the transaction.
+            db.close();
+            // Close database
+        }
+
+        return list_document;
+    }
 
 }

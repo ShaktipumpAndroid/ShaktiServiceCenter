@@ -41,11 +41,6 @@ import activity.complainvk.PendingComplainListActivity;
 import database.DatabaseHelper;
 import webservice.WebURL;
 
-
-//import com.shaktipumps.shakti.material_design.R;
-
-
-
     @SuppressWarnings({"deprecation", "StatementWithEmptyBody"})
     public class HomeFragment extends Fragment implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
@@ -53,8 +48,7 @@ import webservice.WebURL;
     public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
     Context context;
 
-
-TextView approved_complaint, closer_complaint, open_complaint, pending_for_Approval, txtServiceCenterID;
+    TextView approved_complaint, closer_complaint, open_complaint, pending_for_Approval, txtServiceCenterID;
 
     String start_photo_text,end_photo_text;
 
@@ -72,9 +66,7 @@ TextView approved_complaint, closer_complaint, open_complaint, pending_for_Appro
 
      String mServiceCenterName;
 
-
-
-        public HomeFragment() {
+     public HomeFragment() {
         // Required empty public constructor
     }
 
@@ -159,6 +151,8 @@ TextView approved_complaint, closer_complaint, open_complaint, pending_for_Appro
             startActivity(intent);
         });
 
+
+
         // get unsync data count
         // Inflate the layout for this fragment
         return rootView;
@@ -173,6 +167,7 @@ TextView approved_complaint, closer_complaint, open_complaint, pending_for_Appro
             e.printStackTrace();
         }
     }
+
     public static boolean deleteDir(File dir) {
         if (dir != null && dir.isDirectory()) {
             String[] children = dir.list();

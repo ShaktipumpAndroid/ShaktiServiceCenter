@@ -1,12 +1,13 @@
 package activity;
 
+import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
+
 import android.Manifest;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -45,8 +46,6 @@ import java.util.ArrayList;
 import bean.LoginBean;
 import database.DatabaseHelper;
 import webservice.SAPWebService;
-
-import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
 
 public class MainActivity2 extends AppCompatActivity implements FragmentDrawer.FragmentDrawerListener, SharedPreferences.OnSharedPreferenceChangeListener {
@@ -117,11 +116,10 @@ public class MainActivity2 extends AppCompatActivity implements FragmentDrawer.F
 
         mContex = this;
         con = new SAPWebService();
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar =  findViewById(R.id.toolbar);
 
         fusedLocationProviderClient = getFusedLocationProviderClient(this);
 
-        // we add permissions we need to request location of the users
         permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
         permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
 

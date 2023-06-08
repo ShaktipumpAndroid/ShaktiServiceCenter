@@ -17,6 +17,7 @@ import com.shaktipumps.shakti.shaktiServiceCenter.R;
 import java.util.List;
 
 import activity.BeanVk.ComplainDetailListResponse;
+import activity.ForwardList;
 
 
 public class PendingComplainDetailsListAdapter extends RecyclerView.Adapter<PendingComplainDetailsListAdapter.ViewHolder> {
@@ -76,6 +77,12 @@ public class PendingComplainDetailsListAdapter extends RecyclerView.Adapter<Pend
 
        });
 
+       holder.txtForwordID.setOnClickListener(v -> {
+           Intent mIntent = new Intent(mContext, ForwardList.class);
+           mIntent.putExtra("comNo",mComplainDetailListResponse.get(position).getCmpno());
+           mContext.startActivity(mIntent);
+       });
+
     }
 
     @Override
@@ -90,7 +97,7 @@ public class PendingComplainDetailsListAdapter extends RecyclerView.Adapter<Pend
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-public TextView txtwarranteeValueID, txtMaterialDescValueID,txtComplainDateValueID,txtMaterialNoValueID, txtComplainnoValueID, txtMOBNumberValueID, txtsernrValueID, txtReasonValueID, txtWarrenteeConditionsValueID;
+public TextView txtwarranteeValueID, txtMaterialDescValueID,txtComplainDateValueID,txtMaterialNoValueID, txtComplainnoValueID, txtMOBNumberValueID, txtsernrValueID, txtReasonValueID, txtWarrenteeConditionsValueID,txtForwordID;
 
 
         public LinearLayout lvlMainItemViewID;
@@ -112,7 +119,7 @@ public TextView txtwarranteeValueID, txtMaterialDescValueID,txtComplainDateValue
             txtsernrValueID = (TextView) v.findViewById(R.id.txtsernrValueID);
             txtReasonValueID = (TextView) v.findViewById(R.id.txtReasonValueID);
 
-
+            txtForwordID = v.findViewById(R.id.txtForwordID);
 
 
 
@@ -121,6 +128,7 @@ public TextView txtwarranteeValueID, txtMaterialDescValueID,txtComplainDateValue
           //  txtWarrantyValueID =   (TextView) v.findViewById(R.id.txtWarrantyValueID);
 
           }
+
     }
 
 

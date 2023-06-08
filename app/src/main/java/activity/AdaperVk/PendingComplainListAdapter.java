@@ -30,20 +30,11 @@ public class PendingComplainListAdapter extends RecyclerView.Adapter<PendingComp
     private final List<ComplainAllResponse> mComplainAllResponse;
 
 
-   /* public PendingComplainListAdapter(Context mContext, List<ComplainAllResponse> mComplainAllResponse) {
-        // this.galleryModelsList = galleryModelsList;
-        this.mContext = mContext;
-        this.mComplainAllResponse = mComplainAllResponse;
-
-    }*/
-
-
     public PendingComplainListAdapter(Context mContext, List<ComplainAllResponse> mComplainAllResponse, String mStatusValue) {
         this.mContext = mContext;
         this.mComplainAllResponse = mComplainAllResponse;
         this.mStatusValue = mStatusValue;
     }
-
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -196,7 +187,7 @@ public class PendingComplainListAdapter extends RecyclerView.Adapter<PendingComp
 
 
         public TextView txtDealerOEMValueID, txtComplainnoValueID, txtComplainDateValueID, txtMOBNumberValueID,txtCustomerNameValueID,txtClickHereID,
-                txtAddressValueID,   txtEngNameValueID, txtEngMobNoValueID;
+                txtAddressValueID,   txtEngNameValueID, txtEngMobNoValueID,txtEngMobNoHeadID;
 
 
         public ImageView imgShareID;
@@ -209,7 +200,7 @@ public class PendingComplainListAdapter extends RecyclerView.Adapter<PendingComp
             txtClickHereID = (TextView) v.findViewById(R.id.txtClickHereID);
             imgShareID = (ImageView) v.findViewById(R.id.imgShareID);
             lvlMainItemViewID = (LinearLayout) v.findViewById(R.id.lvlMainItemViewID);
-
+            txtEngMobNoHeadID = v.findViewById(R.id.txtEngMobNoHeadID);
             txtDealerOEMValueID = (TextView) v.findViewById(R.id.txtDealerOEMValueID);
             txtComplainnoValueID =  (TextView) v.findViewById(R.id.txtComplainnoValueID);
             txtComplainDateValueID =  (TextView) v.findViewById(R.id.txtComplainDateValueID);

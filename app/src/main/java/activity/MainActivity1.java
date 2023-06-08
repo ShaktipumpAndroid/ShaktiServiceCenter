@@ -40,19 +40,20 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import activity.services.LocationUpdateService;
+import activity.utility.Constant;
 import bean.LoginBean;
 import database.DatabaseHelper;
 import webservice.SAPWebService;
 
 
-@SuppressWarnings("deprecation")
+@SuppressWarnings({"deprecation", "InstantiationOfUtilityClass"})
 public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.FragmentDrawerListener, SharedPreferences.OnSharedPreferenceChangeListener {
-    //Alarm Request Code
+
     private static final String TAG = MainActivity1.class.getSimpleName();
     private int progressBarStatus = 0;
     private final Handler progressBarHandler = new Handler();
     ProgressDialog progressBar;
-
 
     // Used in checking for runtime permissions.
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
@@ -61,11 +62,6 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
     private static final int ALL_PERMISSIONS_RESULT = 1011;
 
     FusedLocationProviderClient fusedLocationProviderClient;
-
-
-
-    // Monitors the state of the connection to the service.
-
     private final ArrayList<String> permissions = new ArrayList<>();
 
     CustomUtility customUtility;
@@ -111,6 +107,8 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
         customUtility = new CustomUtility();
 
         dataHelper = new DatabaseHelper(this);
+        userType = activity.CustomUtility.getSharedPreferences(mContext,"userType");
+        Log.e("userType", "" + userType);
 
         FragmentDrawer drawerFragment = (FragmentDrawer)
                 getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
@@ -150,8 +148,45 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
 
         displayView(0);
 
+        if(userType.equalsIgnoreCase("1")){
             syncState();
+        }
+        else {
+            downloadSubordinateData();
+        }
+    }
 
+    private void downloadSubordinateData() {
+        progressBar = new ProgressDialog(this);
+        progressBar.setCancelable(false);
+        progressBar.setMessage("Downloading Data...");
+        progressBar.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressBar.setProgress(0);
+        progressBar.setMax(100);
+        progressBar.show();
+        progressBarStatus = 0;
+
+        new Thread(() -> {
+            while (progressBarStatus < 100) {
+                try {
+                    progressBarStatus = 20;
+                    progressBarHandler.post(() -> progressBar.setProgress(progressBarStatus));
+                    con.getAssginComplain(MainActivity1.this);
+
+                    progressBarStatus = 100;
+                    progressBarHandler.post(() -> progressBar.setProgress(progressBarStatus));
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            progressBar.dismiss();
+        }).start();
     }
 
     public void syncState() {
@@ -167,7 +202,6 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
         new Thread(() -> {
             while (progressBarStatus < 100) {
                 try {
-
                         progressBarStatus = 30;
                         progressBarHandler.post(() -> progressBar.setProgress(progressBarStatus));
                         con.getStateData(MainActivity1.this);
@@ -192,9 +226,6 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
         }).start();
     }
 
-
-
-
     public static void deleteCache(Context context) {
         try {
             File dir = context.getCacheDir();
@@ -203,6 +234,7 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
             e.printStackTrace();
         }
     }
+
     public static boolean deleteDir(File dir) {
         if (dir != null && dir.isDirectory()) {
             String[] children = dir.list();
@@ -286,8 +318,6 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
 
             case 0:
 
-                userType = activity.CustomUtility.getSharedPreferences(mContext,"userType");
-
                 if(userType.equalsIgnoreCase("1"))
                     fragment = new HomeFragment();
                 else
@@ -324,7 +354,10 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
                 break;
 
             case 2:
-                logOut();
+                if(userType.equalsIgnoreCase("1"))
+                    logOut();
+                else
+                    Logout();
 
                 break;
 
@@ -354,16 +387,20 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
         }
     }
 
-    /*public void OnBackPressed() {
+    private void Logout() {
 
+        dataHelper.deleteTableData(DatabaseHelper.TABLE_ASSGIN_COMPLAIN_SUBORDINATE);
+        dataHelper.deleteSiteAuditImages();
 
-        System.exit(0);
-    }*/
+        CustomUtility.setSharedPreference(mContext, Constant.LocalConveyance, "0");
+        CustomUtility.clearSharedPreference(mContext);
 
+        stopService(new Intent(getApplicationContext(), LocationUpdateService.class));
+        Intent mIntent = new Intent(MainActivity1.this, LoginActivity.class);
+        startActivity(mIntent);
+        finish();
 
-
-
-
+    }
 
 
     @Override
@@ -372,10 +409,6 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
 
         PreferenceManager.getDefaultSharedPreferences(this)
                 .registerOnSharedPreferenceChangeListener(this);
-
-
-
-
     }
 
 

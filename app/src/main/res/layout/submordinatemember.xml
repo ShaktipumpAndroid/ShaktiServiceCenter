@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/_55sdp"
+    android:layout_margin="@dimen/_2sdp"
+
+    android:background="@color/white"
+    >
+
+    <LinearLayout
+        android:id="@+id/lvlMainItemViewID"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_60sdp"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <RelativeLayout
+
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="match_parent"
+            >
+
+            <ImageView
+                android:id="@+id/imgCheckBoxImageID"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:src="@drawable/ic_unselect_icon"
+                android:tag="1" />
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/_2sdp"
+            android:layout_marginEnd="@dimen/_5sdp">
+
+            <TextView
+                android:layout_marginTop="@dimen/_2sdp"
+                android:id="@+id/txtTRLRHeadID"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Name:  "
+                android:fontFamily="@font/open_sans_regular"
+                android:textSize="@dimen/_10ssp"
+                android:textColor="@color/black"
+                />
+
+            <TextView
+                android:layout_marginTop="@dimen/_2sdp"
+                android:layout_marginStart="@dimen/_3sdp"
+                android:layout_toEndOf="@+id/txtTRLRHeadID"
+                android:id="@+id/name_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="805857434872 "
+                android:fontFamily="@font/open_sans_regular"
+                android:textSize="@dimen/_10ssp"
+                android:textColor="@color/black"
+                android:background="@android:color/transparent"
+                />
+
+
+
+            <TextView
+                android:layout_toStartOf="@+id/from_date_value"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:id="@+id/txtTRBLHeadID"
+                android:fontFamily="@font/open_sans_regular"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="From Date: "
+                android:textSize="@dimen/_10ssp"
+                android:textColor="@color/black"
+                />
+
+            <TextView
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:id="@+id/from_date_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="19.12.2014 "
+                android:fontFamily="@font/open_sans_bold"
+                android:textSize="@dimen/_10ssp"
+                android:textColor="@color/black"
+                android:background="@android:color/transparent"
+                />
+
+
+            <!--vikas add Lr date-->
+            <TextView
+                android:layout_below="@+id/txtTRBLHeadID"
+                android:layout_toStartOf="@+id/from_date_value"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:id="@+id/txtLRDateID"
+                android:fontFamily="@font/open_sans_regular"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="To Date: "
+                android:textSize="@dimen/_10ssp"
+                android:textColor="@color/black"
+                />
+
+            <TextView
+                android:layout_below="@+id/from_date_value"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:id="@+id/to_date_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="19.12.2014 "
+                android:fontFamily="@font/open_sans_bold"
+                android:textSize="@dimen/_10ssp"
+                android:textColor="@color/black"
+                android:background="@android:color/transparent"
+                />
+
+            <!--end-->
+            <TextView
+
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_below="@+id/txtTRLRHeadID"
+                android:id="@+id/txtTRNameHeadID"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Aadhar No: "
+                android:textSize="@dimen/_10ssp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/open_sans_regular"
+                />
+
+
+
+            <TextView
+                android:layout_marginStart="@dimen/_2sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_below="@+id/txtTRLRHeadID"
+                android:layout_toEndOf="@+id/txtTRNameHeadID"
+                android:id="@+id/aadhar_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/open_sans_regular"
+                android:text="FEDEX EXPRESS"
+                android:textSize="@dimen/_10ssp"
+                android:textColor="@color/black"
+                />
+
+
+
+            <TextView
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_below="@+id/aadhar_value"
+                android:id="@+id/txtMOBNumberHeadID"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mob Number:"
+                android:textSize="@dimen/_10ssp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/open_sans_regular"
+                />
+
+            <TextView
+                android:layout_marginStart="@dimen/_2sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_below="@+id/aadhar_value"
+                android:layout_toEndOf="@+id/txtMOBNumberHeadID"
+                android:id="@+id/mobile_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="7607107654"
+                android:textSize="@dimen/_10ssp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/open_sans_regular"
+                />
+
+
+ <!--           <TextView
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_below="@+id/txtMOBNumberHeadID"
+                android:id="@+id/txtSAPBillHeadID"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SAP BL Number:"
+                android:textSize="@dimen/_9ssp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/open_sans_regular"
+                />
+
+            <TextView
+                android:layout_marginStart="@dimen/_2sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_below="@+id/txtMOBNumberHeadID"
+                android:layout_toEndOf="@+id/txtSAPBillHeadID"
+                android:id="@+id/txtSAPBillValueID"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0090023036"
+                android:textSize="@dimen/_9ssp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/open_sans_bold"
+                />
+
+
+            <TextView
+                android:layout_toStartOf="@+id/txtGSTBillValueID"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_below="@+id/txtMOBNumberHeadID"
+                android:id="@+id/txtGSTBillHeadID"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="GST BL Number:"
+                android:textSize="@dimen/_9ssp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/open_sans_regular"
+                />
+
+            <TextView
+                android:layout_marginStart="@dimen/_2sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_below="@+id/txtMOBNumberHeadID"
+                android:layout_alignParentEnd="true"
+                android:id="@+id/txtGSTBillValueID"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0090023036"
+                android:textSize="@dimen/_9ssp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/open_sans_bold"
+                />
+-->
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <View
+        android:visibility="gone"
+        android:layout_marginTop="@dimen/_1sdp"
+        android:layout_below="@+id/lvlMainItemViewID"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_1sdp"
+        android:background="@color/blue_fb"/>
+
+</RelativeLayout>

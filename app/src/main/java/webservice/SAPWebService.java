@@ -22,6 +22,7 @@ import java.util.Locale;
 
 import activity.CustomUtility;
 import bean.BeanProduct;
+import bean.SubordinateAssginComplainBean;
 import bean.SubordinateBean;
 import database.DatabaseHelper;
 
@@ -1483,6 +1484,51 @@ public class SAPWebService {
         return progressBarStatus;
     }
 
+    public void getAssginComplain(Context context) {
+
+
+        DatabaseHelper dataHelper = new DatabaseHelper(context);
+        userid = CustomUtility.getSharedPreferences(context,"username");
+
+        final ArrayList<NameValuePair> param = new ArrayList<>();
+        param.add(new BasicNameValuePair("mob_no", userid));
+        try {
+            String obj = CustomHttpClient.executeHttpPost1(WebURL.ASSGINCOMPLAINlIST, param);
+            JSONObject jsonObj = new JSONObject(obj);
+
+            JSONArray ja_sub = jsonObj.getJSONArray("response");
+
+            Log.e("OUTPUT===>", ja_sub.toString());
+            for (int i = 0; i < ja_sub.length(); i++) {
+                JSONObject jo_sub = ja_sub.getJSONObject(i);
+
+                SubordinateAssginComplainBean subordinateBean = new SubordinateAssginComplainBean(
+                        jo_sub.optString("cmpno"),
+                        jo_sub.optString("delname"),
+                        jo_sub.optString("cstname"),
+                        jo_sub.optString("engg_name"),
+                        jo_sub.optString("cmblno"),
+                        jo_sub.optString("caddress"),
+                        jo_sub.optString("matnr"),
+                        jo_sub.optString("warranty"),
+                        jo_sub.optString("maktx"),
+                        jo_sub.optString("sernr"),
+                        jo_sub.optString("reason"),
+                        jo_sub.optString("w_waranty")
+                );
+
+                if (dataHelper.isRecordExist(DatabaseHelper.TABLE_ASSGIN_COMPLAIN_SUBORDINATE, DatabaseHelper.KEY_CMPNO, subordinateBean.getCmpno())) {
+                    dataHelper.updateAssginComplainData(dataHelper.KEY_UPDATE, subordinateBean);
+                } else {
+                    dataHelper.updateAssginComplainData(dataHelper.KEY_INSERT, subordinateBean);
+                }
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
 
 

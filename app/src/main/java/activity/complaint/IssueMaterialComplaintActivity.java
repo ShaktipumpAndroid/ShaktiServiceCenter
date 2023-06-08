@@ -2,14 +2,11 @@ package activity.complaint;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Message;
 import android.os.StrictMode;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,7 +14,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,21 +29,13 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import activity.CustomUtility;
 import database.DatabaseHelper;
-import searchlist.complaint.SearchClouserComplaintListViewAdapter;
-import searchlist.complaint.SearchComplaint;
 import webservice.CustomHttpClient;
-import webservice.SAPWebService;
 import webservice.WebURL;
-
-import static android.os.Environment.getExternalStorageDirectory;
 
 public class IssueMaterialComplaintActivity extends AppCompatActivity {
 
@@ -303,8 +291,8 @@ public class IssueMaterialComplaintActivity extends AppCompatActivity {
                 jsonObj.put("bwart", movement_text);
                 jsonObj.put("qty", qty1_txt.getText().toString());
                 jsonObj.put("cmpno", cmpno);
-                jsonObj.put("erdate", CustomUtility.formateDate(date));
-                jsonObj.put("ertime", CustomUtility.formateTime(time));
+                jsonObj.put("erdate", CustomUtility.formatDate(date));
+                jsonObj.put("ertime", CustomUtility.formatTime(time));
 
 
 

@@ -1,11 +1,22 @@
 package activity;
 
 
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.CAMERA;
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.READ_MEDIA_IMAGES;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static android.os.Build.VERSION.SDK_INT;
+
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
@@ -16,6 +27,9 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.shaktipumps.shakti.shaktiServiceCenter.BuildConfig;
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
@@ -36,7 +50,7 @@ import retrofit2.Response;
 public class SplashActivity extends Activity implements AnimationListener {
 
     // Splash screen timer
-    //private static int SPLASH_TIME_OUT = 10000;
+    private static final int REQUEST_CODE_PERMISSION = 2;
     private static int SPLASH_TIME_OUT = 3000;
     final ArrayList<NameValuePair> param = new ArrayList<NameValuePair>();
     // DatabaseHelper databaseHelper;
@@ -50,7 +64,7 @@ public class SplashActivity extends Activity implements AnimationListener {
     Animation anim;
     String versionName = "0.0";
     String newVersion = "0.0";
-    String userType = "";
+    String userType = "" ,username= "";
 
     @Override
     /** Called when the activity is first created. */
@@ -79,29 +93,117 @@ public class SplashActivity extends Activity implements AnimationListener {
         new Worker1().execute();
 
 
-        new Handler().postDelayed(new Runnable() {
 
-            @Override
-            public void run() {
+        if(checkPermission()){
+            openNextActivity();
+        }
+        else {
+            requestPermission();
+        }
 
-                String data = null;
-                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().build();
-                StrictMode.setThreadPolicy(policy);
+    }
 
-                if (pref.getString("key_login", "login").equalsIgnoreCase("Y")) {
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
+    private boolean checkPermission() {
+        int FineLocation = ContextCompat.checkSelfPermission(getApplicationContext(), ACCESS_FINE_LOCATION);
+        int CoarseLocation = ContextCompat.checkSelfPermission(getApplicationContext(), ACCESS_COARSE_LOCATION);
+        int Camera = ContextCompat.checkSelfPermission(getApplicationContext(), CAMERA);
+        int ReadExternalStorage = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
+        int WriteExternalStorage = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
+        int ReadMediaImages = ContextCompat.checkSelfPermission(getApplicationContext(), READ_MEDIA_IMAGES);
 
-                    i = new Intent(SplashActivity.this, MainActivity1.class);
+        if (SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            return CoarseLocation == PackageManager.PERMISSION_GRANTED
+                    && Camera == PackageManager.PERMISSION_GRANTED  && ReadMediaImages == PackageManager.PERMISSION_GRANTED;
 
-                } else {
-                    i = new Intent(SplashActivity.this, LoginActivity.class);
+        }else {
+            return FineLocation == PackageManager.PERMISSION_GRANTED && CoarseLocation == PackageManager.PERMISSION_GRANTED
+                    && Camera == PackageManager.PERMISSION_GRANTED && ReadExternalStorage == PackageManager.PERMISSION_GRANTED
+                    && WriteExternalStorage == PackageManager.PERMISSION_GRANTED;
+        }
+    }
+
+    private void requestPermission() {
+        if (SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CAMERA,  Manifest.permission.ACCESS_COARSE_LOCATION,
+                            READ_MEDIA_IMAGES},
+                    REQUEST_CODE_PERMISSION);
+        }  else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE_PERMISSION);
+
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_CODE_PERMISSION:
+                if (grantResults.length > 0) {
+
+                    if (SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+
+                        boolean CoarseLocationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                        boolean  Camera = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                        boolean  ReadMediaImages = grantResults[2] == PackageManager.PERMISSION_GRANTED;
+
+                        if (CoarseLocationAccepted  && Camera && ReadMediaImages ) {
+                            // perform action when allow permission success
+                            openNextActivity();
+                        }else {
+                            requestPermission();
+                        }
+                    } else   {
+                        boolean  FineLocationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                        boolean CoarseLocationAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                        boolean  Camera = grantResults[2] == PackageManager.PERMISSION_GRANTED;
+                        boolean ReadPhoneStorage = grantResults[3] == PackageManager.PERMISSION_GRANTED;
+                        boolean WritePhoneStorage = grantResults[4] == PackageManager.PERMISSION_GRANTED;
+
+
+                        if(FineLocationAccepted && CoarseLocationAccepted && Camera && ReadPhoneStorage && WritePhoneStorage ){
+                            openNextActivity();
+                        }else {
+                            requestPermission();
+                        }
+                    }
                 }
-                startActivity(i);
-                finish();
+                break;
+        }
+    }
 
 
+
+    private void openNextActivity() {
+        new Handler().postDelayed(() -> {
+
+            userType = CustomUtility.getSharedPreferences(mContex , "userType");
+            //username
+            String data = null;
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().build();
+            StrictMode.setThreadPolicy(policy);
+
+            if (pref.getString("key_login", "login").equalsIgnoreCase("Y")) {
+
+                i = new Intent(SplashActivity.this, MainActivity1.class);
+
+            } else if (userType.equalsIgnoreCase("2")){
+
+                i = new Intent(SplashActivity.this, MainActivity1.class);
+
+            }else {
+                i = new Intent(SplashActivity.this, LoginActivity.class);
             }
-        }, SPLASH_TIME_OUT);
+            startActivity(i);
+            finish();
 
+
+        }, SPLASH_TIME_OUT);
     }
 
     public static void deleteCache(Context context) {
@@ -112,6 +214,7 @@ public class SplashActivity extends Activity implements AnimationListener {
             e.printStackTrace();
         }
     }
+
     public static boolean deleteDir(File dir) {
         if (dir != null && dir.isDirectory()) {
             String[] children = dir.list();
@@ -153,7 +256,7 @@ public class SplashActivity extends Activity implements AnimationListener {
 
     public void getVersion() {
 
-        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+        ApiInterface apiService = ApiClient.getClientversion().create(ApiInterface.class);
 
         Call<VersionResponse> call = apiService.getVersionCode();
         call.enqueue(new Callback<VersionResponse>() {

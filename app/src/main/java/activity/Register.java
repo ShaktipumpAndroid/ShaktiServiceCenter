@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Objects;
 
 import activity.retrofit.APIInterface;
-import activity.retrofit.ApiCilent;
+import activity.retrofit.ApiClient;
 import activity.retrofit.Model.Register.RegisterResponse;
 import database.DatabaseHelper;
 import retrofit2.Call;
@@ -51,7 +51,7 @@ public class Register extends AppCompatActivity {
     EditText rePassword;
     Button send;
     int index, index1;
-    String mobileNo_txt,name_txt,district_txt,password_txt,state_txt,aadharCard_txt,rePassword_txt, userid;
+    String mobileNo_txt= null,name_txt=null,district_txt=null,password_txt=null,state_txt=null,aadharCard_txt=null,rePassword_txt=null, userid=null;
     private EditText start_date, end_date;
     AlertDialog dialog;
     private String mStart, mEnd;
@@ -89,11 +89,11 @@ public class Register extends AppCompatActivity {
         password = findViewById(R.id.password);
         aadharCard =findViewById(R.id.aadharCard);
         rePassword = findViewById(R.id.repassword);
-        spinner_state = (Spinner) findViewById(R.id.spinner_state);
-        spinner_district = (Spinner) findViewById(R.id.spinner_district);
+        spinner_state =  findViewById(R.id.spinner_state);
+        spinner_district =  findViewById(R.id.spinner_district);
 
-        start_date = (EditText) findViewById(R.id.start_date);
-        end_date = (EditText) findViewById(R.id.end_date);
+        start_date =  findViewById(R.id.start_date);
+        end_date =  findViewById(R.id.end_date);
 
         start_date.setFocusable(false);
         end_date.setFocusable(false);
@@ -267,23 +267,22 @@ public class Register extends AppCompatActivity {
             password_txt = password.getText().toString().trim();
             rePassword_txt = rePassword.getText().toString().trim();
 
-            checkDataValtidation();
-            if(!mobileNo_txt.isEmpty() && !name_txt.isEmpty() && !aadharCard_txt.isEmpty() && !district_txt.isEmpty() && !state_txt.isEmpty() && !password_txt.isEmpty() &&!rePassword_txt.isEmpty()){
+            checkDataValidation();
+            if(!mobileNo_txt.isEmpty() && !name_txt.isEmpty() && !aadharCard_txt.isEmpty() && !district_txt.isEmpty() && !state_txt.isEmpty() && !password_txt.isEmpty() && !rePassword_txt.isEmpty() && mobileNo_txt != null && name_txt != null && aadharCard_txt != null && password_txt != null && rePassword_txt != null){
 
+                 if(mobileNo_txt.length() == 10 && aadharCard_txt.length() == 12){
                      if(password.getText().toString().trim().equals(rePassword.getText().toString().trim()))
                      {
+                          sendDatatoSap();
 
-                        Log.e("Info",""+mobileNo_txt );
-                        Log.e("Info",""+name_txt );
-                        Log.e("Info","Info"+aadharCard_txt );
-                        Log.e("Info",""+district_txt );
-                        Log.e("Info",""+state_txt );
-                        Log.e("Info",""+password_txt );
-                         sendDatatoSap();
                      }
                      else {
                          Toast.makeText(context, "Password Don't Match.", Toast.LENGTH_SHORT).show();
                      }
+                 }
+                 else {
+                     Toast.makeText(context, "Enter valid mobile no and aadhar card no", Toast.LENGTH_SHORT).show();
+                 }
             }
             else{
                 Toast.makeText(context, "Please enter all field.", Toast.LENGTH_SHORT).show();
@@ -292,7 +291,7 @@ public class Register extends AppCompatActivity {
         });
     }
 
-    private void checkDataValtidation() {
+    private void checkDataValidation() {
         try {
             if (mStart == null || mStart.equalsIgnoreCase("")) {
                 start_date.setFocusable(true);
@@ -342,18 +341,23 @@ public class Register extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        apiInterface = ApiCilent.getClient().create(APIInterface.class);
+        apiInterface = ApiClient.getClient().create(APIInterface.class);
         Call<RegisterResponse> call = apiInterface.sendData(ja_invc_data);
 
         call.enqueue(new Callback<RegisterResponse>() {
             @Override
             public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
 
+                Log.e("DATA",response.body().message);
+                Log.e("DATA",response.body().status);
 
                 assert response.body() != null;
                 if (response.body().status.equalsIgnoreCase("true"))
                 {
                     Toast.makeText(Register.this, response.body().message, Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Toast.makeText(Register.this,  response.body().message, Toast.LENGTH_SHORT).show();
                 }
             }
 

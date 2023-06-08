@@ -384,4 +384,38 @@ public class CameraUtils {
         return mediaFile;
     }
 
+    public static File getOutputMediaFile(int type) {
+
+        // External sdcard location
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), GALLERY_DIRECTORY_NAME);
+
+        // Create the storage directory if it does not exist
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                Log.e(GALLERY_DIRECTORY_NAME, "Oops! Failed create "
+                        + GALLERY_DIRECTORY_NAME + " directory");
+                return null;
+            }
+        }
+
+        // Preparing media file naming convention
+        // adds timestamp
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
+
+        File mediaFile;
+
+        if (type == MEDIA_TYPE_IMAGE) {
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator
+                    + "IMG_" + timeStamp + "." + IMAGE_EXTENSION);
+        } else if (type == MEDIA_TYPE_VIDEO) {
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator
+                    + "VID_" + timeStamp + "." + VIDEO_EXTENSION);
+        } else {
+            return null;
+        }
+
+        return mediaFile;
+    }
+
+
 }

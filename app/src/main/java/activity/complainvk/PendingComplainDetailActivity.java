@@ -1,9 +1,5 @@
 package activity.complainvk;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -19,6 +15,10 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
@@ -42,7 +42,7 @@ public class PendingComplainDetailActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
 
     private List<ComplainDetailListResponse> mComplainDetailListResponse;
-
+    String mobile;
     private RelativeLayout rlvBottomViewID;
     private ImageView imgBackID;
     private TextView txtHeaderID;
@@ -53,7 +53,7 @@ private String textRemarkValue;
     private  String mMobileNumber= "";
     private  String mUserID= "";
     //private BaseRequest baseRequest;
-    public TextView txtBTNActionID, txtBTNPendingID, txtBTNClodeID, txtBTNUploadID;
+    public TextView txtBTNActionID,  txtBTNUploadID;
     private RecyclerView rclyPendingComplainList;
     private PendingComplainDetailsListAdapter mPendingComplainDetailsListAdapter;
 
@@ -73,7 +73,7 @@ private String textRemarkValue;
         mUserID = CustomUtility.getSharedPreferences(mContext,"userID");
 
         mComplainDetailListResponse = new ArrayList<>();
-
+        mobile = CustomUtility.getSharedPreferences(mContext,"username");
         rclyPendingComplainList = findViewById(R.id.rclyPendingComplainList);
         rclyPendingComplainList.setLayoutManager(new LinearLayoutManager(this));
 
@@ -229,7 +229,7 @@ private String textRemarkValue;
 
                 // jsonObj.put("project_no", projno);
                 jsonObj.put("cmpno",mComplainNO);
-                // jsonObj.put("beneficiary",ben);
+                 jsonObj.put("mobile",mobile);
                 //  jsonObj.put("mobno",mLrInvoiceResponse.get(0).getMobno());
                 jsonObj.put("kunnr", mUserID);
                 jsonObj.put("action", textRemarkValue);

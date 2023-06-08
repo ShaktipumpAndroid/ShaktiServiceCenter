@@ -58,7 +58,6 @@ import java.util.List;
 import activity.AdaperVk.ImageAdapter;
 import activity.BeanVk.ComplainDetailListResponse;
 import activity.GPSTracker;
-import activity.ShowDocument;
 import activity.utility.CameraUtils;
 import activity.utility.CustomUtility;
 import database.DatabaseHelper;
@@ -222,7 +221,7 @@ public class ApproveReportImageActivity extends AppCompatActivity implements Eas
         photo13 = (TextView) findViewById(R.id.photo13);
 
 
-        mListSize= WebURL.EDITTEXTBOX_SHOW_SIZE;
+        mListSize= WebURL.EDITTEXT_SHOW_SIZE;
         System.out.println("mListSize==>>"+mListSize);
 
         if(mListSize==1)

@@ -31,6 +31,7 @@ public class SubordinateList extends AppCompatActivity {
     ListView inst_list;
     String userid;
     SubordinateAdapter adapter;
+    ArrayList<SubordinateBean> subordinateBeanArrayList ;
     EditText editSearch;
 
     @Override
@@ -50,7 +51,7 @@ public class SubordinateList extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(getResources().getString(R.string.edit_subordinate));
 
-        ArrayList<SubordinateBean> subordinateBeanArrayList ;
+
         subordinateBeanArrayList = db.getSubordinateList();
 
         adapter = new SubordinateAdapter(context, subordinateBeanArrayList);

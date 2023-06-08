@@ -26,6 +26,7 @@ import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -33,7 +34,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ModelVK.LoginResponse;
+import activity.retrofit.APIInterface;
+import activity.retrofit.ApiClient;
+import activity.retrofit.Model.LoginResponse.FiledLoginResponse;
 import database.DatabaseHelper;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import webservice.CustomHttpClient;
 import webservice.SAPWebService;
 import webservice.WebURL;
@@ -42,15 +49,14 @@ import webservice.WebURL;
 public class LoginActivity extends AppCompatActivity {
 
     private RadioGroup radioSexGroup;
-
+    Intent mIntent ;
     String checkUSERId = "0";
-
 
     public final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
     SAPWebService con = null;
     DatabaseHelper dataHelper = null;
     String username, password,  eName;
-
+    APIInterface apiInterface;
     SharedPreferences pref;
     List<String> list = null;
     Context mContext;
@@ -90,25 +96,18 @@ public class LoginActivity extends AppCompatActivity {
         inputLayoutName = findViewById(R.id.input_layout_name);
         radioSexGroup =  findViewById(R.id.radioSex);
 
-
         inputLayoutPassword = findViewById(R.id.input_layout_password);
-       // spinner_login_type = (Spinner) findViewById(R.id.spinner_login_type);
         inputName = findViewById(R.id.login_Et);
 
         inputPassword = findViewById(R.id.password);
         TextView btnSignUp = findViewById(R.id.btn_signup);
 
         inputName.addTextChangedListener(new MyTextWatcher(inputName));
-        // inputEmail.addTextChangedListener(new MyTextWatcher(inputEmail));
         inputPassword.addTextChangedListener(new MyTextWatcher(inputPassword));
 
         con = new SAPWebService();
-
-
         pref = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
         editor = pref.edit();
-
-
 
         btnSignUp.setOnClickListener(view -> {
 
@@ -119,12 +118,80 @@ public class LoginActivity extends AppCompatActivity {
             else {
 
                 RadioButton radioButton = radioSexGroup.findViewById(selectedId);
-
                 checkUSERId = radioButton.getTag().toString();
-                Toast.makeText(mContext, ""+checkUSERId, Toast.LENGTH_SHORT).show();
+                CustomUtility.setSharedPreference(mContext,"userType",checkUSERId);
+                Log.e("checkUSERId","checkUSERId"+checkUSERId);
             }
-            submitForm();
+
+            if (checkUSERId.equalsIgnoreCase("1")){
+                submitForm();
+            }else {
+               if (!inputName.getText().toString().isEmpty() && !inputPassword.getText().toString().isEmpty()){
+                   loginAPI();
+               }else {
+                   Toast.makeText(mContext, "Enter Username or password", Toast.LENGTH_SHORT).show();
+               }
+            }
         });
+    }
+
+    private void loginAPI() {
+        ProgressDialog progress;
+
+        progress = new ProgressDialog(this);
+        progress.setTitle("Please Wait!!");
+        progress.setMessage("Wait!!");
+        progress.setCancelable(true);
+        progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progress.show();
+
+
+        username = inputName.getText().toString();
+        password = inputPassword.getText().toString();
+
+        CustomUtility.setSharedPreference(mContext,"username",username);
+
+        apiInterface = ApiClient.getClient().create(APIInterface.class);
+        Call<FiledLoginResponse> call = apiInterface.login(username,password);
+
+        Log.e("URL====>",call.request().url().toString());
+        call.enqueue(new Callback<FiledLoginResponse>() {
+            @Override
+            public void onResponse(@NotNull Call<FiledLoginResponse> call, @NotNull Response<FiledLoginResponse> response) {
+
+
+                if(response.isSuccessful()){
+                    assert response.body() != null;
+                    Log.e("response=====>",response.body().toString());
+                    if (response.body().status.equalsIgnoreCase("True"))
+                    {
+                        progress.dismiss();
+                        Toast.makeText(LoginActivity.this, "USER LOG IN SUCCESSFULLY ", Toast.LENGTH_SHORT).show();
+                        CustomUtility.setSharedPreference(mContext,"userType",checkUSERId);
+                        CustomUtility.setSharedPreference(mContext,"kunnr",response.body().response);
+
+                        Log.e("kunnr====>",response.body().response);
+                        mIntent = new Intent(LoginActivity.this, MainActivity1.class);
+                        startActivity(mIntent);
+                        finish();
+
+                    } else {
+                        progress.dismiss();
+                        Toast.makeText(LoginActivity.this, response.body().message, Toast.LENGTH_SHORT).show();
+
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call<FiledLoginResponse> call, @NotNull Throwable t) {
+                progress.dismiss();
+                call.cancel();
+
+            }
+
+        });
+
     }
 
     public void getUserTypeValue() {
@@ -190,7 +257,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                     editor.commit(); //
 
-                                    CustomUtility.setSharedPreference(mContext,"userType",checkUSERId);
+
                                     CustomUtility.setSharedPreference(mContext,"userID",join.getString("kunnr"));
                                     CustomUtility.setSharedPreference(mContext,"ServiceCenterName",join.getString("name1"));
                                  }
@@ -201,12 +268,8 @@ public class LoginActivity extends AppCompatActivity {
                                 Message msg1 = new Message();
                                 msg1.obj = mMessage;
                                 mHandler.sendMessage(msg1);
-                                Intent mIntent ;
 
-                                if(checkUSERId.equalsIgnoreCase("1"))
-                                    mIntent = new Intent(LoginActivity.this, MainActivity1.class);
-                                else
-                                    mIntent = new Intent(LoginActivity.this, MainActivity2.class);
+                                mIntent = new Intent(LoginActivity.this, MainActivity1.class);
                                 startActivity(mIntent);
                                 finish();
 
@@ -345,7 +408,5 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         }
-
     }
-
 }

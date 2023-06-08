@@ -53,11 +53,12 @@ private String textRemarkValue;
     private  String mStatusValue= "";
     private  String mMobileNumber= "";
     private  String mUserID= "";
+    String mobile;
     //private BaseRequest baseRequest;
     public TextView txtBTNActionID, txtBTNPendingID, txtBTNClodeID, txtBTNUploadID;
     private RecyclerView rclyPendingComplainList;
     private PendingComplainDetailsListAdapter mPendingComplainDetailsListAdapter;
-
+    String moile;
     private Intent mmIntent;
     private Dialog dialog ;
     @Override
@@ -227,10 +228,10 @@ private String textRemarkValue;
             JSONObject jsonObj = new JSONObject();
 
             try {
-
+                mobile = CustomUtility.getSharedPreferences(mContext,"username");
                 // jsonObj.put("project_no", projno);
                 jsonObj.put("cmpno",mComplainNO);
-                // jsonObj.put("beneficiary",ben);
+                 jsonObj.put("mobile",mobile);
                 //  jsonObj.put("mobno",mLrInvoiceResponse.get(0).getMobno());
                 jsonObj.put("kunnr", mUserID);
                 jsonObj.put("action", textRemarkValue);

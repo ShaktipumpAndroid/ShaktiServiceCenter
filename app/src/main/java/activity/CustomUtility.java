@@ -1,34 +1,27 @@
 package activity;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.provider.Settings;
-import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import java.io.ByteArrayOutputStream;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -36,16 +29,15 @@ import java.util.Locale;
 /**
  * Created by shakti on 11/21/2016.
  */
+@SuppressWarnings("deprecation")
 public class CustomUtility {
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 123;
     private static boolean connected;
-    private String current_date, current_time;
-    private Calendar calander = null;
-    private SimpleDateFormat simpleDateFormat = null;
-    public static String android_id;
-    GPSTracker gps;
+
+    public static SimpleDateFormat simpleDateFormat = null;
+
     public static Context context;
-    private static String PREFERENCE = "DealLizard";
+    private static final String PREFERENCE = "DealLizard";
 
     public static void ShowToast(String text, Context context) {
         Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
@@ -79,107 +71,17 @@ public class CustomUtility {
         // Setting Dialog Message
         alertDialog.setMessage("Please enable automatic date and time setting");
         // On pressing Settings button
-        alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(Settings.ACTION_DATE_SETTINGS);
-                mContext.startActivity(intent);
-            }
+        alertDialog.setPositiveButton("Settings", (dialog, which) -> {
+            Intent intent = new Intent(Settings.ACTION_DATE_SETTINGS);
+            mContext.startActivity(intent);
         });
         // on pressing cancel button
 
-//        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//            public void onClick(DialogInterface dialog, int which) {
-//                dialog.cancel();
-//            }
-//        });
-
         // Showing Alert Message
         alertDialog.show();
-        //alertDialog.setCancelable(cancellable);
-    }
-
-    public static void showTimeSetting(final Context mContext, DialogInterface.OnClickListener pos, DialogInterface.OnClickListener neg) {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
-        // Setting Dialog Title
-        alertDialog.setTitle("DATE TIME SETTINGS");
-        // Setting Dialog Message
-        alertDialog.setMessage("Date Time not auto update please check it.");
-        // On pressing Settings button
-        alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(Settings.ACTION_DATE_SETTINGS);
-                mContext.startActivity(intent);
-            }
-        });
-        // on pressing cancel button
-        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-        // Showing Alert Message
-        alertDialog.show();
-        //alertDialog.setCancelable(cancellable);
-    }
-
-    public static Bitmap getResizedBitmap(Bitmap image, int maxSize) {
-        int width = image.getWidth();
-        int height = image.getHeight();
-
-        float bitmapRatio = (float) width / (float) height;
-        if (bitmapRatio > 1) {
-            width = maxSize;
-            height = (int) (width / bitmapRatio);
-        } else {
-            height = maxSize;
-            width = (int) (height * bitmapRatio);
-        }
-
-        return Bitmap.createScaledBitmap(image, width, height, true);
-    }
-
-    public static String getDeviceName() {
-        String manufacturer = Build.MANUFACTURER;
-        String model = Build.MODEL;
-
-        return capitalize(manufacturer) + "--" + model;
-//        if (model.startsWith(manufacturer)) {
-//            return capitalize(model);
-//        } else {
-//            return capitalize(manufacturer) + "--" + model;
-//        }
-
 
     }
 
-    @SuppressLint("HardwareIds")
-    public static String getDeviceId(Context mContext) {
-        android_id = Settings.Secure.getString(mContext.getContentResolver(),
-                Settings.Secure.ANDROID_ID);
-
-        return android_id;
-    }
-
-    static String capitalize(String s) {
-        if (s == null || s.length() == 0) {
-            return "";
-        }
-        char first = s.charAt(0);
-        if (Character.isUpperCase(first)) {
-            return s;
-        } else {
-            return Character.toUpperCase(first) + s.substring(1);
-        }
-    }
-
-    public static boolean checkNetwork(Context mContext) {
-        ConnectivityManager cm = (ConnectivityManager) mContext
-                .getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
-    }
 
     public static boolean isOnline(Context mContext) {
 
@@ -245,29 +147,6 @@ public class CustomUtility {
 //    return telephonyManager.getDeviceId();
 //}
 
-    /*compress image and convert to  stirng*/
-    public static String CompressImage(String mFile) {
-
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inSampleSize = 8;
-        //options.inSampleSize = 2;
-
-        Log.d("mFile", "" + mFile);
-
-        final Bitmap bitmap = BitmapFactory.decodeFile(mFile, options);
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-
-
-        //    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-
-        byte[] byteArray = stream.toByteArray();
-
-
-        String encodedImage = Base64.encodeToString(byteArray, Base64.DEFAULT);
-
-        return encodedImage;
-    }
 
     public static boolean checkPermission(final Context context) {
 
@@ -280,12 +159,7 @@ public class CustomUtility {
                     alertBuilder.setCancelable(true);
                     alertBuilder.setTitle("Permission necessary");
                     alertBuilder.setMessage("External storage permission is necessary");
-                    alertBuilder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-                        public void onClick(DialogInterface dialog, int which) {
-                            ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
-                        }
-                    });
+                    alertBuilder.setPositiveButton(android.R.string.yes, (dialog, which) -> ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE));
                     AlertDialog alert = alertBuilder.create();
                     alert.show();
                 } else {
@@ -300,9 +174,9 @@ public class CustomUtility {
         }
     }
 
-    public String getCurrentDate() {
+    public static String getCurrentDate() {
         simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
-        current_date = simpleDateFormat.format(new Date());
+        String current_date = simpleDateFormat.format(new Date());
         return current_date.trim();
     }
 
@@ -323,56 +197,44 @@ public class CustomUtility {
     }
 
 
-    public static String formateDate(String date) {
-        String formatedDate = "";
+    public static String formatDate(String date) {
+        String formattedDate = "";
         try {
-            SimpleDateFormat formate = new SimpleDateFormat("dd.MM.yyyy",Locale.US);
-            Date mDate = formate.parse(date);
-//            SimpleDateFormat appFormate = new SimpleDateFormat("dd MMM, yyyy");
-            SimpleDateFormat appFormate = new SimpleDateFormat("yyyyMMdd",Locale.US);
-            formatedDate = appFormate.format(mDate);
-            Log.i("Result", "mDate " + formatedDate);
+            SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy",Locale.US);
+            Date mDate = format.parse(date);
+            SimpleDateFormat appFormat = new SimpleDateFormat("yyyyMMdd",Locale.US);
+            assert mDate != null;
+            formattedDate = appFormat.format(mDate);
+            Log.i("Result", "mDate " + formattedDate);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return formatedDate;
+        return formattedDate;
     }
 
-    public static String formateTime(String time) {
-        String formatedDate = "";
+    public static String formatTime(String time) {
+        String formattedDate = "";
         try {
-            SimpleDateFormat formate = new SimpleDateFormat("HH:mm:ss",Locale.getDefault());
-            Date mDate = formate.parse(time);
-//            SimpleDateFormat appFormate = new SimpleDateFormat("dd MMM, yyyy");
-            SimpleDateFormat appFormate = new SimpleDateFormat("HHmmss",Locale.getDefault());
-            formatedDate = appFormate.format(mDate);
-            Log.i("Result", "mDate " + formatedDate);
+            SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss",Locale.getDefault());
+            Date mDate = format.parse(time);
+            SimpleDateFormat appFormat = new SimpleDateFormat("HHmmss",Locale.getDefault());
+            assert mDate != null;
+            formattedDate = appFormat.format(mDate);
+            Log.i("Result", "mDate " + formattedDate);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return formatedDate;
+        return formattedDate;
     }
 
-//    public boolean isServiceRunning(Context mContext) {
-//        ActivityManager manager = (ActivityManager) mContext.getSystemService( mContext.ACTIVITY_SERVICE );
-//        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)){
-//            if("backgroundservice.TimeService".equals(service.service.getClassName())) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
 
-    public String getCurrentTime() {
+    public static String getCurrentTime() {
 
-        current_time = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date());
-       /* calander = Calendar.getInstance();
-        simpleDateFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
-        current_time = simpleDateFormat.format(calander.getTime());*/
+        String current_time = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date());
 
-       Log.e("TIME123","&&&&"+current_time.trim());
+       Log.e("TIME123","&&&&"+ current_time.trim());
         return current_time.trim();
 
     }
@@ -388,5 +250,91 @@ public class CustomUtility {
             cursor.close();
         }
         return false;
+    }
+    public static String formateDate1(String parseDare) {
+        String inputPattern = "dd.MM.yyyy";
+        String outputPattern = "dd-MMM-yyyy";
+        SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern);
+        SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern);
+
+        Date date;
+        String str = null;
+
+        try {
+            date = inputFormat.parse(parseDare);
+            str = outputFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return str;
+    }
+
+    public static String formatTime1(String parseDare) {
+        String inputPattern = "HH:mm:ss";
+        String outputPattern = "HH:mm a";
+        SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern);
+        SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern);
+
+        Date date ;
+        String str = null;
+
+        try {
+            date = inputFormat.parse(parseDare);
+            str = outputFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return str;
+    }
+
+    public static void removeFromSharedPreference(Context context,String name){
+        SharedPreferences settings = context.getSharedPreferences(PREFERENCE, 0);
+        settings.edit().remove(name).apply();
+    }
+
+    public static boolean isInternetOn(Context mContext) {
+
+        ConnectivityManager connectivity = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivity != null) {
+            NetworkInfo[] info = connectivity.getAllNetworkInfo();
+            for (int i = 0; i < info.length; i++) {
+                if (info[i].getState() == NetworkInfo.State.CONNECTED) {
+                    return true;
+                }
+            }
+        }
+        return false;
+
+    }
+
+    public static void clearSharedPreference(Context context){
+        SharedPreferences settings = context.getSharedPreferences(PREFERENCE, 0);
+        settings.edit().clear().apply();
+    }
+
+    public static String getDeviceName() {
+        String manufacturer = Build.MANUFACTURER;
+        String model = Build.MODEL;
+
+        return capitalize(manufacturer) + "--" + model;
+//        if (model.startsWith(manufacturer)) {
+//            return capitalize(model);
+//        } else {
+//            return capitalize(manufacturer) + "--" + model;
+//        }
+
+    }
+
+
+    static String capitalize(String s) {
+        if (s == null || s.length() == 0) {
+            return "";
+        }
+        char first = s.charAt(0);
+        if (Character.isUpperCase(first)) {
+            return s;
+        } else {
+            return Character.toUpperCase(first) + s.substring(1);
+        }
     }
 }
