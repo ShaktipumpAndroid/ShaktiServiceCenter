@@ -208,17 +208,6 @@ import webservice.WebURL;
             changeButtonVisibility(true, 1f, start);
         }
 
-
-    /*    if (CustomUtility.getSharedPreferences(context, Constant.LocalConveyance).equalsIgnoreCase("0")) {
-            changeButtonVisibility(false, 0.5f, end);
-            changeButtonVisibility(true, 1f, start);
-        } else {
-            changeButtonVisibility(false, 0.5f, start);
-            changeButtonVisibility(true, 1f, end);
-            startLocationService();
-        }
-*/
-
         pending_site.setOnClickListener(view -> {
 
             WebURL.STATUS_CHECK_FOR_COMPLAIN = "01";
@@ -228,7 +217,6 @@ import webservice.WebURL;
         });
 
         visted_site.setOnClickListener(view -> {
-           // getNewComplaint();
             WebURL.STATUS_CHECK_FOR_COMPLAIN = "02";
             Intent intent = new Intent(context, PendingComplainListActivity.class);
             //intent.putExtra("complaint", "Dealer Complaint");
@@ -253,6 +241,7 @@ import webservice.WebURL;
             e.printStackTrace();
         }
     }
+
     public static boolean deleteDir(File dir) {
         if (dir != null && dir.isDirectory()) {
             String[] children = dir.list();
@@ -425,7 +414,6 @@ import webservice.WebURL;
     @Override
     public void onDestroy() {
 
-
         if (progressDialog!=null) {
             progressDialog.cancel();
         }
@@ -434,7 +422,6 @@ import webservice.WebURL;
 
     @Override
     public void onStop() {
-
 
         if (progressDialog!=null) {
             progressDialog.cancel();
@@ -658,122 +645,119 @@ import webservice.WebURL;
                     }
 
                     progressDialog = ProgressDialog.show(getActivity(), getResources().getString(R.string.loading), getResources().getString(R.string.please_wait_));
-                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            //Do something here
-                            if (!TextUtils.isEmpty(from_lat) && !TextUtils.isEmpty(from_lng)) {
-                                if (progressDialog != null)
-                                    if (progressDialog.isShowing()) {
-                                        progressDialog.dismiss();
-                                        progressDialog = null;
-                                    }
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                        //Do something here
+                        if (!TextUtils.isEmpty(from_lat) && !TextUtils.isEmpty(from_lng)) {
+                            if (progressDialog != null)
+                                if (progressDialog.isShowing()) {
+                                    progressDialog.dismiss();
+                                    progressDialog = null;
+                                }
 
-                                final Dialog dialog = new Dialog(getActivity());
-                                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                                dialog.setCancelable(false);
-                                dialog.setContentView(R.layout.custom_dialog1);
-                                WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-                                lp.copyFrom(dialog.getWindow().getAttributes());
-                                lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-                                lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-                                dialog.getWindow().setAttributes(lp);
+                            final Dialog dialog = new Dialog(getActivity());
+                            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                            dialog.setCancelable(false);
+                            dialog.setContentView(R.layout.custom_dialog1);
+                            WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                            lp.copyFrom(dialog.getWindow().getAttributes());
+                            lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+                            lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                            dialog.getWindow().setAttributes(lp);
 
-                                final TextInputEditText etlat = dialog.findViewById(R.id.tiet_lat);
-                                final TextInputEditText etlng = dialog.findViewById(R.id.tiet_lng);
-                                final TextInputEditText etadd = dialog.findViewById(R.id.tiet_add);
-                                final TextView ettxt1 = dialog.findViewById(R.id.txt1);
-                                final TextView ettxt2 = dialog.findViewById(R.id.txt2);
-                                photo1 = dialog.findViewById(R.id.photo1);
-                                final TextView etcncl = dialog.findViewById(R.id.btn_cncl);
-                                final TextView etconfm = dialog.findViewById(R.id.btn_cnfrm);
+                            final TextInputEditText etlat = dialog.findViewById(R.id.tiet_lat);
+                            final TextInputEditText etlng = dialog.findViewById(R.id.tiet_lng);
+                            final TextInputEditText etadd = dialog.findViewById(R.id.tiet_add);
+                            final TextView ettxt1 = dialog.findViewById(R.id.txt1);
+                            final TextView ettxt2 = dialog.findViewById(R.id.txt2);
+                            photo1 = dialog.findViewById(R.id.photo1);
+                            final TextView etcncl = dialog.findViewById(R.id.btn_cncl);
+                            final TextView etconfm = dialog.findViewById(R.id.btn_cnfrm);
 
-                                if (CustomUtility.isOnline(getActivity())) {
-                                    Geocoder geo = new Geocoder(getActivity().getApplicationContext(), Locale.getDefault());
-                                    List<Address> addresses = null;
-                                    if (location != null) {
-                                        try {
-                                            addresses = geo.getFromLocation(lat[0], lng[0], 1);
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                    if (addresses != null) {
-                                        if (addresses.isEmpty()) {
-                                            etadd.setText(getResources().getString(R.string.no_location_found));
-                                        } else {
-                                            etadd.setText(addresses.get(0).getAddressLine(0));
-                                        }
+                            if (CustomUtility.isOnline(getActivity())) {
+                                Geocoder geo = new Geocoder(getActivity().getApplicationContext(), Locale.getDefault());
+                                List<Address> addresses = null;
+                                if (location != null) {
+                                    try {
+                                        addresses = geo.getFromLocation(lat[0], lng[0], 1);
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
                                     }
                                 }
-                                etlat.setText(from_lat);
-                                etlng.setText(from_lng);
-
-                                ettxt1.setText(getResources().getString(R.string.Current_Location));
-                                ettxt2.setText(getResources().getString(R.string.confirm_));
-
-                                // Toast.makeText(getActivity(), "from_lat="+from_lat+"\nfrom_lng="+from_lng, Toast.LENGTH_SHORT).show();
-
-                                photo1.setOnClickListener(v -> {
-                                    value = "1";
-                                    if (start_photo_text == null || start_photo_text.isEmpty()) {
-                                        if (checkPermission()) {
-                                            showConfirmationGallery(DatabaseHelper.KEY_PHOTO1, "PHOTO1");
-                                        } else {
-                                            requestPermission();
-                                        }
+                                if (addresses != null) {
+                                    if (addresses.isEmpty()) {
+                                        etadd.setText(getResources().getString(R.string.no_location_found));
+                                    } else {
+                                        etadd.setText(addresses.get(0).getAddressLine(0));
                                     }
-                                });
-
-                                etcncl.setOnClickListener(v -> dialog.dismiss());
-
-                                etconfm.setOnClickListener(v -> {
-                                    LocalConvenienceBean localConvenienceBean = new LocalConvenienceBean(String.valueOf(username),
-                                            current_start_date,
-                                            "",
-                                            current_start_time,
-                                            "",
-                                            from_lat,
-                                            "",
-                                            from_lng,
-                                            "",
-                                            "",
-                                            "",
-                                            "",
-                                            start_photo_text,
-                                            ""
-                                    );
-                                    dataHelper.insertLocalconvenienceData(localConvenienceBean);
-
-                                    String latlng = "via:" + from_lat + "," + from_lng;
-                                    Log.e("latlng=====>", latlng);
-                                    WayPoints wayPoints = new WayPoints(String.valueOf(username), current_start_date,
-                                            "",
-                                            current_start_time,
-                                            "", latlng);
-
-                                    dataHelper.insertWayPointsData(wayPoints);
-
-                                    CustomUtility.setSharedPreference(getActivity(), Constant.LocalConveyance, "1");
-                                    CustomUtility.setSharedPreference(getActivity(), Constant.FromLatitude, from_lat);
-                                    CustomUtility.setSharedPreference(getActivity(), Constant.FromLongitude, from_lng);
-                                    CustomUtility.setSharedPreference(getActivity(), Constant.DistanceInMeter, "0");
-                                    changeButtonVisibility(false, 0.5f, start);
-                                    changeButtonVisibility(true, 1f, end);
-                                    startLocationService();
-                                    Toast.makeText(getActivity(), getResources().getString(R.string.YourJourney), Toast.LENGTH_LONG).show();
-                                    dialog.dismiss();
-                                });
-
-                                dialog.show();
-                            } else {
-                                if (progressDialog != null)
-                                    if (progressDialog.isShowing()) {
-                                        progressDialog.dismiss();
-                                        progressDialog = null;
-                                    }
-                                Toast.makeText(getActivity(), getResources().getString(R.string.Pleasewaitcurrentlocation), Toast.LENGTH_SHORT).show();
+                                }
                             }
+                            etlat.setText(from_lat);
+                            etlng.setText(from_lng);
+
+                            ettxt1.setText(getResources().getString(R.string.Current_Location));
+                            ettxt2.setText(getResources().getString(R.string.confirm_));
+
+                            // Toast.makeText(getActivity(), "from_lat="+from_lat+"\nfrom_lng="+from_lng, Toast.LENGTH_SHORT).show();
+
+                            photo1.setOnClickListener(v -> {
+                                value = "1";
+                                if (start_photo_text == null || start_photo_text.isEmpty()) {
+                                    if (checkPermission()) {
+                                        showConfirmationGallery(DatabaseHelper.KEY_PHOTO1, "PHOTO1");
+                                    } else {
+                                        requestPermission();
+                                    }
+                                }
+                            });
+
+                            etcncl.setOnClickListener(v -> dialog.dismiss());
+
+                            etconfm.setOnClickListener(v -> {
+                                LocalConvenienceBean localConvenienceBean = new LocalConvenienceBean(String.valueOf(username),
+                                        current_start_date,
+                                        "",
+                                        current_start_time,
+                                        "",
+                                        from_lat,
+                                        "",
+                                        from_lng,
+                                        "",
+                                        "",
+                                        "",
+                                        "",
+                                        start_photo_text,
+                                        ""
+                                );
+                                dataHelper.insertLocalconvenienceData(localConvenienceBean);
+
+                                String latlng = "via:" + from_lat + "," + from_lng;
+                                Log.e("latlng=====>", latlng);
+                                WayPoints wayPoints = new WayPoints(String.valueOf(username), current_start_date,
+                                        "",
+                                        current_start_time,
+                                        "", latlng);
+
+                                dataHelper.insertWayPointsData(wayPoints);
+
+                                CustomUtility.setSharedPreference(getActivity(), Constant.LocalConveyance, "1");
+                                CustomUtility.setSharedPreference(getActivity(), Constant.FromLatitude, from_lat);
+                                CustomUtility.setSharedPreference(getActivity(), Constant.FromLongitude, from_lng);
+                                CustomUtility.setSharedPreference(getActivity(), Constant.DistanceInMeter, "0");
+                                changeButtonVisibility(false, 0.5f, start);
+                                changeButtonVisibility(true, 1f, end);
+                                startLocationService();
+                                Toast.makeText(getActivity(), getResources().getString(R.string.YourJourney), Toast.LENGTH_LONG).show();
+                                dialog.dismiss();
+                            });
+
+                            dialog.show();
+                        } else {
+                            if (progressDialog != null)
+                                if (progressDialog.isShowing()) {
+                                    progressDialog.dismiss();
+                                    progressDialog = null;
+                                }
+                            Toast.makeText(getActivity(), getResources().getString(R.string.Pleasewaitcurrentlocation), Toast.LENGTH_SHORT).show();
                         }
                     }, 2000);
 

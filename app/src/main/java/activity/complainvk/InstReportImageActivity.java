@@ -51,7 +51,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
 import org.apache.http.NameValuePair;
@@ -123,6 +124,8 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
     String fullAddress1 = null;
     String distance1 = null;
     String startphoto = null,totalWayPoint="";
+    TextView photo2;
+
     private static final int PICK_FROM_FILE = 102;
     List<ImageModel> imageArrayList = new ArrayList<>();
     List<String> itemNameList = new ArrayList<>();
@@ -172,10 +175,9 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
 
         if (CustomUtility.getSharedPreferences(mContext,"AUDSYNC" + enq_docno).equalsIgnoreCase("1")){
            if(!pendRemarkValue.isEmpty()){
-               activity.CustomUtility.setSharedPreference(this,Constant.LocalConveyance,"0");
                Log.e("userid===>", userid);
                calculateDistance();
-               new savePendingPhotoDataAPI().execute();
+
           }else {
          Toast.makeText(mContext, "Enter Remark", Toast.LENGTH_SHORT).show();
      }
@@ -213,10 +215,7 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
 
                         startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
                         //startLocationUpdates();
-
                         dialog.dismiss();
-
-
                     })
                     .setNegativeButton("No", (dialog, id) -> dialog.cancel());
             final AlertDialog alert = builder.create();
@@ -234,101 +233,98 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
         if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        fusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                from_lat = " ";
-                from_lng = " ";
-                to_lat = " ";
-                to_lng = " ";
-                fullAddress = "";
-                fullAddress1 = "";
-                startphoto = "";
-                try {
-                    localConvenienceBean = dataHelper.getLocalConvinienceData();
-                    current_start_date = localConvenienceBean.getBegda();
-                    current_start_time = localConvenienceBean.getFrom_time();
+        fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
+            from_lat = " ";
+            from_lng = " ";
+            to_lat = " ";
+            to_lng = " ";
+            fullAddress = "";
+            fullAddress1 = "";
+            startphoto = "";
+            try {
+                localConvenienceBean = dataHelper.getLocalConvinienceData();
+                current_start_date = localConvenienceBean.getBegda();
+                current_start_time = localConvenienceBean.getFrom_time();
 
-                    current_end_date = customutility.getCurrentDate();
-                    current_end_time = customutility.getCurrentTime();
+                current_end_date = customutility.getCurrentDate();
+                current_end_time = customutility.getCurrentTime();
 
-                    from_lat = localConvenienceBean.getFrom_lat();
-                    from_lng = localConvenienceBean.getFrom_lng();
-                    startphoto = localConvenienceBean.getPhoto1();
-                    if (location != null) {
-                        to_lat = String.valueOf(location.getLatitude());
-                        to_lng = String.valueOf(location.getLongitude());
-                    } else {
-                        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                            // TODO: Consider calling
-                            //    ActivityCompat#requestPermissions
-                            // here to request the missing permissions, and then overriding
-                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                            //                                          int[] grantResults)
-                            // to handle the case where the user grants the permission. See the documentation
-                            // for ActivityCompat#requestPermissions for more details.
-                            return;
-                        }
-                        Location location1 = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                        to_lat = String.valueOf(location1.getLatitude());
-                        to_lng = String.valueOf(location1.getLongitude());
-
-
-                    }
-                } catch (NumberFormatException e) {
-                    e.printStackTrace();
-                }
-
-                fullAddress = localConvenienceBean.getStart_loc();
-                if (activity.CustomUtility.isOnline(InstReportImageActivity.this)) {
-                    progressDialog = ProgressDialog.show(InstReportImageActivity.this, getResources().getString(R.string.loading), getResources().getString(R.string.please_wait_));
-                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                        if (!org.apache.http.util.TextUtils.isEmpty(from_lat) && !org.apache.http.util.TextUtils.isEmpty(from_lng) && !org.apache.http.util.TextUtils.isEmpty(to_lat) && !org.apache.http.util.TextUtils.isEmpty(to_lng)) {
-                            if (progressDialog != null)
-                                if (progressDialog.isShowing()) {
-                                    progressDialog.dismiss();
-                                    progressDialog = null;
-                                }
-                            allLatLong = from_lat + "," + from_lng + "," + to_lat + "," + to_lng;
-                            getDistanceInfo(from_lat, from_lng, to_lat, to_lng, allLatLong);
-                        } else {
-                            if (progressDialog != null)
-                                if (progressDialog.isShowing()) {
-                                    progressDialog.dismiss();
-                                    progressDialog = null;
-                                }
-                            Toast.makeText(getApplicationContext(), getResources().getString(R.string.Pleasewaitcurrentlocation), Toast.LENGTH_SHORT).show();
-                        }
-                    }, 2000);
-
+                from_lat = localConvenienceBean.getFrom_lat();
+                from_lng = localConvenienceBean.getFrom_lng();
+                startphoto = localConvenienceBean.getPhoto1();
+                if (location != null) {
+                    to_lat = String.valueOf(location.getLatitude());
+                    to_lng = String.valueOf(location.getLongitude());
                 } else {
-                    Toast.makeText(getApplicationContext(), R.string.saved_travel_data, Toast.LENGTH_SHORT).show();
-                    LocalConvenienceBean localConvenienceBean = new LocalConvenienceBean(String.valueOf(username), current_start_date,
-                            current_end_date,
-                            current_start_time,
-                            current_end_time,
-                            from_lat,
-                            to_lat,
-                            from_lng,
-                            to_lng,
-                            fullAddress,
-                            fullAddress1,
-                            distance1,
-                            startphoto,
-                            ""
-                    );
-                    dataHelper.updateLocalconvenienceData(localConvenienceBean);
-                    wayPoints = dataHelper.getWayPointsData(localConvenienceBean.getBegda(), localConvenienceBean.getFrom_time());
-                    WayPoints wP = new WayPoints(username, current_start_date,
-                            current_end_date,
-                            current_start_time,
-                            current_end_time, wayPoints.getWayPoints());
-                    dataHelper.updateWayPointData1(wP);
-                    stopLocationService();
-                    activity.CustomUtility.setSharedPreference(getApplicationContext(), Constant.LocalConveyance, "0");
-                    activity.CustomUtility.removeFromSharedPreference(getApplicationContext(), Constant.FromLatitude);
-                    activity.CustomUtility.removeFromSharedPreference(getApplicationContext(), Constant.FromLongitude);
+                    if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        // TODO: Consider calling
+                        //    ActivityCompat#requestPermissions
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for ActivityCompat#requestPermissions for more details.
+                        return;
+                    }
+                    Location location1 = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                    to_lat = String.valueOf(location1.getLatitude());
+                    to_lng = String.valueOf(location1.getLongitude());
+
+
                 }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+
+            fullAddress = localConvenienceBean.getStart_loc();
+            if (activity.CustomUtility.isOnline(InstReportImageActivity.this)) {
+                progressDialog = ProgressDialog.show(InstReportImageActivity.this, getResources().getString(R.string.loading), getResources().getString(R.string.please_wait_));
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    if (!org.apache.http.util.TextUtils.isEmpty(from_lat) && !org.apache.http.util.TextUtils.isEmpty(from_lng) && !org.apache.http.util.TextUtils.isEmpty(to_lat) && !org.apache.http.util.TextUtils.isEmpty(to_lng)) {
+                        if (progressDialog != null)
+                            if (progressDialog.isShowing()) {
+                                progressDialog.dismiss();
+                                progressDialog = null;
+                            }
+                        allLatLong = from_lat + "," + from_lng + "," + to_lat + "," + to_lng;
+                        getDistanceInfo(from_lat, from_lng, to_lat, to_lng, allLatLong);
+                    } else {
+                        if (progressDialog != null)
+                            if (progressDialog.isShowing()) {
+                                progressDialog.dismiss();
+                                progressDialog = null;
+                            }
+                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.Pleasewaitcurrentlocation), Toast.LENGTH_SHORT).show();
+                    }
+                }, 2000);
+
+            } else {
+                Toast.makeText(getApplicationContext(), R.string.saved_travel_data, Toast.LENGTH_SHORT).show();
+                LocalConvenienceBean localConvenienceBean = new LocalConvenienceBean(String.valueOf(username), current_start_date,
+                        current_end_date,
+                        current_start_time,
+                        current_end_time,
+                        from_lat,
+                        to_lat,
+                        from_lng,
+                        to_lng,
+                        fullAddress,
+                        fullAddress1,
+                        distance1,
+                        startphoto,
+                        ""
+                );
+                dataHelper.updateLocalconvenienceData(localConvenienceBean);
+                wayPoints = dataHelper.getWayPointsData(localConvenienceBean.getBegda(), localConvenienceBean.getFrom_time());
+                WayPoints wP = new WayPoints(username, current_start_date,
+                        current_end_date,
+                        current_start_time,
+                        current_end_time, wayPoints.getWayPoints());
+                dataHelper.updateWayPointData1(wP);
+                stopLocationService();
+                activity.CustomUtility.setSharedPreference(getApplicationContext(), Constant.LocalConveyance, "0");
+                activity.CustomUtility.removeFromSharedPreference(getApplicationContext(), Constant.FromLatitude);
+                activity.CustomUtility.removeFromSharedPreference(getApplicationContext(), Constant.FromLongitude);
             }
         });
     }
@@ -336,8 +332,6 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
     private void stopLocationService() {
         getApplicationContext().stopService(new Intent(getApplicationContext(), LocationUpdateService.class));
     }
-
-
 
     private void requestPermission() {
         if (SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -1290,7 +1284,7 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
                     Log.e("Response======>", String.valueOf(response.body()));
 
 
-                    fullAddress = Utility.retrieveAddress(lat1, lon1, getApplicationContext());
+                    fullAddress = Utility.retrieveAddress(lat1, lon1,getApplicationContext());
 
                     fullAddress1 = Utility.retrieveAddress(lat2, lon2, getApplicationContext());
 
@@ -1302,43 +1296,108 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
                             progressDialog = null;
                         }
                     Log.e("distance1=====>", distance1);
+                    LayoutInflater inflater = (LayoutInflater) InstReportImageActivity.this.getSystemService(
+                            Context.LAYOUT_INFLATER_SERVICE);
+                    View layout = inflater.inflate(R.layout.custom_dialog2, null);
+                    final AlertDialog.Builder builder =
+                            new AlertDialog.Builder(InstReportImageActivity.this, R.style.MyDialogTheme);
 
-                    if (activity.CustomUtility.isOnline(InstReportImageActivity.this)) {
+                    builder.setView(layout);
+                    builder.setCancelable(true);
+                    AlertDialog dialog = builder.create();
+                    dialog.setCanceledOnTouchOutside(true);
+                    dialog.getWindow().setBackgroundDrawableResource(android.R.color.white);
+                    dialog.getWindow().setGravity(Gravity.BOTTOM);
+                    dialog.show();
 
-                        progressDialog = ProgressDialog.show(InstReportImageActivity.this, "", getResources().getString(R.string.sending_please_wait));
+/*
+                    final Dialog dialog = new Dialog(mContext);
+                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    dialog.setCancelable(false);
+                    dialog.setCanceledOnTouchOutside(false);
+                    dialog.setContentView(R.layout.custom_dialog2);
+                    WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                    lp.copyFrom(dialog.getWindow().getAttributes());
+                    lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+                    lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                    dialog.getWindow().setAttributes(lp);*/
 
-                        new Thread(() -> runOnUiThread(() -> {
-                            LocalConvenienceBean localConvenienceBean = new LocalConvenienceBean(username, current_start_date,
-                                    current_end_date,
-                                    current_start_time,
-                                    current_end_time,
-                                    from_lat,
-                                    to_lat,
-                                    from_lng,
-                                    to_lng,
-                                    fullAddress,
-                                    fullAddress1,
-                                    distance1,
-                                    startphoto,
-                                    ""
-                            );
+                    final TextInputEditText etstrdt = dialog.findViewById(R.id.tiet_str_dt);
+                    final TextInputEditText etstrlatlng = dialog.findViewById(R.id.tiet_str_lat_lng);
+                    final TextInputEditText etstrlocadd = dialog.findViewById(R.id.tiet_str_loc_add);
+                    final TextInputEditText etenddt = dialog.findViewById(R.id.tiet_end_dt);
+                    final TextInputEditText etendlatlng = dialog.findViewById(R.id.tiet_end_lat_lng);
+                    final TextInputEditText etendlocadd = dialog.findViewById(R.id.tiet_end_loc_add);
+                    final TextInputEditText ettotdis = dialog.findViewById(R.id.tiet_tot_dis);
+                    final TextInputLayout til_trvl_mod = dialog.findViewById(R.id.til_trvl_mod);
+                    final TextInputEditText ettrvlmod = dialog.findViewById(R.id.tiet_trvl_mod);
 
-                            dataHelper.updateLocalconvenienceData(localConvenienceBean);
-                            WayPoints  wayPoints = dataHelper.getWayPointsData(localConvenienceBean.getBegda(), localConvenienceBean.getFrom_time());
-
-                            WayPoints wp1 = new WayPoints(String.valueOf(username), current_start_date,
-                                    current_end_date,
-                                    current_start_time,
-                                    current_end_time, wayPoints.getWayPoints());
-                            dataHelper.updateWayPointData1(wp1);
-                            SyncLocalConveneinceDataToSap("", current_end_date, current_end_time, distance1, allLatLong);
-                        })).start();
+                    final TextView etcncl = dialog.findViewById(R.id.btn_cncl);
+                    final TextView etconfm = dialog.findViewById(R.id.btn_cnfrm);
+                    final TextView ettxt1 = dialog.findViewById(R.id.txt1);
+                    final TextView ettxt2 = dialog.findViewById(R.id.txt2);
 
 
-                    } else {
-                        Toast.makeText(InstReportImageActivity.this, getResources().getString(R.string.ConnectToInternet), Toast.LENGTH_SHORT).show();
-                    }
+                    etstrdt.setText(activity.CustomUtility.formateDate1(current_start_date) + " " + activity.CustomUtility.formatTime1(current_start_time));
+                    etstrlatlng.setText(from_lat + "," + from_lng);
+                    etenddt.setText(activity.CustomUtility.formateDate1(current_end_date) + " " + activity.CustomUtility.formatTime1(current_end_time));
+                    etendlatlng.setText(to_lat + "," + to_lng);
+                    etstrlocadd.setText(fullAddress);
+                    etendlocadd.setText(fullAddress1);
+                    ettotdis.setText(distance1);
 
+                    ettxt1.setText(getResources().getString(R.string.localconveniencedetails));
+                    ettxt2.setText(getResources().getString(R.string.endyourJourney));
+
+
+                    etcncl.setOnClickListener(v -> dialog.dismiss());
+
+                    etconfm.setOnClickListener(v -> {
+
+                        if (activity.CustomUtility.isOnline(getApplicationContext())) {
+                            if (!ettrvlmod.getText().toString().isEmpty()) {
+                                new savePendingPhotoDataAPI().execute();
+
+                               // progressDialog = ProgressDialog.show(getApplicationContext(), "", getResources().getString(R.string.sending_please_wait));
+
+                                new Thread(() -> runOnUiThread(() -> {
+                                    LocalConvenienceBean localConvenienceBean = new LocalConvenienceBean(username, current_start_date,
+                                            current_end_date,
+                                            current_start_time,
+                                            current_end_time,
+                                            from_lat,
+                                            to_lat,
+                                            from_lng,
+                                            to_lng,
+                                            fullAddress,
+                                            fullAddress1,
+                                            distance1,
+                                            startphoto,
+                                            ""
+                                    );
+
+                                    dataHelper.updateLocalconvenienceData(localConvenienceBean);
+                                    WayPoints  wayPoints = dataHelper.getWayPointsData(localConvenienceBean.getBegda(), localConvenienceBean.getFrom_time());
+
+                                    WayPoints wp1 = new WayPoints(String.valueOf(username), current_start_date,
+                                            current_end_date,
+                                            current_start_time,
+                                            current_end_time, wayPoints.getWayPoints());
+                                    dataHelper.updateWayPointData1(wp1);
+                                    SyncLocalConveneinceDataToSap(ettrvlmod.getText().toString(), current_end_date, current_end_time, distance1, allLatLong);
+                                })).start();
+
+                                dialog.dismiss();
+
+                            } else {
+                                Toast.makeText(getApplicationContext(), getResources().getString(R.string.Please_Enter_Travel_Mode), Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(getApplicationContext(), getResources().getString(R.string.ConnectToInternet), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    //dialog.show();
 
                 }
             }
