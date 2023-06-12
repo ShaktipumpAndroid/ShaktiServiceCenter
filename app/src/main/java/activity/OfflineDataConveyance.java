@@ -29,6 +29,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 import activity.utility.CameraUtils;
 import adapter.Adapter_offline_list;
@@ -49,8 +50,6 @@ public class OfflineDataConveyance extends AppCompatActivity {
     LinearLayout lin1, lin2;
     RecyclerView recyclerView;
     Adapter_offline_list adapterEmployeeList;
-    private LinearLayoutManager layoutManagerSubCategory;
-
     ArrayList<LocalConvenienceBean> localConvenienceBeanArrayList;
 
     @SuppressLint("WrongConstant")
@@ -62,14 +61,12 @@ public class OfflineDataConveyance extends AppCompatActivity {
         context = this;
 
         db = new DatabaseHelper(context);
-
-
         version = BuildConfig.VERSION_NAME;
         device_name = CustomUtility.getDeviceName();
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         recyclerView = (RecyclerView) findViewById(R.id.emp_list);
@@ -80,7 +77,6 @@ public class OfflineDataConveyance extends AppCompatActivity {
         localConvenienceBeanArrayList = new ArrayList<>();
 
         localConvenienceBeanArrayList = db.getLocalConveyance();
-
 
         Log.e("SIZE", "&&&&" + localConvenienceBeanArrayList.size());
         if (localConvenienceBeanArrayList != null && localConvenienceBeanArrayList.size() > 0) {
@@ -93,7 +89,7 @@ public class OfflineDataConveyance extends AppCompatActivity {
 
             Log.e("SIZE", "&&&&" + localConvenienceBeanArrayList.size());
             adapterEmployeeList = new Adapter_offline_list(context, localConvenienceBeanArrayList);
-            layoutManagerSubCategory = new LinearLayoutManager(context);
+            LinearLayoutManager layoutManagerSubCategory = new LinearLayoutManager(context);
             layoutManagerSubCategory.setOrientation(LinearLayoutManager.VERTICAL);
             recyclerView.setLayoutManager(layoutManagerSubCategory);
             recyclerView.setAdapter(adapterEmployeeList);

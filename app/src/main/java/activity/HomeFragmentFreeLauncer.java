@@ -1,9 +1,5 @@
 package activity;
 
-//**
-//* Created by shakti on 10/3/2016.
-//*/
-
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.CAMERA;
@@ -82,8 +78,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
-import activity.complainvk.Freelauncer.PendingComplainListFreelauncerActivity;
-import activity.complainvk.PendingComplainListActivity;
+import activity.complainvk.Freelauncer.PendingComplainListFreelancerActivity;
 import activity.services.LocationUpdateService;
 import activity.utility.Constant;
 import activity.utility.Utility;
@@ -160,7 +155,6 @@ import webservice.WebURL;
 
         context = this.getActivity();
         progressDialog = new ProgressDialog(context);
-         mobile = activity.utility.CustomUtility.getSharedPreferences(context,"username");
 
         customutility = new CustomUtility();
         username = CustomUtility.getSharedPreferences(context,"username");
@@ -211,17 +205,15 @@ import webservice.WebURL;
         pending_site.setOnClickListener(view -> {
 
             WebURL.STATUS_CHECK_FOR_COMPLAIN = "01";
-            Intent intent = new Intent(context, PendingComplainListFreelauncerActivity.class);
+            Intent intent = new Intent(context, PendingComplainListFreelancerActivity.class);
             intent.putExtra("complaint", "Pending Site to Visit");
             startActivity(intent);
         });
 
         visted_site.setOnClickListener(view -> {
             WebURL.STATUS_CHECK_FOR_COMPLAIN = "02";
-            Intent intent = new Intent(context, PendingComplainListActivity.class);
-            //intent.putExtra("complaint", "Dealer Complaint");
-            intent.putExtra("complaint", "Visited Sites");
-
+            Intent intent = new Intent(context, VisitedComplainListActivity.class);
+            intent.putExtra("complaint", "Visited Site");
             startActivity(intent);
         });
 
@@ -998,6 +990,7 @@ import webservice.WebURL;
 
             try {
 
+                jsonObj.put("cmpno","");
                 jsonObj.put("mobile",mobile);
                 jsonObj.put("begda", param_invc.getBegda());
                 jsonObj.put("endda", param_invc.getEndda());

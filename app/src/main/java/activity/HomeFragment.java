@@ -48,7 +48,7 @@ import webservice.WebURL;
     public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
     Context context;
 
-    TextView approved_complaint, closer_complaint, open_complaint, pending_for_Approval, txtServiceCenterID;
+    TextView approved_complaint, closer_complaint, open_complaint, pending_for_Approval, txtServiceCenterID ,pendingVisit ,visitedSite;
 
     String start_photo_text,end_photo_text;
 
@@ -63,11 +63,10 @@ import webservice.WebURL;
     private static final int ALL_PERMISSIONS_RESULT = 1011;
 
      TextView photo1,photo2;
-
      String mServiceCenterName;
 
      public HomeFragment() {
-        // Required empty public constructor
+
     }
 
 
@@ -79,7 +78,6 @@ import webservice.WebURL;
         progressDialog = new ProgressDialog(context);
 
         mServiceCenterName = CustomUtility.getSharedPreferences(context,"ServiceCenterName");
-        // we add permissions we need to request location of the users
         permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
         permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
 
@@ -105,11 +103,15 @@ import webservice.WebURL;
     public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
+
         open_complaint = rootView.findViewById(R.id.open_complaint);
         txtServiceCenterID = rootView.findViewById(R.id.txtServiceCenterID);
         closer_complaint =rootView.findViewById(R.id.closer_complaint);
         pending_for_Approval = rootView.findViewById(R.id.pending_for_Approval);
         approved_complaint = rootView.findViewById(R.id.approved_complaint);
+        pendingVisit = rootView.findViewById(R.id.pendingVisit);
+        visitedSite = rootView.findViewById(R.id.visitedSite);
+
         txtServiceCenterID.setText(mServiceCenterName);
 
         deleteCache(context);
@@ -146,15 +148,23 @@ import webservice.WebURL;
            // getClosureComplaint();
             WebURL.STATUS_CHECK_FOR_COMPLAIN = "04";
             Intent intent = new Intent(context, PendingComplainListActivity.class);
-            intent.putExtra("complaint", "Clouser Complain");
+            intent.putExtra("complaint", "Closer Complain");
             intent.putExtra("StatusValue", "04");
             startActivity(intent);
         });
 
 
+        pendingVisit.setOnClickListener(v -> {
+            Intent intent = new Intent(context, PendingSiteActivity.class);
 
-        // get unsync data count
-        // Inflate the layout for this fragment
+            startActivity(intent);
+        });
+
+        visitedSite.setOnClickListener(v -> {
+            Intent intent = new Intent(context, VisitedSiteActivity.class);
+            startActivity(intent);
+        });
+
         return rootView;
     }
 

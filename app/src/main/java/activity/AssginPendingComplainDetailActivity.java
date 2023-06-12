@@ -67,7 +67,7 @@ public class AssginPendingComplainDetailActivity extends AppCompatActivity {
         mobile = CustomUtility.getSharedPreferences(mContext,"username");
         db = new DatabaseHelper(mContext);
         // Database
-        mComplainDetailListResponse = db.getSubordinateAssginComplainList();
+        mComplainDetailListResponse = db.getSubordinateAssginComplainNo(mComplainNO);
 
         AssginPendingComplainDetailsListAdapter mPendingComplainDetailsListAdapter = new AssginPendingComplainDetailsListAdapter(mContext, mComplainDetailListResponse);
         rclyPendingComplainList.setAdapter(mPendingComplainDetailsListAdapter);
@@ -152,14 +152,13 @@ public class AssginPendingComplainDetailActivity extends AppCompatActivity {
 
         dialog.show();
 
-        SyncLocalConveneinceDataToSap();
-
         txtBTNRemarkID.setOnClickListener(view1 -> {
 
             textRemarkValue = editText.getText().toString().trim();
             if(!textRemarkValue.equalsIgnoreCase(""))
             {
                 // callInsertRemarkAPI(textRemarkValue);
+                SyncLocalConveneinceDataToSap();
                 new callInsertRemarkAPI().execute();
             }
             else
@@ -192,6 +191,7 @@ public class AssginPendingComplainDetailActivity extends AppCompatActivity {
         try {
 
             jsonObj.put("mobile",mobile );
+            jsonObj.put("cmpno",mComplainNO);
             jsonObj.put("begda", "");
             jsonObj.put("endda", "");
             jsonObj.put("start_time", "");
@@ -202,8 +202,6 @@ public class AssginPendingComplainDetailActivity extends AppCompatActivity {
             jsonObj.put("end_long", "");
 
             jsonObj.put("start_location", "");
-
-
 
             jsonObj.put("end_location", "");
 

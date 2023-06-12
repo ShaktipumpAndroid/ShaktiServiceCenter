@@ -277,4 +277,8 @@
     <string name="Please_Damage_1">Please select Damage Photo 1</string>
     <string name="Please_Damage_2">Please select Damage Photo 2</string>
     <string name="ConnectToInternet">Please check your internet connection first!</string>
+    <string name="start">Start Date</string>
+    <string name="end">End</string>
+    <string name="pendingSite">Pending Site Complain</string>
+    <string name="visitedSite">Visited Site Complain</string>
 </resources>

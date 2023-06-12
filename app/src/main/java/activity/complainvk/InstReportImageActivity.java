@@ -124,7 +124,6 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
     String fullAddress1 = null;
     String distance1 = null;
     String startphoto = null,totalWayPoint="";
-    TextView photo2;
 
     private static final int PICK_FROM_FILE = 102;
     List<ImageModel> imageArrayList = new ArrayList<>();
@@ -135,7 +134,6 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
     DatabaseHelper dataHelper;
     double inst_latitude_double,
             inst_longitude_double;
-
 
     RecyclerView recyclerview;
     Toolbar mToolbar;
@@ -294,6 +292,17 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
                                 progressDialog.dismiss();
                                 progressDialog = null;
                             }
+
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                        builder.setMessage("Please start your journey first")
+                                .setCancelable(false)
+                                .setPositiveButton("Yes", (dialog, id) -> {
+                                    dialog.dismiss();
+                                })
+                                .setNegativeButton("No", (dialog, id) -> dialog.cancel());
+                        final AlertDialog alert = builder.create();
+                        alert.show();
+
                         Toast.makeText(getApplicationContext(), getResources().getString(R.string.Pleasewaitcurrentlocation), Toast.LENGTH_SHORT).show();
                     }
                 }, 2000);
@@ -1432,7 +1441,7 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
         JSONObject jsonObj = new JSONObject();
 
         try {
-
+            jsonObj.put("cmpno",enq_docno);
             jsonObj.put("mobile",mobile );
             jsonObj.put("begda", CustomUtility.formateDate1(param_invc.getBegda()));
             jsonObj.put("endda", CustomUtility.formateDate1(param_invc.getEndda()));

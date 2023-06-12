@@ -76,6 +76,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText inputName, inputPassword;
     private TextInputLayout inputLayoutName,  inputLayoutPassword;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,15 +124,21 @@ public class LoginActivity extends AppCompatActivity {
                 Log.e("checkUSERId","checkUSERId"+checkUSERId);
             }
 
+        if(CustomUtility.isOnline(mContext)){
             if (checkUSERId.equalsIgnoreCase("1")){
                 submitForm();
             }else {
-               if (!inputName.getText().toString().isEmpty() && !inputPassword.getText().toString().isEmpty()){
-                   loginAPI();
-               }else {
-                   Toast.makeText(mContext, "Enter Username or password", Toast.LENGTH_SHORT).show();
-               }
+                if (!inputName.getText().toString().isEmpty() && !inputPassword.getText().toString().isEmpty()){
+                    loginAPI();
+                }else {
+                    Toast.makeText(mContext, "Enter Username or password", Toast.LENGTH_SHORT).show();
+                }
             }
+        }
+        else{
+            Toast.makeText(mContext, "Please turn on Internet", Toast.LENGTH_SHORT).show();
+
+        }
         });
     }
 
@@ -201,14 +208,9 @@ public class LoginActivity extends AppCompatActivity {
         list.add("Service Center");
     }
 
-
-
     /**********************************************************************************************
      *                Server Login
      *********************************************************************************************/
-
-
-
 
     private void serverLoginService() {
 

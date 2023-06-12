@@ -18,12 +18,12 @@ import adapter.PendingAssginComplainListAdapter;
 import bean.SubordinateAssginComplainBean;
 import database.DatabaseHelper;
 
-public class PendingComplainListFreelauncerActivity extends AppCompatActivity {
+public class PendingComplainListFreelancerActivity extends AppCompatActivity {
 
     DatabaseHelper db;
-    RecyclerView rclyPendingComplainList;
+    RecyclerView relyPendingComplainList;
     List<SubordinateAssginComplainBean> subordinateBeanList ;
-    PendingAssginComplainListAdapter assginComplainListAdapter;
+    PendingAssginComplainListAdapter assignComplainListAdapter;
     private Intent mmIntent;
     private ImageView imgBackID;
 
@@ -31,6 +31,7 @@ public class PendingComplainListFreelauncerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pending_complain_freelauncer_list);
+
         Context mContext = this;
         mmIntent = getIntent();
         initView();
@@ -38,8 +39,8 @@ public class PendingComplainListFreelauncerActivity extends AppCompatActivity {
         // Database
         subordinateBeanList = db.getSubordinateAssginComplainList();
 
-        assginComplainListAdapter = new PendingAssginComplainListAdapter(mContext, subordinateBeanList);
-        rclyPendingComplainList.setAdapter(assginComplainListAdapter);
+        assignComplainListAdapter = new PendingAssginComplainListAdapter(mContext, subordinateBeanList);
+        relyPendingComplainList.setAdapter(assignComplainListAdapter);
 
     }
 
@@ -48,8 +49,8 @@ public class PendingComplainListFreelauncerActivity extends AppCompatActivity {
         String mHeaderTittle = mmIntent.getStringExtra("complaint");
         imgBackID = findViewById(R.id.imgBackID);
         TextView txtHeaderID = findViewById(R.id.txtHeaderID);
-        rclyPendingComplainList = findViewById(R.id.rclyPendingComplainList);
-        rclyPendingComplainList.setLayoutManager(new LinearLayoutManager(this));
+        relyPendingComplainList = findViewById(R.id.rclyPendingComplainList);
+        relyPendingComplainList.setLayoutManager(new LinearLayoutManager(this));
         txtHeaderID.setText(mHeaderTittle);
 
         initClickEvent();

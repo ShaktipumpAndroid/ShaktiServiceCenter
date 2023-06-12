@@ -13,11 +13,12 @@ public class SubordinateAssginComplainBean {
         public String sernr;
         public String reason;
         public String w_waranty;
+        public String cmpdt;
 
     public SubordinateAssginComplainBean() {
     }
 
-    public SubordinateAssginComplainBean(String cmpno, String delname, String cstname, String engg_name, String cmblno, String caddress, String matnr, String warranty, String maktx, String sernr, String reason, String w_waranty) {
+    public SubordinateAssginComplainBean(String cmpno, String delname, String cstname, String engg_name, String cmblno, String caddress, String matnr, String warranty, String maktx, String sernr, String reason, String w_waranty, String cmpdt) {
         this.cmpno = cmpno;
         this.delname = delname;
         this.cstname = cstname;
@@ -30,6 +31,15 @@ public class SubordinateAssginComplainBean {
         this.sernr = sernr;
         this.reason = reason;
         this.w_waranty = w_waranty;
+        this.cmpdt = cmpdt;
+    }
+
+    public String getCmpdt() {
+        return cmpdt;
+    }
+
+    public void setCmpdt(String cmpdt) {
+        this.cmpdt = cmpdt;
     }
 
     public String getCmpno() {

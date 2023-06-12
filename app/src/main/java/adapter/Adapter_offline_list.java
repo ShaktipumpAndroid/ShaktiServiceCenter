@@ -140,39 +140,47 @@ public class Adapter_offline_list extends RecyclerView.Adapter<Adapter_offline_l
             }
             if (!TextUtils.isEmpty(responseList.get(position).getFrom_lat())) {
 
-                holder.start_lat.setText(responseList.get(position).getFrom_lat()+","+responseList.get(position).getFrom_lng());
+                holder.start_lat.setText(responseList.get(position).getFrom_lat());
+
+            }
+
+            if (!TextUtils.isEmpty(responseList.get(position).getFrom_lng())) {
+
+                holder.start_lng.setText(responseList.get(position).getFrom_lng());
 
             }
 
             if (!TextUtils.isEmpty(responseList.get(position).getTo_lat())) {
 
-                holder.end_lat.setText(responseList.get(position).getTo_lat()+","+responseList.get(position).getTo_lng());
+                holder.end_lat.setText(responseList.get(position).getTo_lat());
+
+            }
+            if (!TextUtils.isEmpty(responseList.get(position).getTo_lng())) {
+
+                holder.end_lng.setText(responseList.get(position).getTo_lng());
 
             }
 
 
 
-            holder.cardView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
+            holder.cardView.setOnClickListener(view -> {
 
-                    if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                        if (CustomUtility.isOnline(context)) {
+                if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                    if (CustomUtility.isOnline(context)) {
 
-                            startLocationUpdates1(responseList.get(position));
+                        startLocationUpdates1(responseList.get(position));
 
-                        } else {
-                            if (progressDialog != null)
-                                if ((progressDialog != null) && progressDialog.isShowing()) {
-                                    progressDialog.dismiss();
-                                    progressDialog = null;
-                                }
-                            ;
-                            Toast.makeText(context, "No Internet Connection", Toast.LENGTH_SHORT).show();
-                        }
                     } else {
-                        buildAlertMessageNoGps1(responseList.get(position));
+                        if (progressDialog != null)
+                            if ((progressDialog != null) && progressDialog.isShowing()) {
+                                progressDialog.dismiss();
+                                progressDialog = null;
+                            }
+                        ;
+                        Toast.makeText(context, "No Internet Connection", Toast.LENGTH_SHORT).show();
                     }
+                } else {
+                    buildAlertMessageNoGps1(responseList.get(position));
                 }
             });
 
@@ -203,8 +211,6 @@ public class Adapter_offline_list extends RecyclerView.Adapter<Adapter_offline_l
             end_lat = itemView.findViewById(R.id.end_lat);
             start_lng = itemView.findViewById(R.id.start_lng);
             end_lng = itemView.findViewById(R.id.end_lng);
-
-
             cardView = itemView.findViewById(R.id.card_view);
 
         }
@@ -579,11 +585,10 @@ public class Adapter_offline_list extends RecyclerView.Adapter<Adapter_offline_l
         JSONObject jsonObj = new JSONObject();
 
         try {
-
+            jsonObj.put("cmpno","");
             jsonObj.put("mobile",mobile);
             jsonObj.put("begda", CustomUtility.formateDate1(param_invc.getBegda()));
             jsonObj.put("endda", CustomUtility.formateDate1(param_invc.getEndda()));
-
             jsonObj.put("start_time", param_invc.getFrom_time());
             jsonObj.put("end_time", param_invc.getTo_time());
             jsonObj.put("start_lat", param_invc.getFrom_lat());
@@ -603,7 +608,7 @@ public class Adapter_offline_list extends RecyclerView.Adapter<Adapter_offline_l
             e.printStackTrace();
         }
 
-        final ArrayList<NameValuePair> param1_invc = new ArrayList<NameValuePair>();
+        final ArrayList<NameValuePair> param1_invc = new ArrayList<>();
         param1_invc.add(new BasicNameValuePair("travel_distance", String.valueOf(ja_invc_data)));
 
       try {

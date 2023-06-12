@@ -62,4 +62,5 @@ public class WebURL {
     public static final String GET_SUORDINATE = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmap_srv_center/get_subordinate.htm";
     public static final String SAVEEDITDETAIL = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmap_srv_center/subordinate_edit.htm";
     public static final String ASSGINCOMPLAINlIST = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmap_srv_center/assign_complains_details.htm?";
+    public static final String VISITEDCOMPLAINLIST = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmap_srv_center/subordinate_visited.htm";
 }

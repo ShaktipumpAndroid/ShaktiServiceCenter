@@ -173,6 +173,10 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
                     progressBarHandler.post(() -> progressBar.setProgress(progressBarStatus));
                     con.getAssginComplain(MainActivity1.this);
 
+                    progressBarStatus = 39;
+                    progressBarHandler.post(() -> progressBar.setProgress(progressBarStatus));
+                    con.getVisitedComplain(MainActivity1.this);
+
                     progressBarStatus = 100;
                     progressBarHandler.post(() -> progressBar.setProgress(progressBarStatus));
 
@@ -192,7 +196,7 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
     public void syncState() {
         progressBar = new ProgressDialog(this);
         progressBar.setCancelable(false);
-        progressBar.setMessage("Downloading State Data...");
+        progressBar.setMessage("Downloading Data...");
         progressBar.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressBar.setProgress(0);
         progressBar.setMax(100);
@@ -210,7 +214,7 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
                         progressBarHandler.post(() -> progressBar.setProgress(progressBarStatus));
                         con.getSubordinateData(MainActivity1.this);
 
-                        progressBarStatus = 100;
+                    progressBarStatus = 100;
                         progressBarHandler.post(() -> progressBar.setProgress(progressBarStatus));
 
                 } catch (Exception e) {

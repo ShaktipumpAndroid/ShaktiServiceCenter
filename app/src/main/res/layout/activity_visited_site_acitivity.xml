@@ -1,0 +1,131 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <include layout="@layout/toolbar" />
+
+    <LinearLayout
+        android:id="@+id/dom_start_datetime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar"
+        android:baselineAligned="false">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/start"
+            android:layout_width="10dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="@dimen/space_tinny4"
+            android:layout_weight="1"
+            android:textColorHint="@color/colorPrimary">
+
+            <EditText
+                android:id="@+id/start_date"
+                style="@style/under_line_et"
+                android:drawableRight="@drawable/ic_mendotry"
+                android:hint="@string/start"
+                android:onClick="setDate"
+                android:padding="10dp"
+                android:singleLine="true"
+                android:textColorHint="@color/colorPrimary" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/end"
+            android:layout_width="10dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="@dimen/space_tinny4"
+            android:layout_weight="1"
+            android:textColorHint="@color/colorPrimary">
+
+            <EditText
+                android:id="@+id/end_date"
+                style="@style/under_line_et"
+                android:drawableRight="@drawable/ic_mendotry"
+                android:hint="@string/end"
+                android:onClick="setDate"
+                android:padding="10dp"
+                android:singleLine="true"
+                android:textColorHint="@color/colorPrimary" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/lin1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/submit"
+        android:layout_margin="8dp"
+        android:background="@color/edit_text_border_bg"
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/visited_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/space_mid10"
+            android:layout_marginTop="@dimen/space_mid10"
+            android:layout_marginRight="@dimen/space_mid10"
+            android:divider="@null"
+            android:dividerHeight="@dimen/space_mid10">
+
+        </ListView>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/lin2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/submit"
+        android:layout_centerInParent="true"
+        android:layout_margin="8dp"
+        android:background="@color/edit_text_border_bg"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="Data not Available"
+            android:textAlignment="center"
+            android:textColor="@color/black" />
+
+    </LinearLayout>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/submit"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_below="@+id/dom_start_datetime"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="100dp"
+        android:layout_marginBottom="10dp"
+        app:cardBackgroundColor="@color/colorPrimary"
+        app:cardCornerRadius="22dp"
+        app:cardElevation="10dp">
+
+
+        <TextView
+            android:id="@+id/save"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="@string/Submit"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+
+    </androidx.cardview.widget.CardView>
+
+
+
+</RelativeLayout>
+

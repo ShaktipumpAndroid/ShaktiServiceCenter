@@ -31,6 +31,7 @@ import bean.LocalConvenienceBean;
 import bean.LoginBean;
 import bean.SubordinateAssginComplainBean;
 import bean.SubordinateBean;
+import bean.SubordinateVisitedComplainBean;
 import bean.WayPoints;
 
 /**
@@ -99,9 +100,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String TABLE_SUBORDINATE = "tbl_subordinate";
     public static final String TABLE_SERVICE_PHOTO_COMPLAIN  = "tbl_complain_service_photo";
     public static final String TABLE_ASSGIN_COMPLAIN_SUBORDINATE = "tbl_assgin_complain_suborginate";
+    public static final String TABLE_VISIT_COMPLAIN_SUBORDINATE = "tbl_visited_complain_suborginate";
     public static final String TABLE_IMAGES = "tbl_images";
     private static final String TABLE_WayPoints = "wayPoints";
-
 
     public static final String KEY_IMAGES_ID = "imagesId",KEY_IMAGES_NAME = "imagesName",KEY_IMAGES_PATH = "imagesPath",KEY_IMAGE_SELECTED = "imagesSelected",KEY_IMAGES_BILL_NO= "imagesBillNo";
 
@@ -232,6 +233,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String KEY_CMPDT = "cmpdt";
     public static final String KEY_POSNR = "posnr";
     public static final String KEY_REASON = "reason";
+    public static final String KEY_DATE = "cmpdt";
     public static final String KEY_PEND_NO= "cmp_pen_re";
     public static final String KEY_NAME = "name";
     public static final String KEY_CLOSER_RESON = "closer_reason";
@@ -488,7 +490,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + KEY_MAKTX + " TEXT,"
             + KEY_SERNR + " TEXT,"
             + KEY_REASON + " TEXT,"
+            + KEY_DATE + " TEXT,"
             + KEY_WARRANTY_DURATION + " TEXT)";
+
+    private static final String CREATE_TABLE_VISIT_COMPLAIN_SUBORDINATE = "CREATE TABLE IF NOT EXISTS "
+            +  TABLE_VISIT_COMPLAIN_SUBORDINATE + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_CMPNO + " TEXT,"
+            + KEY_DEALER_NAME + " TEXT,"
+            + KEY_CUSTOMER_NAME + " TEXT,"
+            + KEY_MOB_NO + " TEXT,"
+            + KEY_DATE + " TEXT)";
+
 
 
     private static final String CREATE_TABLE_LOCAL_CONVENIENCE = "CREATE TABLE IF NOT EXISTS "
@@ -701,6 +713,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_LOCAL_CONVENIENCE);
         db.execSQL(CREATE_TABLE_SUBORDINATE);
         db.execSQL(CREATE_TABLE_ASSGIN_COMPLAIN_SUBORDINATE);
+        db.execSQL(CREATE_TABLE_VISIT_COMPLAIN_SUBORDINATE);
         db.execSQL(CREATE_TABLE_SITE_AUDIT_IMAGES);
         db.execSQL(CREATE_TABLE_WayPoints);
 
@@ -721,6 +734,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOCAL_CONVENIENCE);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_SUBORDINATE);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_ASSGIN_COMPLAIN_SUBORDINATE);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_VISIT_COMPLAIN_SUBORDINATE);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_IMAGES);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_WayPoints);
 
@@ -4116,6 +4130,55 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         subordinateBean.setSernr(cursor.getString(cursor.getColumnIndex(KEY_SERNR)));
                         subordinateBean.setReason(cursor.getString(cursor.getColumnIndex(KEY_REASON)));
                         subordinateBean.setW_waranty(cursor.getString(cursor.getColumnIndex(KEY_WARRANTY_DURATION)));
+                        subordinateBean.setCmpdt(cursor.getString(cursor.getColumnIndex(KEY_DATE)));
+
+                        subordinateBeanList.add(subordinateBean);
+                        cursor.moveToNext();
+                    }
+                }
+                db.setTransactionSuccessful();
+            }
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+        } finally {
+            db.endTransaction();
+            db.close();
+        }
+
+        return subordinateBeanList;
+    }
+
+    @SuppressLint("Range")
+    public ArrayList<SubordinateAssginComplainBean> getSubordinateAssginComplainNo(String compNo) {
+
+        ArrayList<SubordinateAssginComplainBean> subordinateBeanList = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        db.beginTransaction();
+
+        try {
+            String selectQuery = "";
+            selectQuery = "SELECT * FROM " + TABLE_ASSGIN_COMPLAIN_SUBORDINATE + " WHERE " + KEY_CMPNO+ " = '" + compNo + "'";
+            Log.e("selectQuery===>", selectQuery);
+            Cursor cursor = db.rawQuery(selectQuery, null);
+            Log.e("Count", "&&&" + cursor.getCount());
+            if (cursor.getCount() > 0) {
+                if (cursor.moveToFirst()) {
+                    while (!cursor.isAfterLast()) {
+                        SubordinateAssginComplainBean subordinateBean = new SubordinateAssginComplainBean();
+                        subordinateBean.setCmpno(cursor.getString(cursor.getColumnIndex(KEY_CMPNO)));
+                        subordinateBean.setDelname(cursor.getString(cursor.getColumnIndex(KEY_DEALER_NAME)));
+                        subordinateBean.setCstname(cursor.getString(cursor.getColumnIndex(KEY_CUSTOMER_NAME)));
+                        subordinateBean.setCaddress(cursor.getString(cursor.getColumnIndex(KEY_ADDRESS)));
+                        subordinateBean.setEngg_name(cursor.getString(cursor.getColumnIndex(KEY_ENGG_NAME)));
+                        subordinateBean.setCmblno(cursor.getString(cursor.getColumnIndex(KEY_MOBILE_NO)));
+                        subordinateBean.setMatnr(cursor.getString(cursor.getColumnIndex(KEY_MATNR)));
+                        subordinateBean.setWarranty(cursor.getString(cursor.getColumnIndex(KEY_WARRANTY)));
+                        subordinateBean.setMaktx(cursor.getString(cursor.getColumnIndex(KEY_MAKTX)));
+                        subordinateBean.setSernr(cursor.getString(cursor.getColumnIndex(KEY_SERNR)));
+                        subordinateBean.setReason(cursor.getString(cursor.getColumnIndex(KEY_REASON)));
+                        subordinateBean.setW_waranty(cursor.getString(cursor.getColumnIndex(KEY_WARRANTY_DURATION)));
+                        subordinateBean.setCmpdt(cursor.getString(cursor.getColumnIndex(KEY_DATE)));
 
                         subordinateBeanList.add(subordinateBean);
                         cursor.moveToNext();
@@ -4207,6 +4270,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     values.put(KEY_SERNR, subordinateBean.getSernr());
                     values.put(KEY_REASON, subordinateBean.getReason());
                     values.put(KEY_WARRANTY_DURATION, subordinateBean.getW_waranty());
+                    values.put(KEY_DATE, subordinateBean.getCmpdt());
 
                      db.insert(TABLE_ASSGIN_COMPLAIN_SUBORDINATE, null, values);
                     break;
@@ -4225,6 +4289,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     values.put(KEY_SERNR, subordinateBean.getSernr());
                     values.put(KEY_REASON, subordinateBean.getReason());
                     values.put(KEY_WARRANTY_DURATION, subordinateBean.getW_waranty());
+                    values.put(KEY_DATE, subordinateBean.getCmpdt());
 
                     where = KEY_MOBILE_NO + "='" + subordinateBean.getCmpno() + "'";
 
@@ -4801,4 +4866,86 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return list_document;
     }
 
+    public void updateVistComplainData(String keyUpdate, SubordinateVisitedComplainBean subordinateBean) {
+        long i = 0;
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+        ContentValues values;
+        Log.e("WELCOME","");
+        try {
+            values = new ContentValues();
+            String where = " ";
+            switch (keyUpdate) {
+                case KEY_INSERT:
+                    Log.e("WELCOME","KEY_INSERT");
+                    values.put(KEY_CMPNO, subordinateBean.getCmpno());
+                    values.put(KEY_DEALER_NAME, subordinateBean.getDelname());
+                    values.put(KEY_CUSTOMER_NAME, subordinateBean.getCstname());
+                    values.put(KEY_DATE, subordinateBean.getCmpdt());
+                    values.put(KEY_MOB_NO,subordinateBean.getMblno1());
+
+                    db.insert(TABLE_VISIT_COMPLAIN_SUBORDINATE, null, values);
+                    break;
+
+                case KEY_UPDATE:
+                    Log.e("WELCOME","KEY_UPDATE");
+                    values.put(KEY_CMPNO, subordinateBean.getCmpno());
+                    values.put(KEY_DEALER_NAME, subordinateBean.getDelname());
+                    values.put(KEY_CUSTOMER_NAME, subordinateBean.getCstname());
+                    values.put(KEY_DATE, subordinateBean.getCmpdt());
+                    values.put(KEY_MOB_NO,subordinateBean.getMblno1());
+
+                    where = KEY_CMPNO + "='" + subordinateBean.getCmpno() + "'";
+
+                    i = db.update(TABLE_VISIT_COMPLAIN_SUBORDINATE, values, where, null);
+
+            }
+
+            db.setTransactionSuccessful();
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+        } finally {
+            db.endTransaction();
+            db.close();
+        }
+    }
+
+    @SuppressLint("Range")
+    public List<SubordinateVisitedComplainBean> getSubordinateVsitedComplainList()  {
+
+        ArrayList<SubordinateVisitedComplainBean> subordinateBeanList = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        db.beginTransaction();
+
+        try {
+            String selectQuery = "";
+            selectQuery = "SELECT * FROM " + TABLE_VISIT_COMPLAIN_SUBORDINATE;
+            Cursor cursor = db.rawQuery(selectQuery, null);
+            Log.e("Count", "&&&" + cursor.getCount());
+            if (cursor.getCount() > 0) {
+                if (cursor.moveToFirst()) {
+                    while (!cursor.isAfterLast()) {
+                        SubordinateVisitedComplainBean subordinateBean = new SubordinateVisitedComplainBean();
+                        subordinateBean.setCmpno(cursor.getString(cursor.getColumnIndex(KEY_CMPNO)));
+                        subordinateBean.setDelname(cursor.getString(cursor.getColumnIndex(KEY_DEALER_NAME)));
+                        subordinateBean.setCstname(cursor.getString(cursor.getColumnIndex(KEY_CUSTOMER_NAME)));
+                        subordinateBean.setMblno1(cursor.getString(cursor.getColumnIndex(KEY_MOB_NO)));
+                        subordinateBean.setCmpdt(cursor.getString(cursor.getColumnIndex(KEY_DATE)));
+
+                        subordinateBeanList.add(subordinateBean);
+                        cursor.moveToNext();
+                    }
+                }
+                db.setTransactionSuccessful();
+            }
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+        } finally {
+            db.endTransaction();
+            db.close();
+        }
+
+        return subordinateBeanList;
+    }
 }
