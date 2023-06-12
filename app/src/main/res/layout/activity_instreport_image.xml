@@ -9,205 +9,125 @@
 
 
     <LinearLayout
-        android:layout_above="@+id/rlvRemarkViewViewID"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/transparent"
-        android:orientation="vertical"
-        >
-
-
-
-    <include layout="@layout/toolbar" />
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/rlvButtonViewID"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:orientation="vertical">
+        <include layout="@layout/toolbar"/>
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/toolbar">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerview"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
-
-        <!--       <LinearLayout
-                   android:layout_width="fill_parent"
-                   android:layout_height="fill_parent"
-                   android:orientation="vertical">
-
-                   <TextView
-                       android:id="@+id/photo1"
-                       android:layout_width="match_parent"
-                       android:layout_height="@dimen/space_xxlarge45"
-                       android:layout_marginStart="@dimen/space_mid10"
-                       android:layout_marginTop="@dimen/space_mid6"
-                       android:layout_marginEnd="@dimen/space_mid10"
-                       android:layout_marginBottom="@dimen/space_large15"
-                       android:background="@drawable/icn_box"
-                       android:drawableEnd="@drawable/red_icn"
-                       android:gravity="center_vertical"
-                       android:padding="@dimen/space_mid10"
-                       android:singleLine="true"
-                       android:text="Falty Material/Mager meges"
-                       android:textColor="@color/black"
-                       android:textSize="@dimen/size_xlarge20" />
-
-                   <TextView
-                       android:id="@+id/photo2"
-                       android:layout_width="match_parent"
-                       android:layout_height="@dimen/space_xxlarge45"
-                       android:layout_marginStart="@dimen/space_mid10"
-                       android:layout_marginTop="@dimen/space_mid6"
-                       android:layout_marginEnd="@dimen/space_mid10"
-                       android:layout_marginBottom="@dimen/space_large15"
-                       android:background="@drawable/icn_box"
-                       android:drawableEnd="@drawable/red_icn"
-                       android:gravity="center_vertical"
-                       android:padding="@dimen/space_mid10"
-                       android:singleLine="true"
-                       android:text="Product Full Images"
-                       android:textColor="@color/black"
-                       android:textSize="@dimen/size_xlarge20" />
-
-
-                   <TextView
-                       android:id="@+id/photo3"
-                       android:layout_width="match_parent"
-                       android:layout_height="@dimen/space_xxlarge45"
-                       android:layout_marginStart="@dimen/space_mid10"
-                       android:layout_marginTop="@dimen/space_mid6"
-                       android:layout_marginEnd="@dimen/space_mid10"
-                       android:layout_marginBottom="@dimen/space_large15"
-                       android:background="@drawable/icn_box"
-                       android:drawableEnd="@drawable/red_icn"
-                       android:gravity="center_vertical"
-                       android:padding="@dimen/space_mid10"
-                       android:singleLine="true"
-                       android:text="Cust./Deale/JCC Bill Photo"
-                       android:textColor="@color/black"
-                       android:textSize="@dimen/size_xlarge20" />
-
-
-                   <TextView
-                       android:id="@+id/photo4"
-                       android:layout_width="match_parent"
-                       android:layout_height="@dimen/space_xxlarge45"
-                       android:layout_marginStart="@dimen/space_mid10"
-                       android:layout_marginTop="@dimen/space_mid6"
-                       android:layout_marginEnd="@dimen/space_mid10"
-                       android:layout_marginBottom="@dimen/space_large15"
-                       android:background="@drawable/icn_box"
-                       android:drawableEnd="@drawable/red_icn"
-                       android:gravity="center_vertical"
-                       android:padding="@dimen/space_mid10"
-                       android:singleLine="true"
-                       android:text="Service Center Challan"
-                       android:textColor="@color/black"
-                       android:textSize="@dimen/size_xlarge20" />
-
-                   <TextView
-                       android:id="@+id/photo5"
-                       android:layout_width="match_parent"
-                       android:layout_height="@dimen/space_xxlarge45"
-                       android:layout_marginStart="@dimen/space_mid10"
-                       android:layout_marginTop="@dimen/space_mid6"
-                       android:layout_marginEnd="@dimen/space_mid10"
-                       android:layout_marginBottom="@dimen/space_large15"
-                       android:background="@drawable/icn_box"
-                       android:drawableEnd="@drawable/red_icn"
-                       android:gravity="center_vertical"
-                       android:padding="@dimen/space_mid10"
-                       android:singleLine="true"
-                       android:text="Serial Number Image"
-                       android:textColor="@color/black"
-                       android:textSize="@dimen/size_xlarge20" />
-
-                   <TextView
-                       android:id="@+id/photo6"
-                       android:layout_width="match_parent"
-                       android:layout_height="@dimen/space_xxlarge45"
-                       android:layout_marginStart="@dimen/space_mid10"
-                       android:layout_marginTop="@dimen/space_mid6"
-                       android:layout_marginEnd="@dimen/space_mid10"
-                       android:layout_marginBottom="@dimen/space_large15"
-                       android:background="@drawable/icn_box"
-                       android:drawableEnd="@drawable/red_icn"
-                       android:gravity="center_vertical"
-                       android:padding="@dimen/space_mid10"
-                       android:singleLine="true"
-                       android:text="Damage parts 1"
-                       android:textColor="@color/black"
-                       android:textSize="@dimen/size_xlarge20" />
-
-
-                   <TextView
-                       android:id="@+id/photo7"
-                       android:layout_width="match_parent"
-                       android:layout_height="@dimen/space_xxlarge45"
-                       android:layout_marginStart="@dimen/space_mid10"
-                       android:layout_marginTop="@dimen/space_mid6"
-                       android:layout_marginEnd="@dimen/space_mid10"
-                       android:layout_marginBottom="@dimen/space_large15"
-                       android:background="@drawable/icn_box"
-                       android:drawableEnd="@drawable/red_icn"
-                       android:gravity="center_vertical"
-                       android:padding="@dimen/space_mid10"
-                       android:singleLine="true"
-                       android:text="Damage Photo 2"
-                       android:textColor="@color/black"
-                       android:textSize="@dimen/size_xlarge20" />
-
-
-                   <TextView
-                       android:id="@+id/photo8"
-                       android:layout_width="match_parent"
-                       android:layout_height="@dimen/space_xxlarge45"
-                       android:layout_marginStart="@dimen/space_mid10"
-                       android:layout_marginTop="@dimen/space_mid6"
-                       android:layout_marginEnd="@dimen/space_mid10"
-                       android:layout_marginBottom="@dimen/space_large15"
-                       android:background="@drawable/icn_box"
-                       android:drawableEnd="@drawable/red_icn"
-                       android:gravity="center_vertical"
-                       android:padding="@dimen/space_mid10"
-                       android:singleLine="true"
-                       android:text="Damage Photo 3"
-                       android:textColor="@color/black"
-                       android:textSize="@dimen/size_xlarge20" />
-
-                   <TextView
-                       android:id="@+id/photo9"
-                       android:layout_width="match_parent"
-                       android:layout_height="@dimen/space_xxlarge45"
-                       android:layout_marginStart="@dimen/space_mid10"
-                       android:layout_marginTop="@dimen/space_mid6"
-                       android:layout_marginEnd="@dimen/space_mid10"
-                       android:layout_marginBottom="@dimen/space_large15"
-                       android:background="@drawable/icn_box"
-                       android:drawableEnd="@drawable/red_icn"
-                       android:gravity="center_vertical"
-                       android:padding="@dimen/space_mid10"
-                       android:singleLine="true"
-                       android:text="Damage Photo 4"
-                       android:textColor="@color/black"
-                       android:textSize="@dimen/size_xlarge20" />
+            android:orientation="vertical">
 
 
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
-                   <androidx.recyclerview.widget.RecyclerView
-                       android:id="@+id/file_list"
-                       android:layout_width="match_parent"
-                       android:layout_height="0dp"
-                       android:layout_alignParentBottom="true"
-                       android:visibility="gone"
-                       app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                       app:layout_constraintBottom_toBottomOf="parent"
-                       tool:listitem="@layout/file_list_item" />
+            <LinearLayout
+                android:layout_below="@+id/recyclerview"
+                android:id="@+id/borewell"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Bore well"/>
+                <CheckBox
+                    android:id="@+id/borewellInCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="42dp"
+                    android:paddingTop="5dp"
+                    android:text="In Let"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="@dimen/size_small15" />
+
+                <CheckBox
+                    android:id="@+id/borewellOutCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="5dp"
+                    android:text="Out Let"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="@dimen/size_small15" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/loadLinear"
+                android:layout_below="@+id/borewell"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Transport"/>
+                <CheckBox
+                    android:id="@+id/transportLoadCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="42dp"
+                    android:paddingTop="5dp"
+                    android:text="Load"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="@dimen/size_small15" />
+
+                <CheckBox
+                    android:id="@+id/transportUnloadCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="5dp"
+                    android:text="Unload"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="@dimen/size_small15" />
+
+            </LinearLayout>
+
+            <RelativeLayout
+
+                android:layout_marginBottom="@dimen/_1sdp"
+                android:layout_below="@+id/loadLinear"
+                android:id="@+id/rlvRemarkViewViewID"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_80sdp"
+                android:layout_margin="@dimen/_2sdp"
+                android:background="@color/white">
+
+                <EditText
+                    android:id="@+id/edtRemarkAMTID"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_80sdp"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:layout_marginBottom="@dimen/_5sdp"
+                    android:background="@drawable/bg_shape_item"
+                    android:inputType="text"
+                    android:layout_gravity="top"
+                    android:digits=" abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 "
+                    android:gravity="top"
+                    android:padding="@dimen/_5sdp"
+                    android:singleLine="true"
+                    android:hint="Enter remark here"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_14ssp" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
 
 
-               </LinearLayout>-->
 
 
     </ScrollView>
@@ -216,37 +136,7 @@
 
 
 
-    <RelativeLayout
 
-
-        android:layout_marginBottom="@dimen/_1sdp"
-        android:layout_above="@+id/rlvButtonViewID"
-        android:id="@+id/rlvRemarkViewViewID"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_80sdp"
-        android:layout_margin="@dimen/_2sdp"
-        android:background="@color/white">
-
-        <EditText
-            android:id="@+id/edtRemarkAMTID"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_80sdp"
-            android:layout_marginStart="@dimen/_10sdp"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:layout_marginEnd="@dimen/_10sdp"
-            android:layout_marginBottom="@dimen/_5sdp"
-            android:background="@drawable/bg_shape_item"
-            android:inputType="text"
-            android:layout_gravity="top"
-            android:digits=" abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 "
-            android:gravity="top"
-            android:padding="@dimen/_5sdp"
-            android:singleLine="true"
-            android:hint="Enter remark here"
-            android:textColor="@color/black"
-            android:textSize="@dimen/_14ssp" />
-
-    </RelativeLayout>
 
 
     <RelativeLayout
@@ -267,7 +157,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="Save"
-
             android:fontFamily="@font/open_sans_bold"
             android:textColor="@color/white"
             android:gravity="center"

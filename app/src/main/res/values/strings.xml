@@ -281,4 +281,8 @@
     <string name="end">End</string>
     <string name="pendingSite">Pending Site Complain</string>
     <string name="visitedSite">Visited Site Complain</string>
+    <string name="borwellInlet">Borewell In-let</string>
+    <string name="borwellOutlet">Borewell Out-let</string>
+    <string name="transportLoad">Transport Load</string>
+    <string name="transportUnload">Transport Unload</string>
 </resources>

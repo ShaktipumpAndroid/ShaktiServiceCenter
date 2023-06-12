@@ -35,6 +35,8 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -95,13 +97,17 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
 
 
     LocalConvenienceBean localConvenienceBean;
-    String current_start_date, current_end_date, current_start_time, current_end_time;
+    String current_start_date, current_end_date, current_start_time, current_end_time, username, from_lat,
+     from_lng, to_lat, allLatLong = "", to_lng, value = "1", fullAddress = null, fullAddress1 = null,
+     distance1 = null, startphoto = null, totalWayPoint = "",mobile,enq_docno, cust_nm,
+            mUserID,pendRemarkValue,kunnr, userid,mStatusCheck;
+
     private activity.CustomUtility customutility = null;
     private static final int REQUEST_CODE_PERMISSION = 123;
     WayPoints wayPoints;
     LocationManager locationManager;
     Context mContext;
-    String mobile;
+
     Handler mHandler = new android.os.Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -112,39 +118,28 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
 
     FusedLocationProviderClient fusedLocationClient;
     int selectedIndex;
-    boolean isBackPressed = false,isUpdate = false;
+    boolean isBackPressed = false, isUpdate = false;
     AlertDialog alertDialog;
-    String username;
-    String from_lat;
-    String from_lng;
-    String to_lat;
-    String allLatLong = "";
-    String to_lng, value = "1";
-    String fullAddress = null;
-    String fullAddress1 = null;
-    String distance1 = null;
-    String startphoto = null,totalWayPoint="";
 
     private static final int PICK_FROM_FILE = 102;
     List<ImageModel> imageArrayList = new ArrayList<>();
     List<String> itemNameList = new ArrayList<>();
     List<ImageModel> imageList = new ArrayList<>();
     List<ImageModel> sendimageList = new ArrayList<>();
-    String enq_docno,cust_nm;
+
     DatabaseHelper dataHelper;
-    double inst_latitude_double,
-            inst_longitude_double;
+    double inst_latitude_double, inst_longitude_double;
 
     RecyclerView recyclerview;
     Toolbar mToolbar;
     ImageSelectionAdapter ImageAdapter;
-    String mUserID;
+
     TextView txtBTNSaveID;
     EditText edtRemarkAMTID;
     ProgressDialog progressDialog;
-    String pendRemarkValue;
-    private String  mStatusCheck;
-    String kunnr,userid;
+
+    CheckBox borewellInCheckBox,borewellOutCheckBox,transportLoadCheckBox,transportUnloadCheckBox;
+
     private ArrayList<String> photoPaths = new ArrayList<>();
     private ArrayList<String> docPaths = new ArrayList<>();
 
@@ -154,38 +149,119 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
         setContentView(R.layout.activity_instreport_image);
         mContext = this;
 
-        mUserID = activity.CustomUtility.getSharedPreferences(mContext,"userID");
-        dataHelper = new DatabaseHelper(mContext);
 
         getGpsLocation();
+
+        Init();
+
+    }
+
+    private void Init() {
+        mUserID = activity.CustomUtility.getSharedPreferences(mContext, "userID");
+        dataHelper = new DatabaseHelper(mContext);
+
         customutility = new activity.CustomUtility();
-        txtBTNSaveID =  findViewById(R.id.txtBTNSaveID);
-        mobile = CustomUtility.getSharedPreferences(mContext,"username");
+        txtBTNSaveID = findViewById(R.id.txtBTNSaveID);
+        mobile = CustomUtility.getSharedPreferences(mContext, "username");
         locationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
-        kunnr = CustomUtility.getSharedPreferences(mContext,"kunnr");
-        userid = CustomUtility.getSharedPreferences(mContext,"username");
+        kunnr = CustomUtility.getSharedPreferences(mContext, "kunnr");
+        userid = CustomUtility.getSharedPreferences(mContext, "username");
+
+        recyclerview = findViewById(R.id.recyclerview);
+        edtRemarkAMTID = findViewById(R.id.edtRemarkAMTID);
+        mToolbar = findViewById(R.id.toolbar);
+        borewellInCheckBox = findViewById(R.id.borewellInCheckBox);
+        borewellOutCheckBox = findViewById(R.id.borewellOutCheckBox);
+        transportLoadCheckBox = findViewById(R.id.transportLoadCheckBox);
+        transportUnloadCheckBox = findViewById(R.id.transportUnloadCheckBox);
+
+        setSupportActionBar(mToolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mToolbar.setTitle(getResources().getString(R.string.title));
+
+        CustomUtility.setSharedPreference(mContext, "AUDSYNC" + enq_docno, "");
+
+        Bundle bundle = getIntent().getExtras();
+        enq_docno = bundle.getString("inst_id");
+        cust_nm = bundle.getString("cust_name");
+
+        Log.e("Values===>", enq_docno + "  " + cust_nm);
+
+        SetAdapter();
+        listener();
+
+    }
+
+    private void listener() {
+        mToolbar.setNavigationOnClickListener(view -> {
+            onBackPressed();
+
+        });
 
         txtBTNSaveID.setOnClickListener(view -> {
             Save();
-        pendRemarkValue = edtRemarkAMTID.getText().toString().trim();
+            pendRemarkValue = edtRemarkAMTID.getText().toString().trim();
             retriveArrayList();
-           Log.e("Selected====>",CustomUtility.getSharedPreferences(mContext,"AUDSYNC" + enq_docno)) ;
+            if (CustomUtility.getSharedPreferences(mContext, "AUDSYNC" + enq_docno).equalsIgnoreCase("1")) {
+                if (!pendRemarkValue.isEmpty()) {
+                    calculateDistance();
 
-        if (CustomUtility.getSharedPreferences(mContext,"AUDSYNC" + enq_docno).equalsIgnoreCase("1")){
-           if(!pendRemarkValue.isEmpty()){
-               Log.e("userid===>", userid);
-               calculateDistance();
-
-          }else {
-         Toast.makeText(mContext, "Enter Remark", Toast.LENGTH_SHORT).show();
-     }
-    }
-    else {
-      Toast.makeText(mContext, "Select all image", Toast.LENGTH_SHORT).show();
-    }
+                } else {
+                    Toast.makeText(mContext, "Enter Remark", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(mContext, "Select all image", Toast.LENGTH_SHORT).show();
+            }
         });
-        Init();
+
+        borewellInCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    addItemInImageList(getResources().getString(R.string.borwellInlet));
+                }else {
+                    removeItemFromList(getResources().getString(R.string.borwellInlet));
+                }
+            }
+        });
+
+        borewellOutCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    addItemInImageList(getResources().getString(R.string.borwellOutlet));
+                }else {
+                    removeItemFromList(getResources().getString(R.string.borwellOutlet));
+                }
+            }
+        });
+
+        transportLoadCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    addItemInImageList(getResources().getString(R.string.transportLoad));
+                }else {
+                    removeItemFromList(getResources().getString(R.string.transportLoad));
+                }
+            }
+        });
+
+        transportUnloadCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    addItemInImageList(getResources().getString(R.string.transportUnload));
+                }else {
+                    removeItemFromList(getResources().getString(R.string.transportUnload));
+                }
+            }
+        });
     }
+
+
+
 
     private void calculateDistance() {
         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
@@ -412,7 +488,7 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
                         }
 
 
-                    }else {
+                    } else {
                         Toast.makeText(getApplicationContext(), R.string.all_permission, Toast.LENGTH_LONG).show();
                     }
                 } else {
@@ -434,7 +510,7 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
                             startLocationService();
                         }
 
-                    }else {
+                    } else {
                         Toast.makeText(InstReportImageActivity.this, R.string.all_permission, Toast.LENGTH_LONG).show();
                     }
 
@@ -451,34 +527,7 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
     }
 
 
-    private void Init() {
-        recyclerview = findViewById(R.id.recyclerview);
-        edtRemarkAMTID = findViewById(R.id.edtRemarkAMTID);
-        mToolbar =  findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
-        Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        mToolbar.setTitle(getResources().getString(R.string.title));
 
-        CustomUtility.setSharedPreference(mContext, "AUDSYNC" + enq_docno, "");
-
-        Bundle bundle = getIntent().getExtras();
-        enq_docno= bundle.getString("inst_id");
-        cust_nm= bundle.getString("cust_name");
-
-        Log.e("Values===>",enq_docno +"  "+ cust_nm);
-
-        SetAdapter();
-        listener();
-
-    }
-
-    private void listener() {
-        mToolbar.setNavigationOnClickListener(view -> {
-                onBackPressed();
-
-        });
-    }
 
     private boolean Save() {
 
@@ -488,17 +537,17 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
             Toast.makeText(this, getResources().getString(R.string.Please_Product_photo), Toast.LENGTH_SHORT).show();
         } else if (!imageArrayList.get(2).isImageSelected()) {
             Toast.makeText(this, getResources().getString(R.string.Please_Cust_Dealer_Photo), Toast.LENGTH_SHORT).show();
-        }else if (!imageArrayList.get(3).isImageSelected()) {
+        } else if (!imageArrayList.get(3).isImageSelected()) {
             Toast.makeText(this, getResources().getString(R.string.Please_Sevice_CC), Toast.LENGTH_SHORT).show();
         } else if (!imageArrayList.get(4).isImageSelected()) {
             Toast.makeText(this, getResources().getString(R.string.Please_Serial_Photo), Toast.LENGTH_SHORT).show();
         } else if (!imageArrayList.get(5).isImageSelected()) {
             Toast.makeText(this, getResources().getString(R.string.Please_Damage), Toast.LENGTH_SHORT).show();
-        }else if (!imageArrayList.get(6).isImageSelected()) {
+        } else if (!imageArrayList.get(6).isImageSelected()) {
             Toast.makeText(this, getResources().getString(R.string.Please_Damage_1), Toast.LENGTH_SHORT).show();
         } else if (!imageArrayList.get(7).isImageSelected()) {
             Toast.makeText(this, getResources().getString(R.string.Please_Damage_2), Toast.LENGTH_SHORT).show();
-        }else {
+        } else {
             CustomUtility.setSharedPreference(mContext, "AUDSYNC" + enq_docno, "1");
             isBackPressed = true;
         }
@@ -535,7 +584,7 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
 
             for (int i = 0; i < imageList.size(); i++) {
                 for (int j = 0; j < itemNameList.size(); j++) {
-                    if (imageList.get(i).getBillNo()!=null &&
+                    if (imageList.get(i).getBillNo() != null &&
                             imageList.get(i).getBillNo().trim().equals(enq_docno)) {
                         if (imageList.get(i).getName().equals(itemNameList.get(j))) {
                             ImageModel imageModel = new ImageModel();
@@ -556,11 +605,6 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
     }
 
 
-
-
-
-
-
     public void onPickDoc() {
 
         File file = new File(Environment.getExternalStorageDirectory(),
@@ -572,9 +616,6 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
         //intent.setType("application/pdf");
         startActivityForResult(intent, 1);
     }
-
-
-
 
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -629,7 +670,6 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
     }
 
 
-
     public String getImagePath(Uri uri) {
 
         String s = null;
@@ -644,8 +684,8 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
         } else {
             String[] projection = {MediaStore.Images.Media.DATA};
 
-            Cursor cursor1 = ( mContext).getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, MediaStore.Images.Media._ID + " = ? ", new String[]{image_id}, null);
-            Cursor cursor2 = ( mContext).getContentResolver().query(uri, projection, null, null, null);
+            Cursor cursor1 = (mContext).getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, MediaStore.Images.Media._ID + " = ? ", new String[]{image_id}, null);
+            Cursor cursor2 = (mContext).getContentResolver().query(uri, projection, null, null, null);
 
             Log.e("CUR1", "&&&&" + cursor1);
             Log.e("CUR2", "&&&&" + cursor2);
@@ -688,27 +728,25 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
         extras.putString("key", key);
         extras.putString("data", "INST");*/
 
-       // CustomUtility.setSharedPreference(mContext, "data", data);
+        // CustomUtility.setSharedPreference(mContext, "data", data);
 
         WebURL.mViewPhotoGraph = data;
 
-      //  i_display_image.putExtras(extras);
+        //  i_display_image.putExtras(extras);
         startActivity(i_display_image);
     }
 
 
-
     private boolean deleteDirectory(File path) {
-        if( path.exists() ) {
+        if (path.exists()) {
             File[] files = path.listFiles();
             if (files == null) {
                 return false;
             }
-            for(File file : files) {
-                if(file.isDirectory()) {
+            for (File file : files) {
+                if (file.isDirectory()) {
                     deleteDirectory(file);
-                }
-                else {
+                } else {
                     file.delete();
                 }
             }
@@ -742,7 +780,7 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
 
     private void selectImage(String value) {
 
-        Log.e("select==>", "status"+value);
+        Log.e("select==>", "status" + value);
 
         LayoutInflater inflater = (LayoutInflater) InstReportImageActivity.this.getSystemService(
                 Context.LAYOUT_INFLATER_SERVICE);
@@ -836,10 +874,10 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
 
         DatabaseHelper db = new DatabaseHelper(getApplicationContext());
 
-        if( isUpdate){
-            db.updateImageRecord(imageArrayList.get(selectedIndex).getName(), path,true, enq_docno);
-        }else {
-            db.insertImageRecord(imageArrayList.get(selectedIndex).getName(), path,true, enq_docno);
+        if (isUpdate) {
+            db.updateImageRecord(imageArrayList.get(selectedIndex).getName(), path, true, enq_docno);
+        } else {
+            db.insertImageRecord(imageArrayList.get(selectedIndex).getName(), path, true, enq_docno);
         }
         ImageAdapter.notifyDataSetChanged();
 
@@ -871,7 +909,7 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
             String invc_done = null;
             String obj2 = null;
 
-            String mobile = CustomUtility.getSharedPreferences(getApplicationContext(),"username");
+            String mobile = CustomUtility.getSharedPreferences(getApplicationContext(), "username");
 
             JSONArray ja_invc_data = new JSONArray();
 
@@ -884,10 +922,10 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
                 jsonObj.put("mobile", mobile);
                 jsonObj.put("sc_status", mStatusCheck);
                 jsonObj.put("ACTION", pendRemarkValue);
-              //  jsonObj.put("",);
+                //  jsonObj.put("",);
 
 
-                System.out.println("only_text_jsonObj==>>"+jsonObj);
+                System.out.println("only_text_jsonObj==>>" + jsonObj);
 
                 if (sendimageList.size() > 0) {
 
@@ -916,7 +954,7 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
                         jsonObj.put("PHOTO7", CustomUtility.getBase64FromBitmap(InstReportImageActivity.this, sendimageList.get(7).getImagePath()));
                     }
                 }
-                
+
                 ja_invc_data.put(jsonObj);
 
             } catch (Exception e) {
@@ -928,7 +966,7 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
             param1_invc.add(new BasicNameValuePair("pending_save", String.valueOf(ja_invc_data)));
             Log.e("DATA$$$$", "" + param1_invc.toString());
 
-          Log.e("param1_invc_vihu==>>",""+param1_invc);
+            Log.e("param1_invc_vihu==>>", "" + param1_invc);
             try {
 
                 StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().build();
@@ -945,7 +983,7 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
                     String mStatus = object.getString("status");
                     final String mMessage = object.getString("message");
                     String jo11 = object.getString("response");
-                    System.out.println("jo11==>>"+jo11);
+                    System.out.println("jo11==>>" + jo11);
                     if (mStatus.equalsIgnoreCase("true")) {
                         Message msg = new Message();
                         msg.obj = "Data Submitted Successfully...";
@@ -955,9 +993,7 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
 
                         progressDialog.dismiss();
                         //  finish();
-                    }
-                    else
-                    {
+                    } else {
 
                         Message msg = new Message();
                         msg.obj = "Data Not Submitted, Please try After Sometime.";
@@ -1071,7 +1107,7 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
 
                 }
                 break;*//*
-           *//* case DatabaseHelper.KEY_PHOTO6:
+     *//* case DatabaseHelper.KEY_PHOTO6:
                 if (photo6_text == null || photo6_text.isEmpty()) {
                     if(CustomUtility.getSharedPreferences(mContext,"borewellstatus").equalsIgnoreCase("1")){
                         if (!TextUtils.isEmpty(CustomUtility.getSharedPreferences(mContext, "borewellstatus" + enq_docno))) {
@@ -1171,7 +1207,7 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
 
 
         List<ImageModel> Images = dataHelper.getAllImagesData();
-        Log.e("lrTransportImages",""+Images.size());
+        Log.e("lrTransportImages", "" + Images.size());
         for (int i = 0; i < Images.size(); i++) {
 
             ImageModel imageModel = new ImageModel();
@@ -1181,7 +1217,7 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
             imageModel.setImageSelected(true);
             sendimageList.add(imageModel);
         }
-        Log.e("imageList.size()","2==="+sendimageList.size());
+        Log.e("imageList.size()", "2===" + sendimageList.size());
 
     }
 
@@ -1215,16 +1251,16 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
 
         Log.e("jsonSize=====>", String.valueOf(json.length));
         if (json.length > 20) {
-            double position = (double) json.length /8;
+            double position = (double) json.length / 8;
             Log.e("position=====>", String.valueOf(position));
-            position = position*2 ;
+            position = position * 2;
 
             int pos = (int) position;
             Log.e("position1=====>", String.valueOf(position));
             Log.e("pos=====>", String.valueOf(Math.round(pos)));
 
             for (int i = 0; i <= json.length; i++) {
-                if(i!=0 && i!=json.length-1) {
+                if (i != 0 && i != json.length - 1) {
                     if (totalWayPoint.isEmpty()) {
                         if (!totalWayPoint.contains(json[pos * i])) {
 
@@ -1265,8 +1301,8 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
         Log.e("totalWayPoint", totalWayPoint);
 
         Map<String, String> mapQuery = new HashMap<>();
-        mapQuery.put("origin",lat1+ "," + lon1);
-        mapQuery.put("destination", lat2+ "," + lon2);
+        mapQuery.put("origin", lat1 + "," + lon1);
+        mapQuery.put("destination", lat2 + "," + lon2);
         mapQuery.put("waypoints", totalWayPoint);
         mapQuery.put("key", getResources().getString(R.string.google_API_KEY));
 
@@ -1293,7 +1329,7 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
                     Log.e("Response======>", String.valueOf(response.body()));
 
 
-                    fullAddress = Utility.retrieveAddress(lat1, lon1,getApplicationContext());
+                    fullAddress = Utility.retrieveAddress(lat1, lon1, getApplicationContext());
 
                     fullAddress1 = Utility.retrieveAddress(lat2, lon2, getApplicationContext());
 
@@ -1367,7 +1403,7 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
                             if (!ettrvlmod.getText().toString().isEmpty()) {
                                 new savePendingPhotoDataAPI().execute();
 
-                               // progressDialog = ProgressDialog.show(getApplicationContext(), "", getResources().getString(R.string.sending_please_wait));
+                                // progressDialog = ProgressDialog.show(getApplicationContext(), "", getResources().getString(R.string.sending_please_wait));
 
                                 new Thread(() -> runOnUiThread(() -> {
                                     LocalConvenienceBean localConvenienceBean = new LocalConvenienceBean(username, current_start_date,
@@ -1386,7 +1422,7 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
                                     );
 
                                     dataHelper.updateLocalconvenienceData(localConvenienceBean);
-                                    WayPoints  wayPoints = dataHelper.getWayPointsData(localConvenienceBean.getBegda(), localConvenienceBean.getFrom_time());
+                                    WayPoints wayPoints = dataHelper.getWayPointsData(localConvenienceBean.getBegda(), localConvenienceBean.getFrom_time());
 
                                     WayPoints wp1 = new WayPoints(String.valueOf(username), current_start_date,
                                             current_end_date,
@@ -1427,12 +1463,12 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
 
     public void SyncLocalConveneinceDataToSap(String mode, String endat, String endtm, String mFlotDistanceKM, String allLatLong) {
 
-        String docno_sap ;
-        String invc_done ;
+        String docno_sap;
+        String invc_done;
 
         DatabaseHelper db = new DatabaseHelper(mContext);
 
-        LocalConvenienceBean param_invc ;
+        LocalConvenienceBean param_invc;
 
         param_invc = db.getLocalConvinienceData(endat, endtm);
 
@@ -1441,8 +1477,8 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
         JSONObject jsonObj = new JSONObject();
 
         try {
-            jsonObj.put("cmpno",enq_docno);
-            jsonObj.put("mobile",mobile );
+            jsonObj.put("cmpno", enq_docno);
+            jsonObj.put("mobile", mobile);
             jsonObj.put("begda", CustomUtility.formateDate1(param_invc.getBegda()));
             jsonObj.put("endda", CustomUtility.formateDate1(param_invc.getEndda()));
             jsonObj.put("start_time", param_invc.getFrom_time());
@@ -1549,5 +1585,25 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
         }
     }
 
+    public void addItemInImageList(String Name){
+        ImageModel imageModel = new ImageModel();
+        imageModel.setName(Name);
+        imageModel.setImagePath("");
+        imageModel.setBillNo("");
+        imageModel.setImageSelected(false);
+        imageArrayList.add(imageModel);
 
+        ImageAdapter.notifyDataSetChanged();
+    }
+    private void removeItemFromList(String name) {
+        for (int i=0; i<imageArrayList.size(); i++){
+
+            if(imageArrayList.get(i).getName().equals(name)){
+                imageArrayList.remove(i);
+
+            }
+        }
+
+        ImageAdapter.notifyDataSetChanged();
+    }
 }

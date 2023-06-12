@@ -3,6 +3,7 @@ package activity;
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -193,6 +194,7 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
         }).start();
     }
 
+    @SuppressLint("SuspiciousIndentation")
     public void syncState() {
         progressBar = new ProgressDialog(this);
         progressBar.setCancelable(false);
@@ -394,6 +396,7 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
     private void Logout() {
 
         dataHelper.deleteTableData(DatabaseHelper.TABLE_ASSGIN_COMPLAIN_SUBORDINATE);
+        dataHelper.deleteTableData(DatabaseHelper.TABLE_VISIT_COMPLAIN_SUBORDINATE);
         dataHelper.deleteSiteAuditImages();
 
         CustomUtility.setSharedPreference(mContext, Constant.LocalConveyance, "0");
@@ -421,6 +424,13 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
     protected void onResume() {
         super.onResume();
 
+/*
+        if(!userType.equalsIgnoreCase("1")){
+
+            dataHelper.deleteTableData(DatabaseHelper.TABLE_ASSGIN_COMPLAIN_SUBORDINATE);
+            downloadSubordinateData();
+        }
+*/
 
     }
 
