@@ -52,7 +52,7 @@ public class VisitedComplainDetailActivity extends AppCompatActivity {
     private  String mStatusValue= "";
     private  String mMobileNumber= "";
     private  String mUserID= "";
-    //private BaseRequest baseRequest;
+
     public TextView txtBTNActionID,  txtBTNUploadID;
     private RecyclerView rclyVisitedComplainList;
     private VisitedDetailsListAdapter mPendingComplainDetailsListAdapter;
@@ -102,16 +102,6 @@ public class VisitedComplainDetailActivity extends AppCompatActivity {
         initClickEvent();
         callgetCompalinAllListAPI();
 
-
-        if(mStatusValue.equalsIgnoreCase("01"))
-        {
-            rlvBottomViewID.setVisibility(View.VISIBLE);
-        }
-        else
-        {
-            rlvBottomViewID.setVisibility(View.GONE);
-        }
-
     }
 
     private void initClickEvent() {
@@ -141,7 +131,7 @@ public class VisitedComplainDetailActivity extends AppCompatActivity {
                 Intent intent = new Intent(mContext, InstReportImageActivity.class);
                 intent.putExtra("inst_id", mComplainDetailListResponse.get(0).getCmpno());
                 intent.putExtra("cust_name", mComplainDetailListResponse.get(0).getCloserReason());
-                intent.putExtra("StatusCheck", mStatusValue);
+                intent.putExtra("StatusCheck", "07");
 
                 mContext.startActivity(intent);
 

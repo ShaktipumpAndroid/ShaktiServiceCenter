@@ -80,6 +80,7 @@ public class PendingComplainDetailsListAdapter extends RecyclerView.Adapter<Pend
        holder.txtForwordID.setOnClickListener(v -> {
            Intent mIntent = new Intent(mContext, ForwardList.class);
            mIntent.putExtra("comNo",mComplainDetailListResponse.get(position).getCmpno());
+           mIntent.putExtra("status","01");
            mContext.startActivity(mIntent);
        });
 

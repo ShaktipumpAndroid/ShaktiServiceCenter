@@ -2,6 +2,7 @@ package adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,8 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
 import java.util.List;
+
+import activity.ForwardList;
 import bean.SubordinateAssginComplainBean;
 
 public class AssginPendingComplainDetailsListAdapter extends RecyclerView.Adapter<AssginPendingComplainDetailsListAdapter.ViewHolder> {
@@ -60,10 +63,12 @@ public void onBindViewHolder(final ViewHolder holder, @SuppressLint("RecyclerVie
         mContext.startActivity(shareIntent);
 
         });*/
+
         holder.txtForwordID.setVisibility(View.GONE);
-     /*   holder.txtForwordID.setOnClickListener(v -> {
+      /*  holder.txtForwordID.setOnClickListener(v -> {
         Intent mIntent = new Intent(mContext, ForwardList.class);
         mIntent.putExtra("comNo",mComplainDetailListResponse.get(position).getCmpno());
+        mIntent.putExtra("status","01");
         mContext.startActivity(mIntent);
         });*/
 

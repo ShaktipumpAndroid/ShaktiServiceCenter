@@ -73,6 +73,7 @@ public class VisitedDetailsListAdapter extends RecyclerView.Adapter<VisitedDetai
         holder.txtForwordID.setOnClickListener(v -> {
             Intent mIntent = new Intent(mContext, ForwardList.class);
             mIntent.putExtra("comNo",mComplainDetailListResponse.get(position).getCmpno());
+            mIntent.putExtra("status","07");
             mContext.startActivity(mIntent);
         });
 

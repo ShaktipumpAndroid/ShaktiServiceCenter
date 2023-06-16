@@ -46,7 +46,7 @@ public class ForwardList extends AppCompatActivity {
     TextView txtSubmitPhotoID;
     DatabaseHelper db;
     Toolbar toolbar;
-    String complainNo,userid;
+    String complainNo,userid,status;
     private BaseRequest baseRequest;
     String compNo = null, mobileNo = null , name = null;
 
@@ -59,6 +59,7 @@ public class ForwardList extends AppCompatActivity {
         baseRequest = new BaseRequest(this);
         context = this;
         complainNo = bundle.getString("comNo");
+        status = bundle.getString("status");
         userid = CustomUtility.getSharedPreferences(context,"username");
         Log.e("complain===>",""+complainNo);
 
@@ -142,6 +143,7 @@ public class ForwardList extends AppCompatActivity {
             jsonObj.put("cmpno",compNo);
             jsonObj.put("mobile",mobileNo);
             jsonObj.put("kunnr",userid);
+            jsonObj.put("sc_status",status);
 
             ja_invc_data.put(jsonObj);
 

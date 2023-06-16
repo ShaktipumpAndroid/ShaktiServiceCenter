@@ -174,7 +174,10 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
             
             if (CustomUtility.getSharedPreferences(mContext, "AUDSYNC" + enq_docno).equalsIgnoreCase("1")) {
                 if (!pendRemarkValue.isEmpty()) {
-                    new savePendingPhotoDataAPI().execute();
+                  //  new savePendingPhotoDataAPI().execute();
+
+                    Log.e("Status==>",mStatusCheck);
+
                 } else {
                     Toast.makeText(mContext, "Enter Remark", Toast.LENGTH_SHORT).show();
                 }
@@ -732,6 +735,7 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
                 jsonObj.put("mobile", mobile);
                 jsonObj.put("sc_status", mStatusCheck);
                 jsonObj.put("ACTION", pendRemarkValue);
+
                 System.out.println("only_text_jsonObj==>>" + jsonObj);
 
                 if (imageArrayList.size() > 0) {
@@ -1039,7 +1043,7 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
 
                         if (activity.CustomUtility.isOnline(getApplicationContext())) {
                             if (!ettrvlmod.getText().toString().isEmpty()) {
-                                new savePendingPhotoDataAPI().execute();
+                                //new savePendingPhotoDataAPI().execute();
 
                                 new Thread(() -> runOnUiThread(() -> {
                                     LocalConvenienceBean localConvenienceBean = new LocalConvenienceBean(username, current_start_date,
