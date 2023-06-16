@@ -23,7 +23,7 @@ public class PendingComplainDetailsListAdapter extends RecyclerView.Adapter<Pend
 
     private final Context mContext;
     private final String mMobileNumber;
-
+    private final String status;
     private final List<ComplainDetailListResponse> mComplainDetailListResponse;
 
    /* public PendingComplainListAdapter(Context mContext, List<ComplainAllResponse> mComplainAllResponse) {
@@ -33,10 +33,11 @@ public class PendingComplainDetailsListAdapter extends RecyclerView.Adapter<Pend
 
     }*/
 
-    public PendingComplainDetailsListAdapter(Context mContext, List<ComplainDetailListResponse> mComplainDetailListResponse, String mMobileNumber) {
+    public PendingComplainDetailsListAdapter(Context mContext, List<ComplainDetailListResponse> mComplainDetailListResponse, String mMobileNumber, String stauts) {
         this.mContext = mContext;
         this.mComplainDetailListResponse = mComplainDetailListResponse;
         this.mMobileNumber = mMobileNumber;
+        this.status = stauts;
     }
 
 
@@ -76,6 +77,12 @@ public class PendingComplainDetailsListAdapter extends RecyclerView.Adapter<Pend
            mContext.startActivity(shareIntent);
 
        });
+
+       if (status == "02"){
+           holder.txtForwordID.setVisibility(View.GONE);
+       }else {
+           holder.txtForwordID.setVisibility(View.VISIBLE);
+       }
 
        holder.txtForwordID.setOnClickListener(v -> {
            Intent mIntent = new Intent(mContext, ForwardList.class);

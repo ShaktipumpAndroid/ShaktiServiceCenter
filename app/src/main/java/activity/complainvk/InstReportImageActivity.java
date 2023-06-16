@@ -155,7 +155,7 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
         Bundle bundle = getIntent().getExtras();
         enq_docno = bundle.getString("inst_id");
         cust_nm = bundle.getString("cust_name");
-
+        mStatusCheck = bundle.getString("StatusCheck");
         Log.e("Values===>", enq_docno + "  " + cust_nm);
 
         SetAdapter();
@@ -174,9 +174,7 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
             
             if (CustomUtility.getSharedPreferences(mContext, "AUDSYNC" + enq_docno).equalsIgnoreCase("1")) {
                 if (!pendRemarkValue.isEmpty()) {
-                  //  new savePendingPhotoDataAPI().execute();
-
-                    Log.e("Status==>",mStatusCheck);
+                    new savePendingPhotoDataAPI().execute();
 
                 } else {
                     Toast.makeText(mContext, "Enter Remark", Toast.LENGTH_SHORT).show();

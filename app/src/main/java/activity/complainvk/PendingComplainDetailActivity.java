@@ -406,7 +406,7 @@ private String textRemarkValue;
                         runOnUiThread(new Runnable() {
                             public void run() {
                                 // Toast.makeText(mContext, mMessage, Toast.LENGTH_SHORT).show();
-                                mPendingComplainDetailsListAdapter = new PendingComplainDetailsListAdapter(mContext, mComplainDetailListResponse, mMobileNumber);
+                                mPendingComplainDetailsListAdapter = new PendingComplainDetailsListAdapter(mContext, mComplainDetailListResponse, mMobileNumber,mStatusValue);
                                 rclyPendingComplainList.setAdapter(mPendingComplainDetailsListAdapter);
                                 progressDialog.dismiss();
                             }
