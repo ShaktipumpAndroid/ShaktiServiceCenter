@@ -314,19 +314,11 @@ private String textRemarkValue;
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().build();
         StrictMode.setThreadPolicy(policy);
 
-        //   username = inputName.getText().toString();
-        //   password = inputPassword.getText().toString();
         final ArrayList<NameValuePair> param = new ArrayList<NameValuePair>();
         param.clear();
-        param.add(new BasicNameValuePair("cmpno", mComplainNO));//kunur it means user id
-        param.add(new BasicNameValuePair("STATUS", mStatusValue));///Pending Complaint
-        // param.add(new BasicNameValuePair("mobno", mLRMobileValue));
+        param.add(new BasicNameValuePair("cmpno", mComplainNO));
+        param.add(new BasicNameValuePair("STATUS", mStatusValue));
 
-        //  jsonObject.addProperty("lrno", mLRNumberValue);
-        // jsonObject.addProperty("mobno", mLRMobileValue);
-
-        //  param.add(new BasicNameValuePair("pernr", username));
-        // param.add(new BasicNameValuePair("pass", password));
         /******************************************************************************************/
 /*                   server connection
 /******************************************************************************************/

@@ -1,4 +1,4 @@
-package activity.complainvk;
+package activity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -24,13 +24,12 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import activity.AdaperVk.PendingComplainListAdapter;
+import activity.AdaperVk.SubordinateVisitedListAdapter;
 import activity.BeanVk.ComplainAllResponse;
-import activity.CustomUtility;
 import webservice.CustomHttpClient;
 import webservice.WebURL;
 
-public class PendingComplainListActivity extends AppCompatActivity {
+public class SubordinateVisitedListActivity extends AppCompatActivity {
 
     private Context mContext;
     private ProgressDialog progressDialog;
@@ -41,15 +40,15 @@ public class PendingComplainListActivity extends AppCompatActivity {
     private  String mHeaderTittle = "";
     private  String mStatusValue = "";
     private String mUserID;
-    //private BaseRequest baseRequest;
 
     private Intent mmIntent;
-    private PendingComplainListAdapter mPendingComplainListAdapter;
+    private SubordinateVisitedListAdapter mPendingComplainListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pending_complain_list);
+        setContentView(R.layout.activity_subordinate_visited_list);
+
         mContext = this;
         mmIntent = getIntent();
         initView();
@@ -57,10 +56,10 @@ public class PendingComplainListActivity extends AppCompatActivity {
 
     private void initView() {
 
-         mUserID = CustomUtility.getSharedPreferences(mContext,"userID");
+        mUserID = CustomUtility.getSharedPreferences(mContext,"userID");
 
-        mHeaderTittle = mmIntent.getStringExtra("complaint");
-        mStatusValue = mmIntent.getStringExtra("StatusValue");
+        mHeaderTittle = mmIntent.getStringExtra("heading");
+        mStatusValue = mmIntent.getStringExtra("complaint");
 
         mComplainAllResponse = new ArrayList<>();
         imgBackID = findViewById(R.id.imgBackID);
@@ -71,8 +70,11 @@ public class PendingComplainListActivity extends AppCompatActivity {
         txtHeaderID.setText(mHeaderTittle);
 
         initClickEvent();
-        callgetCompalinAllListAPI();
+        callVisitedListAPI();
+
+        Log.e("Values===>",mStatusValue+"  ,  "+ mUserID);
     }
+
 
     private void initClickEvent() {
 
@@ -80,7 +82,7 @@ public class PendingComplainListActivity extends AppCompatActivity {
 
     }
 
-    public void callgetCompalinAllListAPI() {
+    private void callVisitedListAPI() {
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().build();
         StrictMode.setThreadPolicy(policy);
@@ -88,7 +90,7 @@ public class PendingComplainListActivity extends AppCompatActivity {
         final ArrayList<NameValuePair> param = new ArrayList<>();
         param.clear();
         param.add(new BasicNameValuePair("kunnr", mUserID));//kunur it means user id
-        param.add(new BasicNameValuePair("status", mStatusValue));///Pending Complaint
+        param.add(new BasicNameValuePair("cmpno", mStatusValue));///Pending Complaint
 
         /******************************************************************************************/
 /*                   server connection
@@ -100,9 +102,8 @@ public class PendingComplainListActivity extends AppCompatActivity {
             public void run() {
                 try {
 
-                    String obj = CustomHttpClient.executeHttpPost1(WebURL.PENDING_COMPLAIN_ALL_LIST_VK_PAGE, param);
-                    Log.d("check_error", obj);
-                    Log.e("check_error", obj);
+                    String obj = CustomHttpClient.executeHttpPost1(WebURL.VISITED_COMPLAIN_VK_PAGE, param);
+
 /******************************************************************************************/
 /*                       get JSONwebservice Data
 /******************************************************************************************/
@@ -167,7 +168,7 @@ public class PendingComplainListActivity extends AppCompatActivity {
 
                         runOnUiThread(() -> {
 
-                            mPendingComplainListAdapter = new PendingComplainListAdapter(mContext, mComplainAllResponse, mStatusValue);
+                            mPendingComplainListAdapter = new SubordinateVisitedListAdapter(mContext, mComplainAllResponse, mStatusValue);
                             rclyPendingComplainList.setAdapter(mPendingComplainListAdapter);
                             progressDialog.dismiss();
                         });
@@ -191,11 +192,5 @@ public class PendingComplainListActivity extends AppCompatActivity {
         }.start();
 
     }
-
-
-
-
-
-
 
 }

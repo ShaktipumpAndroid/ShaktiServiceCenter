@@ -1,7 +1,6 @@
 package activity;
 
 import android.annotation.SuppressLint;
-import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -22,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 
@@ -57,15 +55,17 @@ public class PendingSiteActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(getResources().getString(R.string.pendingSite));
 
         context = this;
-        start_date = findViewById(R.id.start_date);
+        /*start_date = findViewById(R.id.start_date);
         end_date = findViewById(R.id.end_date);
-        save = findViewById(R.id.save);
+        save = findViewById(R.id.save);*/
         pending_list = findViewById(R.id.pending_list);
 
-        start_date.setFocusable(false);
-        end_date.setFocusable(false);
+  /*      start_date.setFocusable(false);
+        end_date.setFocusable(false);*/
 
-        start_date.setOnClickListener(view -> {
+        getPendingData();
+
+   /*     start_date.setOnClickListener(view -> {
             Calendar currentDate;
             int mDay, mMonth, mYear;
             currentDate = Calendar.getInstance();
@@ -103,6 +103,7 @@ public class PendingSiteActivity extends AppCompatActivity {
         });
 
         save.setOnClickListener(v -> getPendingData());
+*/
 
     }
 
@@ -123,7 +124,7 @@ public class PendingSiteActivity extends AppCompatActivity {
         progress.show();
 
         apiInterface = ApiClient.getClient().create(APIInterface.class);
-        Call<PendingSiteComplainResponse> call = apiInterface.getPendingVisiting(kunnr, mStart, mEnd);
+        Call<PendingSiteComplainResponse> call = apiInterface.getPendingVisiting(kunnr, "", "");
 
         Log.e("URL====>", call.request().url().toString());
         call.enqueue(new Callback<PendingSiteComplainResponse>() {

@@ -1,4 +1,4 @@
-package activity;
+package activity.complainvk;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -30,77 +30,77 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import activity.complainvk.SubordinateImageActivity;
-import activity.utility.Constant;
-import adapter.AssginPendingComplainDetailsListAdapter;
-import bean.SubordinateAssginComplainBean;
-import database.DatabaseHelper;
+import activity.AdaperVk.VisitedDetailsListAdapter;
+import activity.BeanVk.ComplainDetailListResponse;
+import activity.CustomUtility;
 import webservice.CustomHttpClient;
 import webservice.WebURL;
 
-public class AssginPendingComplainDetailActivity extends AppCompatActivity {
+public class VisitedComplainDetailActivity extends AppCompatActivity {
 
     private Context mContext;
-    private List<SubordinateAssginComplainBean> mComplainDetailListResponse;
-    ProgressDialog progressDialog;
+    private ProgressDialog progressDialog;
+
+    private List<ComplainDetailListResponse> mComplainDetailListResponse;
+    String mobile;
+    private RelativeLayout rlvBottomViewID;
     private ImageView imgBackID;
+    private TextView txtHeaderID;
     private String textRemarkValue;
+    private  String mHeaderTittle= "";
     private  String mComplainNO= "";
     private  String mStatusValue= "";
+    private  String mMobileNumber= "";
     private  String mUserID= "";
-    String mobile;
+    //private BaseRequest baseRequest;
     public TextView txtBTNActionID,  txtBTNUploadID;
-    private RecyclerView rclyPendingComplainList;
+    private RecyclerView rclyVisitedComplainList;
+    private VisitedDetailsListAdapter mPendingComplainDetailsListAdapter;
 
     private Intent mmIntent;
     private Dialog dialog ;
-    DatabaseHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pending_complain_detail);
+        setContentView(R.layout.activity_visited_complain_detail);
+
         mContext = this;
         mmIntent = getIntent();
-
         initView();
-        mobile = CustomUtility.getSharedPreferences(mContext,"username");
-        db = new DatabaseHelper(mContext);
-        // Database
-        mComplainDetailListResponse = db.getSubordinateAssginComplainNo(mComplainNO);
-
-        AssginPendingComplainDetailsListAdapter mPendingComplainDetailsListAdapter = new AssginPendingComplainDetailsListAdapter(mContext, mComplainDetailListResponse);
-        rclyPendingComplainList.setAdapter(mPendingComplainDetailsListAdapter);
 
     }
 
+
     private void initView() {
 
-        mUserID = CustomUtility.getSharedPreferences(mContext,"kunnr");
+        mUserID = CustomUtility.getSharedPreferences(mContext,"userID");
 
         mComplainDetailListResponse = new ArrayList<>();
-
-        rclyPendingComplainList = findViewById(R.id.rclyPendingComplainList);
-        rclyPendingComplainList.setLayoutManager(new LinearLayoutManager(this));
+        mobile = CustomUtility.getSharedPreferences(mContext,"username");
+        rclyVisitedComplainList = findViewById(R.id.rclyVisitedComplainList);
+        rclyVisitedComplainList.setLayoutManager(new LinearLayoutManager(this));
 
         imgBackID = findViewById(R.id.imgBackID);
-        TextView txtHeaderID = findViewById(R.id.txtHeaderID);
+        txtHeaderID = findViewById(R.id.txtHeaderID);
 
-        RelativeLayout rlvBottomViewID = findViewById(R.id.rlvBottomViewID);
+        rlvBottomViewID =  findViewById(R.id.rlvBottomViewID);
         txtBTNUploadID =  findViewById(R.id.txtBTNUploadID);
         // txtBTNSaveID =  findViewById(R.id.txtBTNSaveID);
 
         txtBTNActionID = findViewById(R.id.txtBTNActionID);
 
-        mmIntent.getStringExtra("mobile_number");
+
+
+        mMobileNumber = mmIntent.getStringExtra("mobile_number");
         mComplainNO = mmIntent.getStringExtra("Complain_number");
-        String mHeaderTittle = mmIntent.getStringExtra("complaint");
+        mHeaderTittle = mmIntent.getStringExtra("complaint");
         mStatusValue = mmIntent.getStringExtra("StatusValue");
 
         txtHeaderID.setText(mHeaderTittle);
 
         initClickEvent();
-        //callgetCompalinAllListAPI();
+        callgetCompalinAllListAPI();
 
 
         if(mStatusValue.equalsIgnoreCase("01"))
@@ -116,29 +116,36 @@ public class AssginPendingComplainDetailActivity extends AppCompatActivity {
 
     private void initClickEvent() {
 
-        imgBackID.setOnClickListener(view -> finish());
+        imgBackID.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
 
-        // Toast.makeText(mContext, "Action optiin working commimg soon", Toast.LENGTH_SHORT).show();
-        txtBTNActionID.setOnClickListener(this::initRemarkViewBox);
+        txtBTNActionID.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Toast.makeText(mContext, "Action optiin working commimg soon", Toast.LENGTH_SHORT).show();
+                initRemarkViewBox(view);
+            }
+        });
 
 
 
-        txtBTNUploadID.setOnClickListener(view -> {
+        txtBTNUploadID.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
-            if (CustomUtility.getSharedPreferences(mContext,Constant.LocalConveyance).equalsIgnoreCase("1")){
-                Intent intent = new Intent(mContext, SubordinateImageActivity.class);
+                Intent intent = new Intent(mContext, InstReportImageActivity.class);
                 intent.putExtra("inst_id", mComplainDetailListResponse.get(0).getCmpno());
-                intent.putExtra("cust_name", mComplainDetailListResponse.get(0).getEngg_name());
+                intent.putExtra("cust_name", mComplainDetailListResponse.get(0).getCloserReason());
                 intent.putExtra("StatusCheck", mStatusValue);
 
                 mContext.startActivity(intent);
-            }else {
-                Toast.makeText(mContext, "Start the journey first ", Toast.LENGTH_SHORT).show();
+
             }
-
-
-
         });
 
 
@@ -163,8 +170,6 @@ public class AssginPendingComplainDetailActivity extends AppCompatActivity {
             textRemarkValue = editText.getText().toString().trim();
             if(!textRemarkValue.equalsIgnoreCase(""))
             {
-                // callInsertRemarkAPI(textRemarkValue);
-                SyncLocalConveneinceDataToSap();
                 new callInsertRemarkAPI().execute();
             }
             else
@@ -184,109 +189,6 @@ public class AssginPendingComplainDetailActivity extends AppCompatActivity {
         }
     };
 
-    public void SyncLocalConveneinceDataToSap() {
-
-        String docno_sap ;
-        String invc_done ;
-        progressDialog = ProgressDialog.show(AssginPendingComplainDetailActivity.this, getResources().getString(R.string.loading), getResources().getString(R.string.please_wait_));
-
-
-        JSONArray ja_invc_data = new JSONArray();
-        JSONObject jsonObj = new JSONObject();
-
-        try {
-
-            jsonObj.put("mobile",mobile );
-            jsonObj.put("cmpno",mComplainNO);
-            jsonObj.put("begda", "");
-            jsonObj.put("endda", "");
-            jsonObj.put("start_time", "");
-            jsonObj.put("end_time", "");
-            jsonObj.put("start_lat", "");
-            jsonObj.put("end_lat", "");
-            jsonObj.put("start_long","");
-            jsonObj.put("end_long", "");
-
-            jsonObj.put("start_location", "");
-
-            jsonObj.put("end_location", "");
-
-            jsonObj.put("distance", "0 km");
-            jsonObj.put("TRAVEL_MODE", "");
-            jsonObj.put("LAT_LONG", "");
-                jsonObj.put("PHOTO1", "");
-                jsonObj.put("PHOTO2", "");
-
-            ja_invc_data.put(jsonObj);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-        final ArrayList<NameValuePair> param1_invc = new ArrayList<>();
-        param1_invc.add(new BasicNameValuePair("travel_distance", String.valueOf(ja_invc_data)));
-
-
-        try {
-
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().build();
-            StrictMode.setThreadPolicy(policy);
-
-            String obj2 = CustomHttpClient.executeHttpPost1(WebURL.LOCAL_CONVENIENVCE, param1_invc);
-
-            if (!obj2.isEmpty()) {
-
-                JSONArray ja = new JSONArray(obj2);
-
-                for (int i = 0; i < ja.length(); i++) {
-
-                    JSONObject jo = ja.getJSONObject(i);
-
-
-                    invc_done = jo.getString("msgtyp");
-                    docno_sap = jo.getString("msg");
-                    if (invc_done.equalsIgnoreCase("S")) {
-
-                        if ((progressDialog != null) && progressDialog.isShowing()) {
-                            progressDialog.dismiss();
-                            progressDialog = null;
-                        }
-                        ;
-                        Message msg = new Message();
-                        msg.obj = docno_sap;
-                        mHandler.sendMessage(msg);
-
-
-                        activity.CustomUtility.setSharedPreference(getApplicationContext(), Constant.LocalConveyance, "0");
-
-
-
-                    } else if (invc_done.equalsIgnoreCase("E")) {
-
-                        if ((progressDialog != null) && progressDialog.isShowing()) {
-                            progressDialog.dismiss();
-                            progressDialog = null;
-                        }
-                        ;
-                        Message msg = new Message();
-                        msg.obj = docno_sap;
-                        mHandler.sendMessage(msg);
-
-                    }
-
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            if ((progressDialog != null) && progressDialog.isShowing()) {
-                progressDialog.dismiss();
-                progressDialog = null;
-            }
-
-        }
-    }
 
     private class callInsertRemarkAPI extends AsyncTask<String, String, String> {
 
@@ -314,10 +216,10 @@ public class AssginPendingComplainDetailActivity extends AppCompatActivity {
 
                 // jsonObj.put("project_no", projno);
                 jsonObj.put("cmpno",mComplainNO);
-
+                jsonObj.put("mobile",mobile);
+                //  jsonObj.put("mobno",mLrInvoiceResponse.get(0).getMobno());
                 jsonObj.put("kunnr", mUserID);
                 jsonObj.put("action", textRemarkValue);
-                jsonObj.put("mobile",mobile);
 
                 ja_invc_data.put(jsonObj);
 
@@ -388,7 +290,7 @@ public class AssginPendingComplainDetailActivity extends AppCompatActivity {
         }
     }
 
-/*    public void callgetCompalinAllListAPI() {
+    public void callgetCompalinAllListAPI() {
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().build();
         StrictMode.setThreadPolicy(policy);
@@ -406,9 +308,9 @@ public class AssginPendingComplainDetailActivity extends AppCompatActivity {
 
         //  param.add(new BasicNameValuePair("pernr", username));
         // param.add(new BasicNameValuePair("pass", password));
-        *//******************************************************************************************//*
-*//*                   server connection
-/******************************************************************************************//*
+        /******************************************************************************************/
+/*                   server connection
+/******************************************************************************************/
         progressDialog = ProgressDialog.show(mContext, "", "Connecting to server..please wait !");
 
         new Thread() {
@@ -419,14 +321,14 @@ public class AssginPendingComplainDetailActivity extends AppCompatActivity {
                     String obj = CustomHttpClient.executeHttpPost1(WebURL.PENDING_COMPLAIN_ALL_DETAILS_VK_PAGE, param);
                     Log.d("check_error", obj);
                     Log.e("check_error", obj);
-*//******************************************************************************************//*
-*//*                       get JSONwebservice Data
-/******************************************************************************************//*
+/******************************************************************************************/
+/*                       get JSONwebservice Data
+/******************************************************************************************/
                     //      JSONObject jo = new JSONObject(obj);
                     //  JSONArray ja = new JSONArray(obj);
                     // JSONObject jo = ja.getJSONObject(0);
 
-                   *//* try {
+                   /* try {
                         Gson gson = new Gson();
                         //////////////add model class here
                         progressDialog.dismiss();
@@ -435,7 +337,7 @@ public class AssginPendingComplainDetailActivity extends AppCompatActivity {
 
                     } catch (Exception e) {
                         e.printStackTrace();
-                    }*//*
+                    }*/
 
                     JSONObject jo = new JSONObject(obj);
 
@@ -488,56 +390,24 @@ public class AssginPendingComplainDetailActivity extends AppCompatActivity {
 
                         }
 
-                        runOnUiThread(new Runnable() {
-                            public void run() {
-                                // Toast.makeText(mContext, mMessage, Toast.LENGTH_SHORT).show();
-                                mPendingComplainDetailsListAdapter = new PendingComplainDetailsListAdapter(mContext, mComplainDetailListResponse, mMobileNumber);
-                                rclyPendingComplainList.setAdapter(mPendingComplainDetailsListAdapter);
-                                progressDialog.dismiss();
-                            }
-
-
+                        runOnUiThread(() -> {
+                            mPendingComplainDetailsListAdapter = new VisitedDetailsListAdapter(mContext, mComplainDetailListResponse, mMobileNumber);
+                            rclyVisitedComplainList.setAdapter(mPendingComplainDetailsListAdapter);
+                            progressDialog.dismiss();
                         });
-
-*//*
-                        runOnUiThread(new Runnable() {
-                            public void run() {
-                                try {
-                                    Intent mIntent = new Intent(ActivityPODSearchInfo.this, LrtransportList.class);
-                                    mIntent.putExtra("InvoiceList", (Serializable) mLrInvoiceResponse);
-                                    startActivity(mIntent);
-                                } catch (Exception exception) {
-                                    exception.printStackTrace();
-                                }
-                                progressDialog.dismiss();
-                            }
-
-
-                        });*//*
-
-
-                        //   Toast.makeText(mContext, mMessage, Toast.LENGTH_SHORT).show();
                         progressDialog.dismiss();
 
                     } else {
-                        runOnUiThread(new Runnable() {
-                            public void run() {
-                                Toast.makeText(mContext, mMessage, Toast.LENGTH_SHORT).show();
-                               *//* mPendingComplainListAdapter = new PendingComplainListAdapter(mContext, mComplainAllResponse);
-                                rclyPendingComplainList.setAdapter(mPendingComplainListAdapter);*//*
-                                progressDialog.dismiss();
-                            }
-
-
+                        runOnUiThread(() -> {
+                            Toast.makeText(mContext, mMessage, Toast.LENGTH_SHORT).show();
+                            progressDialog.dismiss();
                         });
-                        //   Toast.makeText(mContext, mMessage, Toast.LENGTH_SHORT).show();
                         progressDialog.dismiss();
                     }
 
 
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    // dismiss the progress dialog
                     progressDialog.dismiss();
                 }
 
@@ -545,6 +415,4 @@ public class AssginPendingComplainDetailActivity extends AppCompatActivity {
 
         }.start();
 
-    }*/
-
-}
+    }}

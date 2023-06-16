@@ -19,7 +19,6 @@ import java.util.List;
 import activity.BeanVk.ComplainDetailListResponse;
 import activity.ForwardList;
 
-
 public class PendingComplainDetailsListAdapter extends RecyclerView.Adapter<PendingComplainDetailsListAdapter.ViewHolder> {
 
     private final Context mContext;
@@ -33,6 +32,7 @@ public class PendingComplainDetailsListAdapter extends RecyclerView.Adapter<Pend
         this.mComplainAllResponse = mComplainAllResponse;
 
     }*/
+
     public PendingComplainDetailsListAdapter(Context mContext, List<ComplainDetailListResponse> mComplainDetailListResponse, String mMobileNumber) {
         this.mContext = mContext;
         this.mComplainDetailListResponse = mComplainDetailListResponse;
@@ -87,12 +87,12 @@ public class PendingComplainDetailsListAdapter extends RecyclerView.Adapter<Pend
 
     @Override
     public int getItemCount() {
-        // return galleryModelsList.size();
+
         if (mComplainDetailListResponse != null && mComplainDetailListResponse.size() > 0)
             return mComplainDetailListResponse.size();
         else
             return 0;
-       //  return 5;
+
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -108,24 +108,20 @@ public TextView txtwarranteeValueID, txtMaterialDescValueID,txtComplainDateValue
 
             super(v);
 
-            imgShareID = (ImageView) v.findViewById(R.id.imgShareID);
-            txtWarrenteeConditionsValueID = (TextView) v.findViewById(R.id.txtWarrenteeConditionsValueID);
-            txtwarranteeValueID = (TextView) v.findViewById(R.id.txtwarranteeValueID);
-            txtMaterialDescValueID = (TextView) v.findViewById(R.id.txtMaterialDescValueID);
-            txtComplainDateValueID = (TextView) v.findViewById(R.id.txtComplainDateValueID);
-            txtMaterialNoValueID = (TextView) v.findViewById(R.id.txtMaterialNoValueID);
-            txtComplainnoValueID = (TextView) v.findViewById(R.id.txtComplainnoValueID);
-            txtMOBNumberValueID = (TextView) v.findViewById(R.id.txtMOBNumberValueID);
-            txtsernrValueID = (TextView) v.findViewById(R.id.txtsernrValueID);
-            txtReasonValueID = (TextView) v.findViewById(R.id.txtReasonValueID);
+            imgShareID =  v.findViewById(R.id.imgShareID);
+            txtWarrenteeConditionsValueID =  v.findViewById(R.id.txtWarrenteeConditionsValueID);
+            txtwarranteeValueID =  v.findViewById(R.id.txtwarranteeValueID);
+            txtMaterialDescValueID =  v.findViewById(R.id.txtMaterialDescValueID);
+            txtComplainDateValueID =  v.findViewById(R.id.txtComplainDateValueID);
+            txtMaterialNoValueID =  v.findViewById(R.id.txtMaterialNoValueID);
+            txtComplainnoValueID =  v.findViewById(R.id.txtComplainnoValueID);
+            txtMOBNumberValueID =  v.findViewById(R.id.txtMOBNumberValueID);
+            txtsernrValueID =  v.findViewById(R.id.txtsernrValueID);
+            txtReasonValueID =  v.findViewById(R.id.txtReasonValueID);
 
             txtForwordID = v.findViewById(R.id.txtForwordID);
+            lvlMainItemViewID =  v.findViewById(R.id.lvlMainItemViewID);
 
-
-
-            lvlMainItemViewID = (LinearLayout) v.findViewById(R.id.lvlMainItemViewID);
-
-          //  txtWarrantyValueID =   (TextView) v.findViewById(R.id.txtWarrantyValueID);
 
           }
 

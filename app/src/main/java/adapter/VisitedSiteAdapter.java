@@ -19,10 +19,10 @@ public class VisitedSiteAdapter extends ArrayAdapter<VisitedSiteBean> {
 
     Context context;
     DatabaseHelper db;
-    ArrayList<VisitedSiteBean> arrayList;
+    public ArrayList<VisitedSiteBean> arrayList;
 
     public VisitedSiteAdapter(Context context,  ArrayList<VisitedSiteBean> arrayList) {
-        super(context, R.layout.pending_site_item_view, arrayList);
+        super(context, R.layout.visited_site_item_view, arrayList);
         this.context = context;
         this.arrayList = arrayList;
 
@@ -54,16 +54,17 @@ public class VisitedSiteAdapter extends ArrayAdapter<VisitedSiteBean> {
             view = LayoutInflater.from(getContext()).inflate(R.layout.visited_site_item_view, parent, false);
         }
 
-        TextView txtCmpNo = (TextView) view.findViewById(R.id.cmp_no_value);
-        TextView txtCmpDate = (TextView) view.findViewById(R.id.cmp_date_value);
-        TextView txtSubName = (TextView) view.findViewById(R.id.name_value);
-        TextView txtSubMobile = (TextView) view.findViewById(R.id.sub_mobile_value);
+        TextView txtCmpNo =  view.findViewById(R.id.cmp_no_value);
+        TextView txtCmpDate =  view.findViewById(R.id.cmp_date_value);
+        TextView txtSubName =  view.findViewById(R.id.name_value);
+        TextView txtSubMobile =  view.findViewById(R.id.sub_mobile_value);
 
 
         txtCmpNo.setText(String.valueOf(visitedSiteBean.getCmpNo()));
         txtCmpDate.setText(String.valueOf(visitedSiteBean.getCmpDate()));
         txtSubName.setText(String.valueOf(visitedSiteBean.getSubordinateName()));
         txtSubMobile.setText(String.valueOf(visitedSiteBean.getSubordinate()));
+
 
 
         return view;

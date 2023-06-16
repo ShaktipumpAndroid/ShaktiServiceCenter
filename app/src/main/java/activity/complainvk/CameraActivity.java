@@ -100,12 +100,7 @@ public class CameraActivity extends Activity {
         startPreview(null);
 
 
-        image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               switchCamera();
-            }
-        });
+        image.setOnClickListener(v -> switchCamera());
 
         if(TextUtils.isEmpty(lat) && TextUtils.isEmpty(lng))
         {
@@ -130,7 +125,7 @@ public class CameraActivity extends Activity {
             Log.e("jisunLog", "Failed camera open");
         } else {
 
-            FrameLayout layoutPreview = (FrameLayout) findViewById(R.id.layoutPreview);
+            FrameLayout layoutPreview =  findViewById(R.id.layoutPreview);
             if (preview != null) {
                 layoutPreview.removeView(preview);
                 preview = null;

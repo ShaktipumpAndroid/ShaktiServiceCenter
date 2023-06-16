@@ -3,7 +3,40 @@ package bean;
 public class ImageModel {
 
     String ID,name,ImagePath,billNo;
-    boolean isImageSelected;
+    boolean isImageSelected, boerwellLiffiting, borewellLowering, transportLoading, transportUnLoading;
+
+
+    public boolean isBoerwellLiffiting() {
+        return boerwellLiffiting;
+    }
+
+    public void setBoerwellLiffiting(boolean boerwellLiffiting) {
+        this.boerwellLiffiting = boerwellLiffiting;
+    }
+
+    public boolean isBorewellLowering() {
+        return borewellLowering;
+    }
+
+    public void setBorewellLowering(boolean borewellLowering) {
+        this.borewellLowering = borewellLowering;
+    }
+
+    public boolean isTransportLoading() {
+        return transportLoading;
+    }
+
+    public void setTransportLoading(boolean transportLoading) {
+        this.transportLoading = transportLoading;
+    }
+
+    public boolean isTransportUnLoading() {
+        return transportUnLoading;
+    }
+
+    public void setTransportUnLoading(boolean transportUnLoading) {
+        this.transportUnLoading = transportUnLoading;
+    }
 
     public String getName() {
         return name;

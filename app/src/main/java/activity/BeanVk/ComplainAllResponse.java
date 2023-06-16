@@ -76,6 +76,17 @@ public class ComplainAllResponse {
     @SerializedName("sengno")
     private String mSengno;
 
+    private String Vistedstatus;
+
+
+    public String getVistedstatus() {
+        return Vistedstatus;
+    }
+
+    public void setVistedstatus(String vistedstatus) {
+        Vistedstatus = vistedstatus;
+    }
+
     public String getAwaitApproval() {
         return mAwaitApproval;
     }

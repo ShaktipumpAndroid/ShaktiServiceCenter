@@ -303,10 +303,6 @@ private String textRemarkValue;
         }
     }
 
-
-
-
-
     public void callgetCompalinAllListAPI() {
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().build();

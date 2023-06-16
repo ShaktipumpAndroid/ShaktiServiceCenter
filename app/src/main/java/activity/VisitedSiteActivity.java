@@ -1,15 +1,13 @@
 package activity;
 
 import android.annotation.SuppressLint;
-import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 
@@ -37,8 +34,6 @@ import retrofit2.Response;
 
 public class VisitedSiteActivity extends AppCompatActivity {
 
-    private EditText start_date, end_date;
-    private TextView save;
     Context context;
     private String  mStart, mEnd;
     APIInterface apiInterface;
@@ -57,54 +52,9 @@ public class VisitedSiteActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(getResources().getString(R.string.visitedSite));
         context = this;
-        start_date = findViewById(R.id.start_date);
-        end_date = findViewById(R.id.end_date);
-        save = findViewById(R.id.save);
 
         visited_list = findViewById(R.id.visited_list);
-
-        start_date.setFocusable(false);
-        end_date.setFocusable(false);
-
-        start_date.setOnClickListener(view -> {
-            Calendar currentDate;
-            int mDay, mMonth, mYear;
-            currentDate = Calendar.getInstance();
-
-            mDay = currentDate.get(Calendar.DAY_OF_MONTH);
-            mMonth = currentDate.get(Calendar.MONTH);
-            mYear = currentDate.get(Calendar.YEAR);
-
-            @SuppressLint("SetTextI18n") DatePickerDialog datePickerDialog = new DatePickerDialog(context, (datePicker, i, i1, i2) -> {
-                i1 = i1 + 1;
-                start_date.setText(i2 + "/" + i1 + "/" + i);
-                mStart = start_date.getText().toString().trim();
-                parseDateToddMMyyyy1(mStart);
-            }, mYear, mMonth, mDay);
-            datePickerDialog.setTitle(getResources().getString(R.string.start));
-            datePickerDialog.show();
-        });
-
-        // Date help for leave to
-        end_date.setOnClickListener(view -> {
-            Calendar currentDate;
-            int mDay, mMonth, mYear;
-            currentDate = Calendar.getInstance();
-
-            mDay = currentDate.get(Calendar.DAY_OF_MONTH);
-            mMonth = currentDate.get(Calendar.MONTH);
-            mYear = currentDate.get(Calendar.YEAR);
-            @SuppressLint("SetTextI18n") DatePickerDialog datePickerDialog = new DatePickerDialog(context, (datePicker, i, i1, i2) -> {
-                i1 = i1 + 1;
-                end_date.setText(i2 + "/" + i1 + "/" + i);
-                mEnd = end_date.getText().toString().trim();
-                parseDateToddMMyyyy2(mEnd);
-            }, mYear, mMonth, mDay);
-            datePickerDialog.setTitle(getResources().getString(R.string.end));
-            datePickerDialog.show();
-        });
-
-        save.setOnClickListener(v -> getVisitedData());
+        getVisitedData();
     }
 
     private void getVisitedData()  {
@@ -124,7 +74,7 @@ public class VisitedSiteActivity extends AppCompatActivity {
         progress.show();
 
         apiInterface = ApiClient.getClient().create(APIInterface.class);
-        Call<PendingSiteComplainResponse> call = apiInterface.getVisitedComplain(kunnr, mStart, mEnd);
+        Call<PendingSiteComplainResponse> call = apiInterface.getVisitedComplain(kunnr, "", "");
 
         Log.e("URL====>", call.request().url().toString());
         call.enqueue(new Callback<PendingSiteComplainResponse>() {
@@ -150,6 +100,13 @@ public class VisitedSiteActivity extends AppCompatActivity {
 
                     adapter = new VisitedSiteAdapter(context, visitedSiteBeanArrayList);
                     visited_list.setAdapter(adapter);
+
+                    visited_list.setOnItemClickListener((parent, view, position, id) -> {
+                        Intent intent = new Intent(context, SubordinateVisitedListActivity.class);
+                        intent.putExtra("heading", "New Complaint");
+                        intent.putExtra("complaint",pendingSiteComplainResponse.response.get(position).cmpno );
+                        startActivity(intent);
+                    });
 
                     progress.dismiss();
                     Toast.makeText(VisitedSiteActivity.this, response.body().message, Toast.LENGTH_SHORT).show();

@@ -120,9 +120,9 @@ import webservice.WebURL;
 
             WebURL.STATUS_CHECK_FOR_COMPLAIN = "01";
             Intent intent = new Intent(context, PendingComplainListActivity.class);
-
             intent.putExtra("complaint", "New Complaint");
             intent.putExtra("StatusValue", "01");
+
             startActivity(intent);
         });
 

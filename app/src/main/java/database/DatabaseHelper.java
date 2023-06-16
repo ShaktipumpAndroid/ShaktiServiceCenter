@@ -104,6 +104,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String TABLE_IMAGES = "tbl_images";
     private static final String TABLE_WayPoints = "wayPoints";
 
+    private static final String KEY_PUMPSET_LIFTING = "lifting";
+    private static final String KEY_PUMPSET_LOWERING = "lowering";
+    private static final String KEY_MATERIAL_LOAD = "loading";
+    private static final String KEY_MATERIAL_UNLOAD = "unloading";
+
+
     public static final String KEY_IMAGES_ID = "imagesId",KEY_IMAGES_NAME = "imagesName",KEY_IMAGES_PATH = "imagesPath",KEY_IMAGE_SELECTED = "imagesSelected",KEY_IMAGES_BILL_NO= "imagesBillNo";
 
 
@@ -465,7 +471,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + KEY_PHOTO12 + " TEXT)";
 
     private static final String CREATE_TABLE_SITE_AUDIT_IMAGES = "CREATE TABLE "
-            + TABLE_IMAGES + "("  + KEY_IMAGES_ID + " INTEGER PRIMARY KEY AUTOINCREMENT ,"+ KEY_IMAGES_NAME + " TEXT," + KEY_IMAGES_PATH + " TEXT," + KEY_IMAGE_SELECTED + " BOOLEAN," + KEY_IMAGES_BILL_NO + " TEXT)";
+            + TABLE_IMAGES + "("  + KEY_IMAGES_ID + " INTEGER PRIMARY KEY AUTOINCREMENT ,"
+            + KEY_IMAGES_NAME + " TEXT,"
+            + KEY_IMAGES_PATH + " TEXT,"
+            + KEY_IMAGE_SELECTED + " BOOLEAN,"
+            + KEY_PUMPSET_LIFTING + " BOOLEAN,"
+            + KEY_PUMPSET_LOWERING + " BOOLEAN,"
+            + KEY_MATERIAL_LOAD + " BOOLEAN,"
+            + KEY_MATERIAL_UNLOAD + " BOOLEAN,"
+            + KEY_IMAGES_BILL_NO + " TEXT)";
 
     private static final String CREATE_TABLE_WayPoints = "CREATE TABLE IF NOT EXISTS "
             + TABLE_WayPoints + "(" + KEY_ID + " PRIMARY KEY ,"
@@ -4577,7 +4591,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     imageModel.setName(mcursor.getString(1));
                     imageModel.setImagePath(mcursor.getString(2));
                     imageModel.setImageSelected(Boolean.parseBoolean(mcursor.getString(3)));
-                    imageModel.setBillNo(mcursor.getString(4));
+                    imageModel.setBoerwellLiffiting(Boolean.parseBoolean(mcursor.getString(4)));
+                    imageModel.setBorewellLowering(Boolean.parseBoolean(mcursor.getString(5)));
+                    imageModel.setTransportLoading(Boolean.parseBoolean(mcursor.getString(6)));
+                    imageModel.setTransportUnLoading(Boolean.parseBoolean(mcursor.getString(7)));
+                    imageModel.setBillNo(mcursor.getString(8));
+
                     siteAuditImages.add(imageModel);
                 }
             }
@@ -4587,24 +4606,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return siteAuditImages;
     }
 
-    public void insertImageRecord( String name,String path, boolean isSelected, String billno) {
+    public void insertImageRecord(String name, String path, boolean isSelected, String billno, Boolean boerwellLiffiting, Boolean borewellLowering, Boolean transportLoading, Boolean transportUnLoading) {
         SQLiteDatabase  database = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(KEY_IMAGES_NAME, name);
         contentValues.put(KEY_IMAGES_PATH, path);
         contentValues.put(KEY_IMAGE_SELECTED, isSelected);
         contentValues.put(KEY_IMAGES_BILL_NO, billno);
+        contentValues.put(KEY_PUMPSET_LIFTING, boerwellLiffiting);
+        contentValues.put(KEY_PUMPSET_LOWERING,borewellLowering);
+        contentValues.put(KEY_MATERIAL_LOAD,transportLoading);
+        contentValues.put(KEY_MATERIAL_UNLOAD,transportUnLoading);
+
         database.insert(TABLE_IMAGES, null, contentValues);
         database.close();
     }
 
-    public void updateImageRecord( String name, String path, boolean isSelected, String billno) {
+    public void updateImageRecord(String name, String path, boolean isSelected, String billno, Boolean boerwellLiffiting, Boolean borewellLowering, Boolean transportLoading, Boolean transportUnLoading) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(KEY_IMAGES_NAME, name);
         values.put(KEY_IMAGES_PATH, path);
         values.put(KEY_IMAGE_SELECTED, isSelected);
         values.put(KEY_IMAGES_BILL_NO, billno);
+        values.put(KEY_PUMPSET_LIFTING, boerwellLiffiting);
+        values.put(KEY_PUMPSET_LOWERING,borewellLowering);
+        values.put(KEY_MATERIAL_LOAD,transportLoading);
+        values.put(KEY_MATERIAL_UNLOAD,transportUnLoading);
+
         // update Row
         db.update(TABLE_IMAGES,values,"imagesName = '"+name+"'",null);
         db.close();
@@ -4627,7 +4656,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     imageModel.setName(mcursor.getString(1));
                     imageModel.setImagePath(mcursor.getString(2));
                     imageModel.setBillNo(mcursor.getString(3));
-                    imageModel.setImageSelected(Boolean.parseBoolean(mcursor.getString(4)));
+                    imageModel.setTransportLoading(Boolean.parseBoolean(mcursor.getString(6)));
+                    imageModel.setTransportUnLoading(Boolean.parseBoolean(mcursor.getString(7)));
+                    imageModel.setBoerwellLiffiting(Boolean.parseBoolean(mcursor.getString(4)));
+                    imageModel.setBorewellLowering(Boolean.parseBoolean(mcursor.getString(5)));
+                    imageModel.setImageSelected(Boolean.parseBoolean(mcursor.getString(8)));
                     Images.add(imageModel);
                 }
             }
@@ -4871,13 +4904,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.beginTransaction();
         ContentValues values;
-        Log.e("WELCOME","");
+
         try {
             values = new ContentValues();
             String where = " ";
             switch (keyUpdate) {
                 case KEY_INSERT:
-                    Log.e("WELCOME","KEY_INSERT");
+
                     values.put(KEY_CMPNO, subordinateBean.getCmpno());
                     values.put(KEY_DEALER_NAME, subordinateBean.getDelname());
                     values.put(KEY_CUSTOMER_NAME, subordinateBean.getCstname());

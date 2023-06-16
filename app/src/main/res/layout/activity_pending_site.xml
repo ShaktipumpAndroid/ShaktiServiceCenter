@@ -4,7 +4,7 @@
     android:layout_height="match_parent">
     <include layout="@layout/toolbar" />
 
-    <LinearLayout
+  <!--  <LinearLayout
         android:id="@+id/dom_start_datetime"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -52,18 +52,19 @@
                 android:textColorHint="@color/colorPrimary" />
 
         </com.google.android.material.textfield.TextInputLayout>
-    </LinearLayout>
+    </LinearLayout>-->
 
     <LinearLayout
+        android:layout_below="@+id/toolbar"
         android:id="@+id/lin1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/submit"
         android:layout_margin="8dp"
         android:background="@color/edit_text_border_bg"
         android:orientation="vertical">
 
         <ListView
+
             android:id="@+id/pending_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -81,7 +82,7 @@
         android:id="@+id/lin2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/submit"
+        android:layout_below="@+id/toolbar"
         android:layout_centerInParent="true"
         android:layout_margin="8dp"
         android:background="@color/edit_text_border_bg"
@@ -99,7 +100,7 @@
 
     </LinearLayout>
 
-    <androidx.cardview.widget.CardView
+<!--    <androidx.cardview.widget.CardView
         android:id="@+id/submit"
         android:layout_width="match_parent"
         android:layout_height="40dp"
@@ -123,7 +124,7 @@
             android:textColor="@color/white"
             android:textSize="20sp" />
 
-    </androidx.cardview.widget.CardView>
+    </androidx.cardview.widget.CardView>-->
 
 
 

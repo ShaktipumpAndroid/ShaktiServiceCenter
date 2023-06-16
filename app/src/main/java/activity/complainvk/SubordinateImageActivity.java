@@ -1,27 +1,38 @@
 package activity.complainvk;
 
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.CAMERA;
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.READ_MEDIA_IMAGES;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.os.Build.VERSION.SDK_INT;
 import static activity.utility.FileUtils.getPath;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.os.StrictMode;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,11 +43,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
 import org.apache.http.NameValuePair;
@@ -72,18 +85,16 @@ import retrofit2.Response;
 import webservice.CustomHttpClient;
 import webservice.WebURL;
 
-
-@SuppressWarnings("deprecation")
-public class InstReportImageActivity extends AppCompatActivity implements ImageSelectionAdapter.ImageSelectionListener {
+@SuppressWarnings({"deprecation", "resource", "StringConcatenationInLoop"})
+public class SubordinateImageActivity extends AppCompatActivity implements ImageSelectionAdapter.ImageSelectionListener {
 
 
     LocalConvenienceBean localConvenienceBean;
     String current_start_date, current_end_date, current_start_time, current_end_time, username, from_lat,
-     from_lng, to_lat, allLatLong = "", to_lng, fullAddress = null, fullAddress1 = null,
-     distance1 = null, startphoto = null, totalWayPoint = "",mobile, enq_docno, cust_nm,
+            from_lng, to_lat, allLatLong = "", to_lng, fullAddress = null, fullAddress1 = null,
+            distance1 = null, startphoto = null, totalWayPoint = "",mobile, enq_docno, cust_nm,
             mUserID,pendRemarkValue,kunnr, userid,mStatusCheck;
 
-    private activity.CustomUtility customutility = null;
     private static final int REQUEST_CODE_PERMISSION = 123;
     WayPoints wayPoints;
     LocationManager locationManager;
@@ -106,7 +117,7 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
     List<ImageModel> imageArrayList = new ArrayList<>();
     List<String> itemNameList = new ArrayList<>();
     List<ImageModel> imageList = new ArrayList<>();
-    
+
 
     DatabaseHelper dataHelper;
     double inst_latitude_double, inst_longitude_double;
@@ -119,22 +130,24 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
     EditText edtRemarkAMTID;
     ProgressDialog progressDialog;
 
+    CheckBox borewellInCheckBox,borewellOutCheckBox,transportLoadCheckBox,transportUnloadCheckBox;
+
+    Boolean boerwellLiffiting=false, borewellLowering=false, transportLoading=false, transportUnLoading=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_instreport_image);
+        setContentView(R.layout.activity_subordinate_image);
+
         mContext = this;
         getGpsLocation();
         Init();
-
     }
-
     private void Init() {
         mUserID = activity.CustomUtility.getSharedPreferences(mContext, "userID");
         dataHelper = new DatabaseHelper(mContext);
 
-        customutility = new activity.CustomUtility();
+
         txtBTNSaveID = findViewById(R.id.txtBTNSaveID);
         mobile = CustomUtility.getSharedPreferences(mContext, "username");
         locationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
@@ -144,6 +157,10 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
         recyclerview = findViewById(R.id.recyclerview);
         edtRemarkAMTID = findViewById(R.id.edtRemarkAMTID);
         mToolbar = findViewById(R.id.toolbar);
+        borewellInCheckBox = findViewById(R.id.borewellInCheckBox);
+        borewellOutCheckBox = findViewById(R.id.borewellOutCheckBox);
+        transportLoadCheckBox = findViewById(R.id.transportLoadCheckBox);
+        transportUnloadCheckBox = findViewById(R.id.transportUnloadCheckBox);
 
         setSupportActionBar(mToolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
@@ -153,6 +170,7 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
         CustomUtility.setSharedPreference(mContext, "AUDSYNC" + enq_docno, "");
 
         Bundle bundle = getIntent().getExtras();
+        assert bundle != null;
         enq_docno = bundle.getString("inst_id");
         cust_nm = bundle.getString("cust_name");
 
@@ -164,17 +182,16 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
     }
 
     private void listener() {
-        mToolbar.setNavigationOnClickListener(view -> {
-            onBackPressed();
-        });
+        mToolbar.setNavigationOnClickListener(view -> onBackPressed());
 
         txtBTNSaveID.setOnClickListener(view -> {
             Save();
             pendRemarkValue = edtRemarkAMTID.getText().toString().trim();
-            
+
             if (CustomUtility.getSharedPreferences(mContext, "AUDSYNC" + enq_docno).equalsIgnoreCase("1")) {
                 if (!pendRemarkValue.isEmpty()) {
-                    new savePendingPhotoDataAPI().execute();
+                    calculateDistance();
+
                 } else {
                     Toast.makeText(mContext, "Enter Remark", Toast.LENGTH_SHORT).show();
                 }
@@ -183,10 +200,48 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
             }
         });
 
+        borewellInCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(isChecked){
+                boerwellLiffiting = true;
+                addItemInImageList(getResources().getString(R.string.borwellInlet));
+            }else {
+                removeItemFromList(getResources().getString(R.string.borwellInlet));
+                boerwellLiffiting = false;
+            }
+        });
 
+        borewellOutCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(isChecked){
+                addItemInImageList(getResources().getString(R.string.borwellOutlet));
+                borewellLowering = true;
+            }else {
+                removeItemFromList(getResources().getString(R.string.borwellOutlet));
+                borewellLowering = false;
+            }
+        });
+
+        transportLoadCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(isChecked){
+                addItemInImageList(getResources().getString(R.string.transportLoad));
+                transportLoading =true;
+            }else {
+                removeItemFromList(getResources().getString(R.string.transportLoad));
+                transportLoading =false;
+            }
+        });
+
+        transportUnloadCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(isChecked){
+                addItemInImageList(getResources().getString(R.string.transportUnload));
+                transportUnLoading = true;
+            }else {
+                removeItemFromList(getResources().getString(R.string.transportUnload));
+                transportUnLoading = false;
+            }
+        });
     }
 
-/*    private void calculateDistance() {
+    private void calculateDistance() {
         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
                 || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
             if (checkPermission()) {
@@ -199,8 +254,9 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
             buildAlertMessageNoGps();
         }
 
-    }*/
-/*    private void buildAlertMessageNoGps() {
+    }
+
+    private void buildAlertMessageNoGps() {
 
         if (activity.CustomUtility.isInternetOn(mContext)) {
 
@@ -241,8 +297,8 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
                 current_start_date = localConvenienceBean.getBegda();
                 current_start_time = localConvenienceBean.getFrom_time();
 
-                current_end_date = customutility.getCurrentDate();
-                current_end_time = customutility.getCurrentTime();
+                current_end_date = activity.CustomUtility.getCurrentDate();
+                current_end_time = activity.CustomUtility.getCurrentTime();
 
                 from_lat = localConvenienceBean.getFrom_lat();
                 from_lng = localConvenienceBean.getFrom_lng();
@@ -262,6 +318,7 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
                         return;
                     }
                     Location location1 = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                    assert location1 != null;
                     to_lat = String.valueOf(location1.getLatitude());
                     to_lng = String.valueOf(location1.getLongitude());
 
@@ -272,8 +329,8 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
             }
 
             fullAddress = localConvenienceBean.getStart_loc();
-            if (activity.CustomUtility.isOnline(InstReportImageActivity.this)) {
-                progressDialog = ProgressDialog.show(InstReportImageActivity.this, getResources().getString(R.string.loading), getResources().getString(R.string.please_wait_));
+            if (activity.CustomUtility.isOnline(SubordinateImageActivity.this)) {
+                progressDialog = ProgressDialog.show(SubordinateImageActivity.this, getResources().getString(R.string.loading), getResources().getString(R.string.please_wait_));
                 new Handler(Looper.getMainLooper()).postDelayed(() -> {
                     if (!org.apache.http.util.TextUtils.isEmpty(from_lat) && !org.apache.http.util.TextUtils.isEmpty(from_lng) && !org.apache.http.util.TextUtils.isEmpty(to_lat) && !org.apache.http.util.TextUtils.isEmpty(to_lng)) {
                         if (progressDialog != null)
@@ -293,9 +350,7 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
                         final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
                         builder.setMessage("Please start your journey first")
                                 .setCancelable(false)
-                                .setPositiveButton("Yes", (dialog, id) -> {
-                                    dialog.dismiss();
-                                })
+                                .setPositiveButton("Yes", (dialog, id) -> dialog.dismiss())
                                 .setNegativeButton("No", (dialog, id) -> dialog.cancel());
                         final AlertDialog alert = builder.create();
                         alert.show();
@@ -341,14 +396,14 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
 
     private void requestPermission() {
         if (SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            ActivityCompat.requestPermissions(InstReportImageActivity.this,
+            ActivityCompat.requestPermissions(SubordinateImageActivity.this,
                     new String[]{Manifest.permission.CAMERA, Manifest.permission.MANAGE_EXTERNAL_STORAGE,
                             Manifest.permission.READ_CONTACTS, Manifest.permission.READ_PHONE_STATE,
                             Manifest.permission.RECORD_AUDIO, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION,
                             Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_AUDIO},
                     REQUEST_CODE_PERMISSION);
         } else {
-            ActivityCompat.requestPermissions(InstReportImageActivity.this,
+            ActivityCompat.requestPermissions(SubordinateImageActivity.this,
                     new String[]{Manifest.permission.CAMERA,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE,
                             Manifest.permission.READ_CONTACTS, Manifest.permission.READ_PHONE_STATE,
@@ -383,7 +438,7 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
                     && ReadExternalStorage == PackageManager.PERMISSION_GRANTED
                     && AccessCoarseLocation == PackageManager.PERMISSION_GRANTED && AccessFineLocation == PackageManager.PERMISSION_GRANTED;
         }
-    }*/
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
@@ -432,7 +487,7 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
                         }
 
                     } else {
-                        Toast.makeText(InstReportImageActivity.this, R.string.all_permission, Toast.LENGTH_LONG).show();
+                        Toast.makeText(SubordinateImageActivity.this, R.string.all_permission, Toast.LENGTH_LONG).show();
                     }
 
                 }
@@ -450,37 +505,65 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
 
     private void Save() {
 
-            if (!imageArrayList.get(0).isImageSelected()) {
-                Toast.makeText(this, getResources().getString(R.string.Please_Falty_photo), Toast.LENGTH_SHORT).show();
-            } else if (!imageArrayList.get(1).isImageSelected()) {
-                Toast.makeText(this, getResources().getString(R.string.Please_Product_photo), Toast.LENGTH_SHORT).show();
-            } else if (!imageArrayList.get(2).isImageSelected()) {
-                Toast.makeText(this, getResources().getString(R.string.Please_Cust_Dealer_Photo), Toast.LENGTH_SHORT).show();
-            } else if (!imageArrayList.get(3).isImageSelected()) {
-                Toast.makeText(this, getResources().getString(R.string.Please_Sevice_CC), Toast.LENGTH_SHORT).show();
-            } else if (!imageArrayList.get(4).isImageSelected()) {
-                Toast.makeText(this, getResources().getString(R.string.Please_Serial_Photo), Toast.LENGTH_SHORT).show();
-            } else {
-                CustomUtility.setSharedPreference(mContext, "AUDSYNC" + enq_docno, "1");
-                isBackPressed = true;
-            }
+        if (!imageArrayList.get(0).isImageSelected()) {
+            Toast.makeText(this, getResources().getString(R.string.Please_Product_serial_no), Toast.LENGTH_SHORT).show();
+        } else if (!imageArrayList.get(1).isImageSelected()) {
+            Toast.makeText(this, getResources().getString(R.string.Please_site_error), Toast.LENGTH_SHORT).show();
+        } else if (!imageArrayList.get(2).isImageSelected()) {
+            Toast.makeText(this, getResources().getString(R.string.Please_discharge), Toast.LENGTH_SHORT).show();
+        } else if (!imageArrayList.get(3).isImageSelected()) {
+            Toast.makeText(this, getResources().getString(R.string.Please_site_images), Toast.LENGTH_SHORT).show();
+        } else if (!imageArrayList.get(4).isImageSelected()) {
+            Toast.makeText(this, getResources().getString(R.string.Please_fir_field), Toast.LENGTH_SHORT).show();
+        } else if (!imageArrayList.get(5).isImageSelected()) {
+            Toast.makeText(this, getResources().getString(R.string.Please_customer), Toast.LENGTH_SHORT).show();
+        }else if (!imageArrayList.get(6).isImageSelected()) {
+            Toast.makeText(this, getResources().getString(R.string.Please_approval), Toast.LENGTH_SHORT).show();
+        }else if (!imageArrayList.get(7).isImageSelected()) {
+            Toast.makeText(this, getResources().getString(R.string.Please_other), Toast.LENGTH_SHORT).show();
+        }else {
+            CustomUtility.setSharedPreference(mContext, "AUDSYNC" + enq_docno, "1");
+            isBackPressed = true;
+        }
 
     }
 
     private void SetAdapter() {
         imageArrayList = new ArrayList<>();
         itemNameList = new ArrayList<>();
-        itemNameList.add(getResources().getString(R.string.Falty_material));
-        itemNameList.add(getResources().getString(R.string.Product_Full_Images));
-        itemNameList.add(getResources().getString(R.string.Cust_dealer));
-        itemNameList.add(getResources().getString(R.string.SerciveCC));
-        itemNameList.add(getResources().getString(R.string.Serial_Number));
-        itemNameList.add(getResources().getString(R.string.Damage));
-        itemNameList.add(getResources().getString(R.string.Damage1));
-        itemNameList.add(getResources().getString(R.string.Damage_2));
+        itemNameList.add(getResources().getString(R.string.old_serial_no));
+        itemNameList.add(getResources().getString(R.string.site_error));
+        itemNameList.add(getResources().getString(R.string.discharge_image));
+        itemNameList.add(getResources().getString(R.string.site_images));
+        itemNameList.add(getResources().getString(R.string.fir_field));
+        itemNameList.add(getResources().getString(R.string.customer_satisfaction));
+        itemNameList.add(getResources().getString(R.string.approval));
+        itemNameList.add(getResources().getString(R.string.other));
+
 
         DatabaseHelper db = new DatabaseHelper(this);
         imageList = db.getAllImages();
+
+        if (itemNameList.size() > 0 && imageList != null && imageList.size() > 0) {
+
+            for (int i = 0; i < imageList.size(); i++) {
+                if (imageList.get(i).getName().equals(getResources().getString(R.string.borwellInlet))){
+                    borewellInCheckBox.setChecked(true);
+                    itemNameList.add(getResources().getString(R.string.borwellInlet));
+                }else if (imageList.get(i).getName().equals(getResources().getString(R.string.borwellOutlet))){
+                    borewellOutCheckBox.setChecked(true);
+                    itemNameList.add(getResources().getString(R.string.borwellOutlet));
+                }else if (imageList.get(i).getName().equals(getResources().getString(R.string.transportLoad))){
+                    transportLoadCheckBox.setChecked(true);
+                    itemNameList.add(getResources().getString(R.string.transportLoad));
+
+                }else if (imageList.get(i).getName().equals(getResources().getString(R.string.transportUnload))){
+                    transportUnloadCheckBox.setChecked(true);
+                    itemNameList.add(getResources().getString(R.string.transportUnload));
+                }
+
+            }
+        }
 
 
         for (int i = 0; i < itemNameList.size(); i++) {
@@ -510,7 +593,7 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
             }
         }
 
-        ImageAdapter = new ImageSelectionAdapter(InstReportImageActivity.this, imageArrayList);
+        ImageAdapter = new ImageSelectionAdapter(SubordinateImageActivity.this, imageArrayList);
         recyclerview.setHasFixedSize(true);
         recyclerview.setAdapter(ImageAdapter);
         ImageAdapter.ImageSelection(this);
@@ -536,34 +619,27 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
         if (resultCode == RESULT_CANCELED) {
             return;
         }
-        switch (requestCode) {
-
-            case PICK_FROM_FILE:
-                try {
-                    Uri mImageCaptureUri = data.getData();
-                    String path = getPath(InstReportImageActivity.this, mImageCaptureUri); // From Gallery
-                    if (path == null) {
-                        path = mImageCaptureUri.getPath(); // From File Manager
-                    }
-                    Log.e("Activity", "PathHolder22= " + path);
-                    String filename = path.substring(path.lastIndexOf("/") + 1);
-                    String file;
-                    if (filename.indexOf(".") > 0) {
-                        file = filename.substring(0, filename.lastIndexOf("."));
-                    } else {
-                        file = "";
-                    }
-                    if (TextUtils.isEmpty(file)) {
-                        Toast.makeText(InstReportImageActivity.this, "File not valid!", Toast.LENGTH_LONG).show();
-                    } else {
-                        UpdateArrayList(path);
-
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
+        if (requestCode == PICK_FROM_FILE) {
+            try {
+                Uri mImageCaptureUri = data.getData();
+                String path = getPath(SubordinateImageActivity.this, mImageCaptureUri); // From Gallery
+                Log.e("Activity", "PathHolder22= " + path);
+                String filename = path.substring(path.lastIndexOf("/") + 1);
+                String file;
+                if (filename.indexOf(".") > 0) {
+                    file = filename.substring(0, filename.lastIndexOf("."));
+                } else {
+                    file = "";
                 }
-                break;
+                if (TextUtils.isEmpty(file)) {
+                    Toast.makeText(SubordinateImageActivity.this, "File not valid!", Toast.LENGTH_LONG).show();
+                } else {
+                    UpdateArrayList(path);
 
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
     }
@@ -596,17 +672,17 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
 
         Log.e("select==>", "status" + value);
 
-        LayoutInflater inflater = (LayoutInflater) InstReportImageActivity.this.getSystemService(
+        LayoutInflater inflater = (LayoutInflater) SubordinateImageActivity.this.getSystemService(
                 Context.LAYOUT_INFLATER_SERVICE);
         View layout = inflater.inflate(R.layout.pick_img_layout, null);
         final androidx.appcompat.app.AlertDialog.Builder builder =
-                new androidx.appcompat.app.AlertDialog.Builder(InstReportImageActivity.this, R.style.MyDialogTheme);
+                new androidx.appcompat.app.AlertDialog.Builder(SubordinateImageActivity.this, R.style.MyDialogTheme);
 
         builder.setView(layout);
         builder.setCancelable(true);
         alertDialog = builder.create();
         alertDialog.setCanceledOnTouchOutside(true);
-        alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        Objects.requireNonNull(alertDialog.getWindow()).setBackgroundDrawableResource(android.R.color.transparent);
         alertDialog.getWindow().setGravity(Gravity.BOTTOM);
         alertDialog.show();
 
@@ -618,6 +694,7 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
         if (value.equals("0")) {
             title.setText(getResources().getString(R.string.select_image));
             gallery.setText(getResources().getString(R.string.gallery));
+            gallery.setVisibility(View.GONE);
             camera.setText(getResources().getString(R.string.camera));
 
         } else {
@@ -631,35 +708,27 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
             if (value.equals("0")) {
                 openGallery();
             } else {
-                Intent i_display_image = new Intent(InstReportImageActivity.this, PhotoViewerActivity.class);
+                Intent i_display_image = new Intent(SubordinateImageActivity.this, PhotoViewerActivity.class);
                 i_display_image.putExtra("image_path", imageArrayList.get(selectedIndex).getImagePath());
                 startActivity(i_display_image);
             }
         });
 
-        camera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialog.dismiss();
-                if (value.equals("0")) {
-                    openCamera();
-                } else {
-                    selectImage("0");
-                }
+        camera.setOnClickListener(v -> {
+            alertDialog.dismiss();
+            if (value.equals("0")) {
+                openCamera();
+            } else {
+                selectImage("0");
             }
         });
 
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialog.dismiss();
-            }
-        });
+        cancel.setOnClickListener(v -> alertDialog.dismiss());
     }
 
     public void openCamera() {
 
-        camraLauncher.launch(new Intent(InstReportImageActivity.this, CameraActivity2.class)
+        camraLauncher.launch(new Intent(SubordinateImageActivity.this, CameraActivity2.class)
                 .putExtra("cust_name", cust_nm));
     }
 
@@ -670,8 +739,8 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
                     if (result.getData() != null && result.getData().getExtras() != null) {
 
                         Bundle bundle = result.getData().getExtras();
-                        Log.e("bundle====>", bundle.get("data").toString());
-                        UpdateArrayList(bundle.get("data").toString());
+                        Log.e("bundle====>", Objects.requireNonNull(bundle.get("data")).toString());
+                        UpdateArrayList(Objects.requireNonNull(bundle.get("data")).toString());
                     }
                 }
             });
@@ -689,9 +758,9 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
         DatabaseHelper db = new DatabaseHelper(getApplicationContext());
 
         if (isUpdate) {
-            db.updateImageRecord(imageArrayList.get(selectedIndex).getName(), path, true, enq_docno , true,true,true,true);
+            db.updateImageRecord(imageArrayList.get(selectedIndex).getName(), path, true, enq_docno , boerwellLiffiting,borewellLowering,transportLoading,transportUnLoading);
         } else {
-            db.insertImageRecord(imageArrayList.get(selectedIndex).getName(), path, true, enq_docno, true,true,true,true);
+            db.insertImageRecord(imageArrayList.get(selectedIndex).getName(), path, true, enq_docno, boerwellLiffiting,borewellLowering,transportLoading,transportUnLoading);
         }
         ImageAdapter.notifyDataSetChanged();
     }
@@ -722,7 +791,7 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
 
             String mobile = CustomUtility.getSharedPreferences(getApplicationContext(), "username");
 
-             JSONArray ja_invc_data = new JSONArray();
+            JSONArray ja_invc_data = new JSONArray();
             JSONObject jsonObj = new JSONObject();
 
 
@@ -732,67 +801,71 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
                 jsonObj.put("mobile", mobile);
                 jsonObj.put("sc_status", mStatusCheck);
                 jsonObj.put("ACTION", pendRemarkValue);
+                jsonObj.put("bore1_image", boerwellLiffiting);
+                jsonObj.put("bore2_image",borewellLowering);
+                jsonObj.put("transport1",transportLoading);
+                jsonObj.put("transport2",transportUnLoading);
                 System.out.println("only_text_jsonObj==>>" + jsonObj);
 
                 if (imageArrayList.size() > 0) {
 
                     if (imageArrayList.get(0).isImageSelected()) {
-                        jsonObj.put("PHOTO1", CustomUtility.getBase64FromBitmap(InstReportImageActivity.this, imageArrayList.get(0).getImagePath()));
+                        jsonObj.put("PHOTO1", CustomUtility.getBase64FromBitmap(SubordinateImageActivity.this, imageArrayList.get(0).getImagePath()));
                     }else{
                         jsonObj.put("PHOTO1", "");
                     }
                     if (1 < imageArrayList.size() && imageArrayList.get(1).isImageSelected()) {
-                        jsonObj.put("PHOTO2", CustomUtility.getBase64FromBitmap(InstReportImageActivity.this, imageArrayList.get(1).getImagePath()));
+                        jsonObj.put("PHOTO2", CustomUtility.getBase64FromBitmap(SubordinateImageActivity.this, imageArrayList.get(1).getImagePath()));
                     }else{
                         jsonObj.put("PHOTO2", "");
                     }
                     if (2 < imageArrayList.size() && imageArrayList.get(2).isImageSelected()) {
-                        jsonObj.put("PHOTO3", CustomUtility.getBase64FromBitmap(InstReportImageActivity.this, imageArrayList.get(2).getImagePath()));
+                        jsonObj.put("PHOTO3", CustomUtility.getBase64FromBitmap(SubordinateImageActivity.this, imageArrayList.get(2).getImagePath()));
                     }else{
                         jsonObj.put("PHOTO3", "");
                     }
                     if (3 < imageArrayList.size() && imageArrayList.get(3).isImageSelected()) {
-                        jsonObj.put("PHOTO4", CustomUtility.getBase64FromBitmap(InstReportImageActivity.this, imageArrayList.get(3).getImagePath()));
+                        jsonObj.put("PHOTO4", CustomUtility.getBase64FromBitmap(SubordinateImageActivity.this, imageArrayList.get(3).getImagePath()));
                     }  else{
                         jsonObj.put("PHOTO4", "");
                     }
                     if (4 < imageArrayList.size() && imageArrayList.get(4).isImageSelected()) {
-                        jsonObj.put("PHOTO5", CustomUtility.getBase64FromBitmap(InstReportImageActivity.this, imageArrayList.get(4).getImagePath()));
+                        jsonObj.put("PHOTO5", CustomUtility.getBase64FromBitmap(SubordinateImageActivity.this, imageArrayList.get(4).getImagePath()));
                     }else{
                         jsonObj.put("PHOTO5", "");
                     }
                     if (5 < imageArrayList.size() && imageArrayList.get(5).isImageSelected()) {
-                        jsonObj.put("PHOTO6", CustomUtility.getBase64FromBitmap(InstReportImageActivity.this, imageArrayList.get(5).getImagePath()));
+                        jsonObj.put("PHOTO6", CustomUtility.getBase64FromBitmap(SubordinateImageActivity.this, imageArrayList.get(5).getImagePath()));
                     }else{
                         jsonObj.put("PHOTO6", "");
                     }
                     if (6 < imageArrayList.size() && imageArrayList.get(6).isImageSelected()) {
-                        jsonObj.put("PHOTO7", CustomUtility.getBase64FromBitmap(InstReportImageActivity.this, imageArrayList.get(6).getImagePath()));
+                        jsonObj.put("PHOTO7", CustomUtility.getBase64FromBitmap(SubordinateImageActivity.this, imageArrayList.get(6).getImagePath()));
                     }else{
                         jsonObj.put("PHOTO7", "");
                     }
                     if (7 < imageArrayList.size() && imageArrayList.get(7).isImageSelected()) {
-                        jsonObj.put("PHOTO8", CustomUtility.getBase64FromBitmap(InstReportImageActivity.this, imageArrayList.get(7).getImagePath()));
+                        jsonObj.put("PHOTO8", CustomUtility.getBase64FromBitmap(SubordinateImageActivity.this, imageArrayList.get(7).getImagePath()));
                     }else{
                         jsonObj.put("PHOTO8", "");
                     }
                     if (8 < imageArrayList.size() && imageArrayList.get(8).isImageSelected()) {
-                        jsonObj.put("PHOTO10", CustomUtility.getBase64FromBitmap(InstReportImageActivity.this, imageArrayList.get(8).getImagePath()));
+                        jsonObj.put("PHOTO10", CustomUtility.getBase64FromBitmap(SubordinateImageActivity.this, imageArrayList.get(8).getImagePath()));
                     }else{
                         jsonObj.put("PHOTO10", "");
                     }
                     if (9 < imageArrayList.size() && imageArrayList.get(9).isImageSelected()) {
-                        jsonObj.put("PHOTO11", CustomUtility.getBase64FromBitmap(InstReportImageActivity.this, imageArrayList.get(9).getImagePath()));
+                        jsonObj.put("PHOTO11", CustomUtility.getBase64FromBitmap(SubordinateImageActivity.this, imageArrayList.get(9).getImagePath()));
                     }else{
                         jsonObj.put("PHOTO11", "");
                     }
                     if (10 < imageArrayList.size() && imageArrayList.get(10).isImageSelected()) {
-                        jsonObj.put("PHOTO12", CustomUtility.getBase64FromBitmap(InstReportImageActivity.this, imageArrayList.get(7).getImagePath()));
+                        jsonObj.put("PHOTO12", CustomUtility.getBase64FromBitmap(SubordinateImageActivity.this, imageArrayList.get(7).getImagePath()));
                     }else{
                         jsonObj.put("PHOTO12", "");
                     }
                     if (11 < imageArrayList.size() && imageArrayList.get(11).isImageSelected()) {
-                        jsonObj.put("PHOTO13", CustomUtility.getBase64FromBitmap(InstReportImageActivity.this, imageArrayList.get(11).getImagePath()));
+                        jsonObj.put("PHOTO13", CustomUtility.getBase64FromBitmap(SubordinateImageActivity.this, imageArrayList.get(11).getImagePath()));
                     }else{
                         jsonObj.put("PHOTO13", "");
                     }
@@ -808,7 +881,7 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
             final ArrayList<NameValuePair> param1_invc = new ArrayList<>();
 
             param1_invc.add(new BasicNameValuePair("pending_save", String.valueOf(ja_invc_data)));
-            Log.e("DATA$$$$", "" + param1_invc.toString());
+            Log.e("DATA$$$$", "" + param1_invc);
 
             Log.e("param1_invc_vihu==>>", "" + param1_invc);
             try {
@@ -816,36 +889,35 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
                 StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().build();
                 StrictMode.setThreadPolicy(policy);
 
-                obj2 = CustomHttpClient.executeHttpPost1(WebURL.PENDING_COMPLAIN_PENDING_PHOTO_VK_PAGE, param1_invc);
+                obj2 = CustomHttpClient.executeHttpPost1(WebURL.SAVE_SUB_IMAGES, param1_invc);
 
                 Log.e("OUTPUT1", "&&&&" + obj2);
 
-                if (obj2 != "") {
+                if (!obj2.equals("")) {
+
 
                     JSONObject object = new JSONObject(obj2);
                     String mStatus = object.getString("status");
-                    final String mMessage = object.getString("message");
+                    object.getString("message");
                     String jo11 = object.getString("response");
                     System.out.println("jo11==>>" + jo11);
+                    Message msg = new Message();
                     if (mStatus.equalsIgnoreCase("true")) {
-                        Message msg = new Message();
                         msg.obj = "Data Submitted Successfully...";
                         mHandler2.sendMessage(msg);
                         progressDialog.dismiss();
-                        dataHelper.deleteTableData(dataHelper.TABLE_IMAGES);
+                        dataHelper.deleteTableData(DatabaseHelper.TABLE_IMAGES);
                         finish();
 
-                        progressDialog.dismiss();
                         //  finish();
                     } else {
 
-                        Message msg = new Message();
                         msg.obj = "Data Not Submitted, Please try After Sometime.";
                         mHandler2.sendMessage(msg);
 
-                        progressDialog.dismiss();
                         //  finish();
                     }
+                    progressDialog.dismiss();
 
                 }
 
@@ -875,11 +947,6 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
             inst_latitude_double = gps.getLatitude();
             inst_longitude_double = gps.getLongitude();
 
-          /*  if (inst_latitude_double == 0.0) {
-                CustomUtility.ShowToast("Lat Long not captured, Please try again.", mContext);
-            } else {
-                //CustomUtility.ShowToast("Latitude:-" + inst_latitude_double + "     " + "Longitude:-" + inst_longitude_double, mContext);
-            }*/
 
         } else {
             gps.showSettingsAlert();
@@ -913,14 +980,14 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
                         if (!totalWayPoint.contains(json[pos * i])) {
 
                             totalWayPoint = json[pos * i];
-                            Log.e("positi====>", String.valueOf(i) + "=====>" + json[pos * i]);
+                            Log.e("positi====>", i + "=====>" + json[pos * i]);
                         }
 
                     } else {
                         if (pos * i < json.length) {
                             if (!totalWayPoint.contains(json[pos * i])) {
                                 totalWayPoint = totalWayPoint + "|" + json[pos * i];
-                                Log.e("positi====>", String.valueOf(i) + "=====>" + json[pos * i]);
+                                Log.e("positi====>", i + "=====>" + json[pos * i]);
                             }
                         }
                     }
@@ -989,17 +1056,17 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
                             progressDialog = null;
                         }
                     Log.e("distance1=====>", distance1);
-                    LayoutInflater inflater = (LayoutInflater) InstReportImageActivity.this.getSystemService(
+                    LayoutInflater inflater = (LayoutInflater) SubordinateImageActivity.this.getSystemService(
                             Context.LAYOUT_INFLATER_SERVICE);
                     View layout = inflater.inflate(R.layout.custom_dialog2, null);
                     final AlertDialog.Builder builder =
-                            new AlertDialog.Builder(InstReportImageActivity.this, R.style.MyDialogTheme);
+                            new AlertDialog.Builder(SubordinateImageActivity.this, R.style.MyDialogTheme);
 
                     builder.setView(layout);
                     builder.setCancelable(true);
                     AlertDialog dialog = builder.create();
                     dialog.setCanceledOnTouchOutside(true);
-                    dialog.getWindow().setBackgroundDrawableResource(android.R.color.white);
+                    Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawableResource(android.R.color.white);
                     dialog.getWindow().setGravity(Gravity.BOTTOM);
                     dialog.show();
 
@@ -1010,15 +1077,16 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
                     final TextInputEditText etendlatlng = dialog.findViewById(R.id.tiet_end_lat_lng);
                     final TextInputEditText etendlocadd = dialog.findViewById(R.id.tiet_end_loc_add);
                     final TextInputEditText ettotdis = dialog.findViewById(R.id.tiet_tot_dis);
-                    final TextInputLayout til_trvl_mod = dialog.findViewById(R.id.til_trvl_mod);
                     final TextInputEditText ettrvlmod = dialog.findViewById(R.id.tiet_trvl_mod);
-
+                    final TextInputEditText tiet_complaintNo = dialog.findViewById(R.id.tiet_complaintNo);
                     final TextView etcncl = dialog.findViewById(R.id.btn_cncl);
                     final TextView etconfm = dialog.findViewById(R.id.btn_cnfrm);
                     final TextView ettxt1 = dialog.findViewById(R.id.txt1);
                     final TextView ettxt2 = dialog.findViewById(R.id.txt2);
 
 
+
+                    tiet_complaintNo.setText(enq_docno);
                     etstrdt.setText(activity.CustomUtility.formateDate1(current_start_date) + " " + activity.CustomUtility.formatTime1(current_start_time));
                     etstrlatlng.setText(from_lat + "," + from_lng);
                     etenddt.setText(activity.CustomUtility.formateDate1(current_end_date) + " " + activity.CustomUtility.formatTime1(current_end_time));
@@ -1031,15 +1099,14 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
                     ettxt2.setText(getResources().getString(R.string.endyourJourney));
 
 
-                    etcncl.setOnClickListener(v ->{
-                        dialog.dismiss();
-                    } );
+
+                    etcncl.setOnClickListener(v -> dialog.dismiss());
 
                     etconfm.setOnClickListener(v -> {
 
                         if (activity.CustomUtility.isOnline(getApplicationContext())) {
-                            if (!ettrvlmod.getText().toString().isEmpty()) {
-                                new savePendingPhotoDataAPI().execute();
+                            if (!Objects.requireNonNull(ettrvlmod.getText()).toString().isEmpty()) {
+                                new SubordinateImageActivity.savePendingPhotoDataAPI().execute();
 
                                 new Thread(() -> runOnUiThread(() -> {
                                     LocalConvenienceBean localConvenienceBean = new LocalConvenienceBean(username, current_start_date,
@@ -1184,13 +1251,13 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
                             progressDialog.dismiss();
                             progressDialog = null;
                         }
-                        ;
+
                         Message msg = new Message();
                         msg.obj = docno_sap;
                         mHandler.sendMessage(msg);
                         db.deleteLocalconvenienceDetail1(endat, endtm);
                         db.deleteWayPointsDetail1(endat, endtm);
-                        //stopLocationService();
+                        stopLocationService();
                         activity.CustomUtility.setSharedPreference(getApplicationContext(), Constant.LocalConveyance, "0");
                         activity.CustomUtility.removeFromSharedPreference(getApplicationContext(), Constant.FromLatitude);
                         activity.CustomUtility.removeFromSharedPreference(getApplicationContext(), Constant.FromLongitude);
@@ -1238,7 +1305,6 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
 
             if(imageArrayList.get(i).getName().equals(name)){
                 imageArrayList.remove(i);
-
             }
         }
 
@@ -1248,18 +1314,7 @@ public class InstReportImageActivity extends AppCompatActivity implements ImageS
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-
-   /*     if(boerwellLiffiting ) {
-            Toast.makeText(this, getResources().getString(R.string.Please_Pump_set_lifting), Toast.LENGTH_SHORT).show();
-        }else if (borewellLowering) {
-            Toast.makeText(this, getResources().getString(R.string.Please_Pump_set_lowering), Toast.LENGTH_SHORT).show();
-        }else  if (transportLoading) {
-            Toast.makeText(this, getResources().getString(R.string.Please_Transport_Loading), Toast.LENGTH_SHORT).show();
-        }else  if (transportUnLoading) {
-            Toast.makeText(this, getResources().getString(R.string.Please_Transport_UNLoading), Toast.LENGTH_SHORT).show();
-        }else {
-            super.onBackPressed();
-        }*/
+        Log.e("VALUES====>"," " +borewellLowering+"  "+boerwellLiffiting+"  "+transportLoading+"  "+transportUnLoading);
 
     }
 }

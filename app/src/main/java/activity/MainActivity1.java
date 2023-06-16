@@ -171,10 +171,12 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
             while (progressBarStatus < 100) {
                 try {
                     progressBarStatus = 20;
+                    dataHelper.deleteTableData(dataHelper.TABLE_ASSGIN_COMPLAIN_SUBORDINATE);
                     progressBarHandler.post(() -> progressBar.setProgress(progressBarStatus));
                     con.getAssginComplain(MainActivity1.this);
 
                     progressBarStatus = 39;
+                    dataHelper.deleteTableData(dataHelper.TABLE_VISIT_COMPLAIN_SUBORDINATE);
                     progressBarHandler.post(() -> progressBar.setProgress(progressBarStatus));
                     con.getVisitedComplain(MainActivity1.this);
 
