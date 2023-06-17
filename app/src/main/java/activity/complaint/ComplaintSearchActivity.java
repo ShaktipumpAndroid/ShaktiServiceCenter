@@ -319,7 +319,7 @@ public class ComplaintSearchActivity extends AppCompatActivity {
                     String save = cursor.getString(cursor.getColumnIndex("save_by"));
                    int fdate1 = 0;
                    if (!TextUtils.isEmpty(fdate)) {
-                        fdate1 = Integer.parseInt(CustomUtility.formateDate(fdate));
+                        fdate1 = Integer.parseInt(CustomUtility.formatDate(fdate));
                    }
 
 
@@ -439,7 +439,7 @@ public class ComplaintSearchActivity extends AppCompatActivity {
                     String save = cursor.getString(cursor.getColumnIndex("save_by"));
                     int fdate1 = 0;
                     if (!TextUtils.isEmpty(fdate)) {
-                        fdate1 = Integer.parseInt(CustomUtility.formateDate(fdate));
+                        fdate1 = Integer.parseInt(CustomUtility.formatDate(fdate));
                     }
 
 

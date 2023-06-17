@@ -1,4 +1,4 @@
-package activity.complainvk.Freelauncer;
+package activity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,13 +24,12 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import activity.AdaperVk.PendingComplainListAdapter;
+import activity.AdaperVk.SubordinateVisitedListAdapter;
 import activity.BeanVk.ComplainAllResponse;
-import activity.CustomUtility;
 import webservice.CustomHttpClient;
 import webservice.WebURL;
 
-public class PendingComplainListFreelauncerActivity extends AppCompatActivity {
+public class SubordinateVisitedListActivity extends AppCompatActivity {
 
     private Context mContext;
     private ProgressDialog progressDialog;
@@ -39,18 +37,18 @@ public class PendingComplainListFreelauncerActivity extends AppCompatActivity {
     RecyclerView rclyPendingComplainList;
     private ImageView imgBackID;
     private TextView txtHeaderID;
-    private  String mHeaderTittle= "";
-    private  String mStatusValue= "";
+    private  String mHeaderTittle = "";
+    private  String mStatusValue = "";
     private String mUserID;
-    //private BaseRequest baseRequest;
 
     private Intent mmIntent;
+    private SubordinateVisitedListAdapter mPendingComplainListAdapter;
 
-    private PendingComplainListAdapter mPendingComplainListAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pending_complain_freelauncer_list);
+        setContentView(R.layout.activity_subordinate_visited_list);
+
         mContext = this;
         mmIntent = getIntent();
         initView();
@@ -58,11 +56,10 @@ public class PendingComplainListFreelauncerActivity extends AppCompatActivity {
 
     private void initView() {
 
-         mUserID = CustomUtility.getSharedPreferences(mContext,"userID");
+        mUserID = CustomUtility.getSharedPreferences(mContext,"userID");
 
-         mHeaderTittle = mmIntent.getStringExtra("complaint");
-        mStatusValue = mmIntent.getStringExtra("StatusValue");
-
+        mHeaderTittle = mmIntent.getStringExtra("heading");
+        mStatusValue = mmIntent.getStringExtra("complaint");
 
         mComplainAllResponse = new ArrayList<>();
         imgBackID = findViewById(R.id.imgBackID);
@@ -73,39 +70,28 @@ public class PendingComplainListFreelauncerActivity extends AppCompatActivity {
         txtHeaderID.setText(mHeaderTittle);
 
         initClickEvent();
-        callgetCompalinAllListAPI();
+        callVisitedListAPI();
+
+        Log.e("Values===>",mStatusValue+"  ,  "+ mUserID);
     }
+
 
     private void initClickEvent() {
 
-        imgBackID.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
+        imgBackID.setOnClickListener(view -> finish());
 
     }
 
-    public void callgetCompalinAllListAPI() {
+    private void callVisitedListAPI() {
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().build();
         StrictMode.setThreadPolicy(policy);
 
-        //   username = inputName.getText().toString();
-        //   password = inputPassword.getText().toString();
-
-        final ArrayList<NameValuePair> param = new ArrayList<NameValuePair>();
+        final ArrayList<NameValuePair> param = new ArrayList<>();
         param.clear();
         param.add(new BasicNameValuePair("kunnr", mUserID));//kunur it means user id
-        param.add(new BasicNameValuePair("status", mStatusValue));///Pending Complaint
-        // param.add(new BasicNameValuePair("mobno", mLRMobileValue));
+        param.add(new BasicNameValuePair("cmpno", mStatusValue));///Pending Complaint
 
-        //  jsonObject.addProperty("lrno", mLRNumberValue);
-        // jsonObject.addProperty("mobno", mLRMobileValue);
-
-        //  param.add(new BasicNameValuePair("pernr", username));
-        // param.add(new BasicNameValuePair("pass", password));
         /******************************************************************************************/
 /*                   server connection
 /******************************************************************************************/
@@ -116,10 +102,11 @@ public class PendingComplainListFreelauncerActivity extends AppCompatActivity {
             public void run() {
                 try {
 
-                    String obj = CustomHttpClient.executeHttpPost1(WebURL.PENDING_COMPLAIN_ALL_LIST_VK_PAGE, param);
-                    Log.d("check_error", obj);
-                    Log.e("check_error", obj);
+                    String obj = CustomHttpClient.executeHttpPost1(WebURL.VISITED_COMPLAIN_VK_PAGE, param);
 
+/******************************************************************************************/
+/*                       get JSONwebservice Data
+/******************************************************************************************/
 
                     JSONObject jo = new JSONObject(obj);
 
@@ -133,8 +120,6 @@ public class PendingComplainListFreelauncerActivity extends AppCompatActivity {
                             mComplainAllResponse.clear();
 
                         JSONArray ja = new JSONArray(jo11);
-                        // JSONObject jo = ja.getJSONObject(0);
-
                         System.out.println("ja==>>"+ja.get(0));
 
                         for (int i = 0; i < ja.length(); i++) {
@@ -175,62 +160,30 @@ public class PendingComplainListFreelauncerActivity extends AppCompatActivity {
                             mmComplainAllResponse.setPendAprRemark(join.getString("pend_apr_remark"));
                             mmComplainAllResponse.setScStatus(join.getString("sc_status"));
                             mmComplainAllResponse.setSengno(join.getString("sengno"));
-
+                            mmComplainAllResponse.setVistedstatus("");
 
                             mComplainAllResponse.add(mmComplainAllResponse);
 
                         }
 
-                        runOnUiThread(new Runnable() {
-                            public void run() {
-                               // Toast.makeText(mContext, mMessage, Toast.LENGTH_SHORT).show();
-                                mPendingComplainListAdapter = new PendingComplainListAdapter(mContext, mComplainAllResponse, mStatusValue);
-                                rclyPendingComplainList.setAdapter(mPendingComplainListAdapter);
-                                progressDialog.dismiss();
-                            }
+                        runOnUiThread(() -> {
 
-
+                            mPendingComplainListAdapter = new SubordinateVisitedListAdapter(mContext, mComplainAllResponse, mStatusValue);
+                            rclyPendingComplainList.setAdapter(mPendingComplainListAdapter);
+                            progressDialog.dismiss();
                         });
 
-/*
-                        runOnUiThread(new Runnable() {
-                            public void run() {
-                                try {
-                                    Intent mIntent = new Intent(ActivityPODSearchInfo.this, LrtransportList.class);
-                                    mIntent.putExtra("InvoiceList", (Serializable) mLrInvoiceResponse);
-                                    startActivity(mIntent);
-                                } catch (Exception exception) {
-                                    exception.printStackTrace();
-                                }
-                                progressDialog.dismiss();
-                            }
-
-
-                        });*/
-
-
-                        //   Toast.makeText(mContext, mMessage, Toast.LENGTH_SHORT).show();
                         progressDialog.dismiss();
 
                     } else {
-                        runOnUiThread(new Runnable() {
-                            public void run() {
-                                Toast.makeText(mContext, mMessage, Toast.LENGTH_SHORT).show();
-                               /* mPendingComplainListAdapter = new PendingComplainListAdapter(mContext, mComplainAllResponse);
-                                rclyPendingComplainList.setAdapter(mPendingComplainListAdapter);*/
-                                progressDialog.dismiss();
-                            }
-
-
+                        runOnUiThread(() -> {
+                            Toast.makeText(mContext, mMessage, Toast.LENGTH_SHORT).show();
+                            progressDialog.dismiss();
                         });
-                        //   Toast.makeText(mContext, mMessage, Toast.LENGTH_SHORT).show();
                         progressDialog.dismiss();
                     }
-
-
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    // dismiss the progress dialog
                     progressDialog.dismiss();
                 }
 
@@ -239,7 +192,5 @@ public class PendingComplainListFreelauncerActivity extends AppCompatActivity {
         }.start();
 
     }
-
-
 
 }

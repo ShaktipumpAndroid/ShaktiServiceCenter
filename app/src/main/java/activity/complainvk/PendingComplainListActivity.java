@@ -1,19 +1,18 @@
 package activity.complainvk;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
@@ -22,7 +21,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,14 +38,14 @@ public class PendingComplainListActivity extends AppCompatActivity {
     RecyclerView rclyPendingComplainList;
     private ImageView imgBackID;
     private TextView txtHeaderID;
-    private  String mHeaderTittle= "";
-    private  String mStatusValue= "";
+    private  String mHeaderTittle = "";
+    private  String mStatusValue = "";
     private String mUserID;
     //private BaseRequest baseRequest;
 
     private Intent mmIntent;
-
     private PendingComplainListAdapter mPendingComplainListAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,9 +59,8 @@ public class PendingComplainListActivity extends AppCompatActivity {
 
          mUserID = CustomUtility.getSharedPreferences(mContext,"userID");
 
-         mHeaderTittle = mmIntent.getStringExtra("complaint");
+        mHeaderTittle = mmIntent.getStringExtra("complaint");
         mStatusValue = mmIntent.getStringExtra("StatusValue");
-
 
         mComplainAllResponse = new ArrayList<>();
         imgBackID = findViewById(R.id.imgBackID);
@@ -79,12 +76,7 @@ public class PendingComplainListActivity extends AppCompatActivity {
 
     private void initClickEvent() {
 
-        imgBackID.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
+        imgBackID.setOnClickListener(view -> finish());
 
     }
 
@@ -93,20 +85,11 @@ public class PendingComplainListActivity extends AppCompatActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().build();
         StrictMode.setThreadPolicy(policy);
 
-        //   username = inputName.getText().toString();
-        //   password = inputPassword.getText().toString();
-
-        final ArrayList<NameValuePair> param = new ArrayList<NameValuePair>();
+        final ArrayList<NameValuePair> param = new ArrayList<>();
         param.clear();
         param.add(new BasicNameValuePair("kunnr", mUserID));//kunur it means user id
         param.add(new BasicNameValuePair("status", mStatusValue));///Pending Complaint
-        // param.add(new BasicNameValuePair("mobno", mLRMobileValue));
 
-        //  jsonObject.addProperty("lrno", mLRNumberValue);
-        // jsonObject.addProperty("mobno", mLRMobileValue);
-
-        //  param.add(new BasicNameValuePair("pernr", username));
-        // param.add(new BasicNameValuePair("pass", password));
         /******************************************************************************************/
 /*                   server connection
 /******************************************************************************************/
@@ -123,20 +106,6 @@ public class PendingComplainListActivity extends AppCompatActivity {
 /******************************************************************************************/
 /*                       get JSONwebservice Data
 /******************************************************************************************/
-                    //      JSONObject jo = new JSONObject(obj);
-                    //  JSONArray ja = new JSONArray(obj);
-                    // JSONObject jo = ja.getJSONObject(0);
-
-                   /* try {
-                        Gson gson = new Gson();
-                        //////////////add model class here
-                        progressDialog.dismiss();
-                        InstallarCustListModel mInstallarCustListModel = gson.fromJson(obj, InstallarCustListModel.class);
-                        getInstallarCustListModel(mInstallarCustListModel);
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }*/
 
                     JSONObject jo = new JSONObject(obj);
 
@@ -150,8 +119,6 @@ public class PendingComplainListActivity extends AppCompatActivity {
                             mComplainAllResponse.clear();
 
                         JSONArray ja = new JSONArray(jo11);
-                        // JSONObject jo = ja.getJSONObject(0);
-
                         System.out.println("ja==>>"+ja.get(0));
 
                         for (int i = 0; i < ja.length(); i++) {
@@ -192,62 +159,30 @@ public class PendingComplainListActivity extends AppCompatActivity {
                             mmComplainAllResponse.setPendAprRemark(join.getString("pend_apr_remark"));
                             mmComplainAllResponse.setScStatus(join.getString("sc_status"));
                             mmComplainAllResponse.setSengno(join.getString("sengno"));
-
+                            mmComplainAllResponse.setVistedstatus("");
 
                             mComplainAllResponse.add(mmComplainAllResponse);
 
                         }
 
-                        runOnUiThread(new Runnable() {
-                            public void run() {
-                               // Toast.makeText(mContext, mMessage, Toast.LENGTH_SHORT).show();
-                                mPendingComplainListAdapter = new PendingComplainListAdapter(mContext, mComplainAllResponse, mStatusValue);
-                                rclyPendingComplainList.setAdapter(mPendingComplainListAdapter);
-                                progressDialog.dismiss();
-                            }
+                        runOnUiThread(() -> {
 
-
+                            mPendingComplainListAdapter = new PendingComplainListAdapter(mContext, mComplainAllResponse, mStatusValue);
+                            rclyPendingComplainList.setAdapter(mPendingComplainListAdapter);
+                            progressDialog.dismiss();
                         });
 
-/*
-                        runOnUiThread(new Runnable() {
-                            public void run() {
-                                try {
-                                    Intent mIntent = new Intent(ActivityPODSearchInfo.this, LrtransportList.class);
-                                    mIntent.putExtra("InvoiceList", (Serializable) mLrInvoiceResponse);
-                                    startActivity(mIntent);
-                                } catch (Exception exception) {
-                                    exception.printStackTrace();
-                                }
-                                progressDialog.dismiss();
-                            }
-
-
-                        });*/
-
-
-                        //   Toast.makeText(mContext, mMessage, Toast.LENGTH_SHORT).show();
                         progressDialog.dismiss();
 
                     } else {
-                        runOnUiThread(new Runnable() {
-                            public void run() {
-                                Toast.makeText(mContext, mMessage, Toast.LENGTH_SHORT).show();
-                               /* mPendingComplainListAdapter = new PendingComplainListAdapter(mContext, mComplainAllResponse);
-                                rclyPendingComplainList.setAdapter(mPendingComplainListAdapter);*/
-                                progressDialog.dismiss();
-                            }
-
-
+                        runOnUiThread(() -> {
+                            Toast.makeText(mContext, mMessage, Toast.LENGTH_SHORT).show();
+                            progressDialog.dismiss();
                         });
-                        //   Toast.makeText(mContext, mMessage, Toast.LENGTH_SHORT).show();
                         progressDialog.dismiss();
                     }
-
-
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    // dismiss the progress dialog
                     progressDialog.dismiss();
                 }
 
@@ -258,110 +193,7 @@ public class PendingComplainListActivity extends AppCompatActivity {
     }
 
 
-    public void callgetCompalinAllListAPI11() {
 
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().build();
-        StrictMode.setThreadPolicy(policy);
-
-        //   username = inputName.getText().toString();
-        //   password = inputPassword.getText().toString();
-
-        final ArrayList<NameValuePair> param = new ArrayList<NameValuePair>();
-        param.clear();
-
-        param.add(new BasicNameValuePair("id", "9500001850"));///Pending Complaint
-        // param.add(new BasicNameValuePair("mobno", mLRMobileValue));
-
-        //  jsonObject.addProperty("lrno", mLRNumberValue);
-        // jsonObject.addProperty("mobno", mLRMobileValue);
-
-        //  param.add(new BasicNameValuePair("pernr", username));
-        // param.add(new BasicNameValuePair("pass", password));
-        /******************************************************************************************/
-/*                   server connection
-/******************************************************************************************/
-        progressDialog = ProgressDialog.show(mContext, "", "Connecting to server..please wait !");
-
-        new Thread() {
-
-            public void run() {
-                try {
-
-                  //  String obj = CustomHttpClient.executeHttpGet("https://solar10.shaktisolarrms.com/RMSAppTest/MoterParamList?id=9500001850", param);
-                    String obj = CustomHttpClient.executeHttpGet("https://solar10.shaktisolarrms.com/RMSAppTest/MoterParamList?id=9500001850");
-                    Log.d("check_error", obj);
-                    Log.e("check_error", obj);
-
-
-                    JSONObject jo = new JSONObject(obj);
-
-                    String mStatus = jo.getString("status");
-                    final String mMessage = jo.getString("message");
-                    String jo11 = jo.getString("response");
-                    System.out.println("jo11==>>"+jo11);
-                    if (mStatus.equalsIgnoreCase("true")) {
-
-
-
-                        runOnUiThread(new Runnable() {
-                            public void run() {
-                                 Toast.makeText(mContext, "mStatus==>>"+mStatus+"\nmMessage==>>"+mMessage, Toast.LENGTH_SHORT).show();
-                              /*  mPendingComplainListAdapter = new PendingComplainListAdapter(mContext, mComplainAllResponse, mStatusValue);
-                                rclyPendingComplainList.setAdapter(mPendingComplainListAdapter);*/
-                               // addDynamicViewProNew(mSettingParameterResponse);
-                                progressDialog.dismiss();
-                            }
-
-
-                        });
-
-/*
-                        runOnUiThread(new Runnable() {
-                            public void run() {
-                                try {
-                                    Intent mIntent = new Intent(ActivityPODSearchInfo.this, LrtransportList.class);
-                                    mIntent.putExtra("InvoiceList", (Serializable) mLrInvoiceResponse);
-                                    startActivity(mIntent);
-                                } catch (Exception exception) {
-                                    exception.printStackTrace();
-                                }
-                                progressDialog.dismiss();
-                            }
-
-
-                        });*/
-
-
-                        //   Toast.makeText(mContext, mMessage, Toast.LENGTH_SHORT).show();
-                        progressDialog.dismiss();
-
-                    } else {
-                        runOnUiThread(new Runnable() {
-                            public void run() {
-                                Toast.makeText(mContext, mMessage, Toast.LENGTH_SHORT).show();
-                               /* mPendingComplainListAdapter = new PendingComplainListAdapter(mContext, mComplainAllResponse);
-                                rclyPendingComplainList.setAdapter(mPendingComplainListAdapter);*/
-                                progressDialog.dismiss();
-                            }
-
-
-                        });
-                        //   Toast.makeText(mContext, mMessage, Toast.LENGTH_SHORT).show();
-                        progressDialog.dismiss();
-                    }
-
-
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    // dismiss the progress dialog
-                    progressDialog.dismiss();
-                }
-
-            }
-
-        }.start();
-
-    }
 
 
 

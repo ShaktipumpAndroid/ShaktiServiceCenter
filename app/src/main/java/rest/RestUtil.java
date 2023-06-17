@@ -3,23 +3,23 @@ package rest;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
-import retrofit2.converter.jackson.JacksonConverterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class RestUtil {
     private static RestUtil self;
-    private String API_BASE_URL = "https://maps.googleapis.com/";
-    private Retrofit retrofit;
+    private final Retrofit retrofit;
 
     private RestUtil() {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient httpClient = new OkHttpClient.Builder().addInterceptor(interceptor).build();
 
+        String API_BASE_URL = "https://maps.googleapis.com/";
         Retrofit.Builder builder =
                 new Retrofit.Builder()
                         .baseUrl(API_BASE_URL)
-                        .addConverterFactory(JacksonConverterFactory.create());
+                        .addConverterFactory(GsonConverterFactory.create());
         retrofit = builder.client(httpClient).build();
     }
 

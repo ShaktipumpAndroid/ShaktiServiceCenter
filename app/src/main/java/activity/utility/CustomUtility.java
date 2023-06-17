@@ -10,10 +10,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.provider.Settings;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -22,11 +24,11 @@ import androidx.core.content.ContextCompat;
 
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
+import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-
 
 
 /**
@@ -201,11 +203,12 @@ public class CustomUtility {
     }
 
     public static String formateDate1(String date) {
+        Log.e("Date==>", date);
         String formatedDate = "";
         try {
-            SimpleDateFormat formate = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat formate = new SimpleDateFormat("dd.MM.yyyy");
             Date mDate = formate.parse(date);
-//            SimpleDateFormat appFormate = newworkorder SimpleDateFormat("dd MMM, yyyy");
+            Log.e("change", String.valueOf(mDate));
             SimpleDateFormat appFormate = new SimpleDateFormat("yyyyMMdd");
             formatedDate = appFormate.format(mDate);
             Log.i("Result", "mDate " + formatedDate);
@@ -261,6 +264,46 @@ public class CustomUtility {
     public static String getSharedPreferences(Context context, String name) {
         SharedPreferences settings = context.getSharedPreferences(PREFERENCE, 0);
         return settings.getString(name, "");
+    }
+
+    public static boolean checkLocationPermission(final Context context) {
+        int currentAPIVersion = Build.VERSION.SDK_INT;
+        if (currentAPIVersion >= Build.VERSION_CODES.TIRAMISU) {
+            return (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED);
+
+        } else {
+            return true;
+        }
+    }
+
+    public static String getBase64FromBitmap(Context context,String Imagepath) {
+        String imageString=" ";
+        try {
+            Bitmap bitmap = BitmapFactory.decodeFile(Imagepath);
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
+            byte[] imageBytes = byteArrayOutputStream.toByteArray();
+            imageString = Base64.encodeToString(imageBytes, Base64.NO_WRAP);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return imageString;
+
+    }
+
+    public static boolean isOnline(Context mContext) {
+        ConnectivityManager connectivity =
+                (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivity != null) {
+            NetworkInfo[] info = connectivity.getAllNetworkInfo();
+            if (info != null) {
+                for (NetworkInfo networkInfo : info)
+                    if (networkInfo.getState() == NetworkInfo.State.CONNECTED) {
+                        return true;
+                    }
+            }
+        }
+        return false;
     }
 
     public String getCurrentDate() {

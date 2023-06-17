@@ -57,6 +57,38 @@ public class ComplainDetailListResponse {
     @SerializedName("warranty_condition")
     private String mWarrantyCondition;
 
+    public ComplainDetailListResponse(String mCloserReason, String mCmplnRelatedTo, String mCmpno, String mComamt, String mCusamt, String mDefect, String mDelamt, String mExtwg, String mFkdat, String mFocamt, String mHistory, String mInsuranceTxt, String mMaktx, String mMatnr, String mPayToFreelancer, String mPaymentBy, String mPosnr, String mReComp, String mReDel, String mReason, String mSernr, String mVbeln, String mWarDate, String mWarrantee, String mWarrantyCondition) {
+        this.mCloserReason = mCloserReason;
+        this.mCmplnRelatedTo = mCmplnRelatedTo;
+        this.mCmpno = mCmpno;
+        this.mComamt = mComamt;
+        this.mCusamt = mCusamt;
+        this.mDefect = mDefect;
+        this.mDelamt = mDelamt;
+        this.mExtwg = mExtwg;
+        this.mFkdat = mFkdat;
+        this.mFocamt = mFocamt;
+        this.mHistory = mHistory;
+        this.mInsuranceTxt = mInsuranceTxt;
+        this.mMaktx = mMaktx;
+        this.mMatnr = mMatnr;
+        this.mPayToFreelancer = mPayToFreelancer;
+        this.mPaymentBy = mPaymentBy;
+        this.mPosnr = mPosnr;
+        this.mReComp = mReComp;
+        this.mReDel = mReDel;
+        this.mReason = mReason;
+        this.mSernr = mSernr;
+        this.mVbeln = mVbeln;
+        this.mWarDate = mWarDate;
+        this.mWarrantee = mWarrantee;
+        this.mWarrantyCondition = mWarrantyCondition;
+    }
+
+    public ComplainDetailListResponse() {
+
+    }
+
     public String getCloserReason() {
         return mCloserReason;
     }

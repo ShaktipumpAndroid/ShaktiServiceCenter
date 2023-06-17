@@ -7,7 +7,6 @@ import android.graphics.BitmapFactory;
 import android.os.StrictMode;
 import android.util.Base64;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -23,7 +22,9 @@ import java.util.Locale;
 
 import activity.CustomUtility;
 import bean.BeanProduct;
-import bean.LoginBean;
+import bean.SubordinateAssginComplainBean;
+import bean.SubordinateBean;
+import bean.SubordinateVisitedComplainBean;
 import database.DatabaseHelper;
 
 /**
@@ -35,67 +36,11 @@ public class SAPWebService {
     public static final int MODE_PRIVATE = 0;
     ArrayList<String> al;
     String matnr, kunnr, vkorg, vtweg, extwg, maktx, kbetr, mtart, konwa;
+    String country, country_text, state, state_text, district, district_text, tehsil, tehsil_text;
     //get user id of person
-    String userid = LoginBean.getUseid();
+    String userid ;
     SharedPreferences.Editor editor;
     SharedPreferences pref;
-
-    /**************************** create attendance table ***********************************************/
-    // Create DatabaseHelper instance
-    public int getAttendanceData(Context context) {
-
-        int progressBarStatus = 0;
-
-        DatabaseHelper dataHelper = new DatabaseHelper(context);
-
-
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().build();
-        StrictMode.setThreadPolicy(policy);
-
-        al = new ArrayList<>();
-        final ArrayList<NameValuePair> param = new ArrayList<NameValuePair>();
-        param.clear();
-        param.add(new BasicNameValuePair("PERNR", userid));
-
-
-        try {
-            String obj = CustomHttpClient.executeHttpPost1(WebURL.ATTENDANCE_PAGE, param);
-
-            if (obj != null) {
-
-                JSONObject jsonObj = new JSONObject(obj);
-                JSONArray ja = jsonObj.getJSONArray("attendance");
-
-
-             //   dataHelper.deleteAttendance();
-
-                for (int i = 0; i < ja.length(); i++) {
-
-                    JSONObject jo = ja.getJSONObject(i);
-                    // login = jo.getString("LOGIN");
-
-
-                    dataHelper.insertAttendance(userid,
-                            jo.getString("begdat"),
-                            jo.getString("indz"),
-                            jo.getString("iodz"),
-                            jo.getString("totdz"),
-                            jo.getString("atn_status"),
-                            jo.getString("leave_typ"));
-                }
-
-
-            }
-
-            progressBarStatus = 20;
-
-        } catch (Exception E) {
-            progressBarStatus = 20;
-        }
-
-        return progressBarStatus;
-    }
-
 
     /**************************** create route detail ***********************************************/
     // Create DatabaseHelper instance
@@ -120,14 +65,7 @@ public class SAPWebService {
             if (obj != null) {
 
                 JSONObject jsonObj = new JSONObject(obj);
-
-
                 JSONArray ja = jsonObj.getJSONArray("route_detail");
-
-                //  Log.d("route_ja",""+ja) ;
-
-
-
 
                 for (int i = 0; i < ja.length(); i++) {
 
@@ -481,7 +419,7 @@ public class SAPWebService {
                 JSONArray chat_app = jsonObj.getJSONArray("chat_app_api");
 
 
-                pref = context.getSharedPreferences("MyPref", MODE_PRIVATE);
+                pref = context.getSharedPreferences("MyPref", Context.MODE_PRIVATE);
                 editor = pref.edit();
 
                 for (int i = 0; i < chat_app.length(); i++) {
@@ -1414,8 +1352,158 @@ public class SAPWebService {
 
 }
 
+    public void getStateData(Context context) {
+
+        @SuppressWarnings("resource") DatabaseHelper dataHelper = new DatabaseHelper(context);
+        final ArrayList<NameValuePair> param = new ArrayList<>();
+        try {
+            String obj = CustomHttpClient.executeHttpPost1(WebURL.STATE_DATA, param);
+            JSONArray ja_state = new JSONArray(obj);
+            dataHelper.deleteStateSearchHelpData();
+            for (int i = 0; i < ja_state.length(); i++) {
+                JSONObject jo_state = ja_state.getJSONObject(i);
+                country = jo_state.optString("country");
+                country_text = jo_state.optString("countrytext");
+                state = jo_state.optString("state");
+                state_text = jo_state.optString("statetext");
+                district = jo_state.optString("district");
+                district_text = jo_state.optString("districttext");
+                tehsil = jo_state.optString("tehsil");
+                tehsil_text = jo_state.optString("tehsiltext");
+                dataHelper.insertStateData(country, country_text, state, state_text, district, district_text, tehsil, tehsil_text);
+            }
+        } catch (Exception e) {
+            Log.d("msg", "" + e);
+        }
+
+    }
+
+    public int getSubordinateData(Context context) {
+        int progressBarStatus = 0;
+        DatabaseHelper dataHelper = new DatabaseHelper(context);
+        userid = CustomUtility.getSharedPreferences(context,"username");
+
+        final ArrayList<NameValuePair> param = new ArrayList<>();
+        param.add(new BasicNameValuePair("kunnr", userid));
+
+        Log.e("UseID===>",param.toString());
+        try {
+            String obj = CustomHttpClient.executeHttpPost1(WebURL.GET_SUORDINATE, param);
+            JSONObject jsonObj = new JSONObject(obj);
+
+            JSONArray ja_sub = jsonObj.getJSONArray("response");
+
+            Log.e("OUTPUT===>", ja_sub.toString());
+            for (int i = 0; i < ja_sub.length(); i++) {
+                JSONObject jo_sub = ja_sub.getJSONObject(i);
+
+                SubordinateBean subordinateBean = new SubordinateBean(
+                        jo_sub.optString("mobile"),
+                        jo_sub.optString("aadhar"),
+                        jo_sub.optString("name"),
+                        jo_sub.optString("date_from"),
+                        jo_sub.optString("date_to"),
+                        jo_sub.optString("state"),
+                        jo_sub.optString("district"),
+                        jo_sub.optString("passward"));
+
+                if (dataHelper.isRecordExist(DatabaseHelper.TABLE_SUBORDINATE, DatabaseHelper.KEY_MOB_NO, subordinateBean.getMobileNo())) {
+                    dataHelper.updateSuboridnateData(dataHelper.KEY_UPDATE, subordinateBean);
+                } else {
+                    dataHelper.updateSuboridnateData(dataHelper.KEY_INSERT, subordinateBean);
+                }
+            }
 
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return progressBarStatus;
+    }
+
+    public void getAssginComplain(Context context) {
+
+        DatabaseHelper dataHelper = new DatabaseHelper(context);
+        userid = CustomUtility.getSharedPreferences(context,"username");
+
+        final ArrayList<NameValuePair> param = new ArrayList<>();
+        param.add(new BasicNameValuePair("mob_no", userid));
+        try {
+            String obj = CustomHttpClient.executeHttpPost1(WebURL.ASSGINCOMPLAINlIST, param);
+            JSONObject jsonObj = new JSONObject(obj);
+
+            JSONArray ja_sub = jsonObj.getJSONArray("response");
+
+            Log.e("OUTPUT===>", ja_sub.toString());
+            for (int i = 0; i < ja_sub.length(); i++) {
+                JSONObject jo_sub = ja_sub.getJSONObject(i);
+
+                SubordinateAssginComplainBean subordinateBean = new SubordinateAssginComplainBean(
+                        jo_sub.optString("cmpno"),
+                        jo_sub.optString("delname"),
+                        jo_sub.optString("cstname"),
+                        jo_sub.optString("engg_name"),
+                        jo_sub.optString("cmblno"),
+                        jo_sub.optString("caddress"),
+                        jo_sub.optString("matnr"),
+                        jo_sub.optString("warranty"),
+                        jo_sub.optString("maktx"),
+                        jo_sub.optString("sernr"),
+                        jo_sub.optString("reason"),
+                        jo_sub.optString("w_waranty"),
+                        jo_sub.optString("cmpdt")
+                );
+
+                if (dataHelper.isRecordExist(DatabaseHelper.TABLE_ASSGIN_COMPLAIN_SUBORDINATE, DatabaseHelper.KEY_CMPNO, subordinateBean.getCmpno())) {
+                    dataHelper.updateAssginComplainData(dataHelper.KEY_UPDATE, subordinateBean);
+                } else {
+                    dataHelper.updateAssginComplainData(dataHelper.KEY_INSERT, subordinateBean);
+                }
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getVisitedComplain(Context context) {
+
+        DatabaseHelper dataHelper = new DatabaseHelper(context);
+        userid = CustomUtility.getSharedPreferences(context,"username");
+
+        final ArrayList<NameValuePair> param = new ArrayList<>();
+        param.add(new BasicNameValuePair("mobile", userid));
+        try {
+            String obj = CustomHttpClient.executeHttpPost1(WebURL.VISITEDCOMPLAINLIST, param);
+            JSONObject jsonObj = new JSONObject(obj);
+
+            JSONArray ja_sub = jsonObj.getJSONArray("response");
+
+            Log.e("OUTPUT===>", ja_sub.toString());
+            for (int i = 0; i < ja_sub.length(); i++) {
+                JSONObject jo_sub = ja_sub.getJSONObject(i);
+
+                SubordinateVisitedComplainBean subordinateBean = new SubordinateVisitedComplainBean(
+                        jo_sub.optString("cmpno"),
+                        jo_sub.optString("cmpdt"),
+                        jo_sub.optString("cstname"),
+                        jo_sub.optString("delname"),
+                        jo_sub.optString("mblno1")
+                );
+
+                if (dataHelper.isRecordExist(DatabaseHelper.TABLE_VISIT_COMPLAIN_SUBORDINATE, DatabaseHelper.KEY_CMPNO, subordinateBean.getCmpno())) {
+                    dataHelper.updateVistComplainData(dataHelper.KEY_UPDATE, subordinateBean);
+                } else {
+                    dataHelper.updateVistComplainData(dataHelper.KEY_INSERT, subordinateBean);
+                }
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
 
 

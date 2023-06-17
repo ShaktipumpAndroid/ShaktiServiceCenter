@@ -14,21 +14,38 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.BROADCAST_STICKY" />
-    <uses-permission android:name="android.permission.ACCESS_GPS" />
-    <uses-permission android:name="android.permission.CAMERA" /> <!-- <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/> -->
-    <!-- <uses-permission android:name="android.permission.READ_CALL_LOG" /> -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission
+        android:name="com.google.android.gms.permission.AD_ID"
+        tools:node="remove" />
+
+    <uses-feature android:name="android.hardware.location.gps" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+    <uses-feature
+        android:name="android.hardware.camera.front"
+        android:required="true" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <uses-permission
+        android:name="android.permission.READ_LOGS"
+        tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.STORAGE" />
 
-    <uses-feature android:name="android.hardware.location.gps" /> <!-- Google Cloud Messaging for Android -->
+
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.ACCESS_GPS" />
 
     <application
-        android:label="@string/app_name"
         android:name="adapter.Controller"
         android:allowBackup="true"
         android:appComponentFactory="whateverString"
@@ -36,6 +53,7 @@
         android:fullBackupContent="@xml/backup_descriptor"
         android:hardwareAccelerated="true"
         android:icon="@drawable/shakti_logo"
+        android:label="@string/app_name"
         android:largeHeap="true"
         android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
@@ -45,14 +63,53 @@
         tools:replace="android:appComponentFactory"
         tools:targetApi="q">
 
-        <activity android:name="activity.complainvk.PendingComplainDetailActivity"  android:screenOrientation="portrait" />
-        <activity android:name="activity.complainvk.PendingComplainListActivity"   android:screenOrientation="portrait" /><!-- android:theme="@style/AppTheme" -->
-        <activity android:name="activity.SplashActivity"
-            android:screenOrientation="portrait"
-            android:exported="true">
+
+        <activity
+            android:name="activity.SubordinateVisitedListActivity"
+            android:exported="false" />
+
+        <activity
+            android:name="activity.VisitedComplainListActivity"
+            android:exported="false" />
+        <activity
+            android:name="activity.VisitedSiteActivity"
+            android:exported="false" />
+        <activity
+            android:name="activity.PendingSiteActivity"
+            android:exported="false" />
+        <activity
+            android:name="activity.ForwardList"
+            android:exported="false" />
+        <activity
+            android:name="activity.PhotoViewerActivity"
+            android:exported="false" />
+        <activity
+            android:name="activity.EditSubordinate"
+            android:exported="false" />
+        <activity
+            android:name="activity.SubordinateList"
+            android:exported="false" />
+        <activity
+            android:name="activity.Register"
+            android:exported="false" />
+        <activity
+            android:name="activity.complainvk.PendingComplainDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="activity.complainvk.SubordinateImageActivity"
+            android:screenOrientation="portrait"  />
+        <activity
+            android:name="activity.complainvk.VisitedComplainDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="activity.complainvk.PendingComplainListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="activity.SplashActivity"
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -66,6 +123,9 @@
             android:name="activity.MainActivity2"
             android:screenOrientation="portrait" />
         <activity
+            android:name="activity.CameraActivity2"
+            android:exported="false" />
+        <activity
             android:name="activity.UpdateActivity"
             android:screenOrientation="portrait" /> <!-- android:theme="@android:style/Theme.Translucent" -->
         <activity
@@ -77,40 +137,31 @@
         <activity
             android:name="activity.ShowDocument"
             android:screenOrientation="portrait" />
-
+        <activity
+            android:name="activity.AssginPendingComplainDetailActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name="activity.complainvk.InstReportImageActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name="activity.complainvk.ApproveReportImageActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name="activity.complainvk.ApproveComplainDetailActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name="activity.complainvk.CameraActivity"
             android:screenOrientation="portrait" />
-
         <activity
-            android:name="activity.complainvk.Freelauncer.PendingComplainListFreelauncerActivity"
+            android:name="activity.complainvk.Freelauncer.PendingComplainListFreelancerActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name="activity.complainvk.Freelauncer.PendingComplainFreelauncerDetailActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name="activity.complainvk.ShowPhotograph"
             android:screenOrientation="portrait" />
-        <!--
-             The API key for Google Maps-based APIs is defined as a string resource.
-             (See the file "res/values/google_maps_api.xml").
-             Note that the API key is linked to the encryption key used to sign the APK.
-             You need a different API key for each encryption key, including the release key that is used to
-             sign the APK for publishing.
-             You can define the keys for the debug and release targets in src/debug/ and src/release/. 
-        -->
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
@@ -143,8 +194,8 @@
         -->
         <service
             android:name="backgroundservice.SyncDataService"
-            android:screenOrientation="portrait"
-            android:exported="true"/>
+            android:exported="true"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name="activity.VisitHistoryActivity"
@@ -156,13 +207,12 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-        <!--
-<activity
-            android:name="activity.Notification"
-            android:screenOrientation="portrait" />
-        -->
+
         <activity
             android:name="activity.VideoSearchActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="activity.OfflineDataConveyance"
             android:screenOrientation="portrait" />
         <activity
             android:name="activity.complaint.ComplaintDashboard"
@@ -259,6 +309,13 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
+
+        <service
+            android:name="activity.services.LocationUpdateService"
+            android:enabled="true"
+            android:exported="true"
+            android:foregroundServiceType="location"
+            android:stopWithTask="false" />
     </application>
 
 </manifest>

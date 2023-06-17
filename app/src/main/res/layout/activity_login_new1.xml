@@ -44,6 +44,7 @@
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
+                    android:gravity="center"
                     android:layout_height="wrap_content">
 
 
@@ -64,21 +65,25 @@
                             android:checked="true" />
 
                         <RadioButton
+                            android:visibility="gone"
                             android:layout_marginStart="@dimen/_10sdp"
                             android:id="@+id/rdFreelauncerID"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:tag="2"
                             android:text="Free Launcer" />
+                        <RadioButton
+
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:id="@+id/rdfeildTechnician"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:tag="2"
+                            android:text="Field Technician" />
 
                     </RadioGroup>
 
                 </LinearLayout>
-
-
-
-
-
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/input_layout_name"
@@ -101,6 +106,7 @@
                         android:textColorHint="@color/colorAccent"
                         android:textColorLink="@color/colorAccent"
                         android:textIsSelectable="false"
+                        android:maxLength="10"
                         android:textSize="@dimen/size_small15" />
 
                 </com.google.android.material.textfield.TextInputLayout>

@@ -1,58 +1,17 @@
 package syncdata;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
-import android.os.Build;
-import android.os.Environment;
-import android.os.Message;
-import android.os.StrictMode;
-import android.util.Log;
-import android.widget.Toast;
 
-
-import androidx.multidex.BuildConfig;
-
-import com.shaktipumps.shakti.shaktisalesemployee.app.Config;
 
 import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.TextUtils;
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
 
-import activity.CustomUtility;
-import activity.complaint.ComplaintDashboard;
-import backgroundservice.AndroidService;
-import bean.AttendanceBean;
-import bean.BeanProductFinal;
-import bean.CheckInOutBean;
-import bean.ClouserComplaint;
-import bean.ComplaintAudio;
-import bean.ComplaintImage;
-import bean.ComplaintStart;
-import bean.DsrEntryBean;
-import bean.EmployeeGPSActivityBean;
-import bean.ForwardForAppEntryBean;
-import bean.InprocessComplaint;
-import bean.LoginBean;
-import bean.NewAddedCustomerBean;
-import bean.NoOrderBean;
-import bean.SurveyBean;
 import database.DatabaseHelper;
-import webservice.CustomHttpClient;
 import webservice.SAPWebService;
-import webservice.WebURL;
-
-import static android.os.Environment.getExternalStoragePublicDirectory;
 
 /**
  * Created by shakti on 11/21/2016.

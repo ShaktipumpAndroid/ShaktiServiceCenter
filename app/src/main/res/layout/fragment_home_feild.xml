@@ -1,0 +1,515 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:background="@color/white"
+    android:orientation="vertical"
+
+    android:weightSum="1"
+    tools:context="activity.HomeFragment">
+
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:fillViewport="false"
+        android:focusable="false"
+        android:longClickable="false"
+        android:measureAllChildren="false"
+        android:nestedScrollingEnabled="false"
+        android:saveEnabled="false">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+      <!--      <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="35dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginRight="35dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_100sdp"
+                    android:layout_marginRight="4dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    &lt;!&ndash;<Button&ndash;&gt;
+                    &lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;
+                    &lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;
+                    &lt;!&ndash;android:paddingTop="15dp"&ndash;&gt;
+                    &lt;!&ndash;android:paddingBottom="15dp"&ndash;&gt;
+                    &lt;!&ndash;android:drawableTop="@mipmap/open_complaint"&ndash;&gt;
+                    &lt;!&ndash;android:textAppearance="?android:attr/textAppearanceLarge"&ndash;&gt;
+                    &lt;!&ndash;android:text="New \nComplaint"&ndash;&gt;
+                    &lt;!&ndash;android:textColor="@color/dark_header_color"&ndash;&gt;
+                    &lt;!&ndash;android:background="@layout/rounded_corner"&ndash;&gt;
+
+                    &lt;!&ndash;android:id="@+id/open_complaint"&ndash;&gt;
+                    &lt;!&ndash;android:layout_weight="1"&ndash;&gt;
+                    &lt;!&ndash;android:textAlignment="center"&ndash;&gt;
+                    &lt;!&ndash;android:textSize="13dp"&ndash;&gt;
+                    &lt;!&ndash;android:textStyle="bold" />&ndash;&gt;
+
+
+                    <RelativeLayout
+                        android:id="@+id/new_complaint"
+
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+
+                        android:layout_marginLeft="3dp">
+
+                        <TextView
+                            android:id="@+id/open_complaint"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentRight="true"
+                            android:layout_gravity="right|center"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:background="@layout/rounded_corner"
+
+                            android:drawableTop="@mipmap/call_center"
+                            android:paddingTop="15dp"
+                            android:paddingBottom="15dp"
+                            android:text="New Complaint"
+                            android:textAlignment="center"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+                            android:textColor="@color/dark_header_color"
+                            android:textSize="13dp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/new_complaint_notification"
+                            android:layout_width="wrap_content"
+                            android:visibility="gone"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginRight="30dp"
+                            android:text="20"
+                            android:textColor="#FFDC0707"
+                            android:textSize="13dp"
+                            android:textStyle="bold" />
+
+                    </RelativeLayout>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+
+                    android:layout_height="match_parent"
+                    android:layout_weight=".002"
+                    android:orientation="vertical" />
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_100sdp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+
+                    <RelativeLayout
+                        android:id="@+id/deal_pend_cmp"
+
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+
+                        android:layout_marginLeft="3dp">
+
+
+                        <TextView
+                            android:gravity="center"
+                            android:id="@+id/pending_for_Approval"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentRight="true"
+                            android:layout_gravity="right|center"
+                            android:layout_weight="1"
+                            android:background="@layout/rounded_corner"
+
+                            android:drawableTop="@mipmap/new_call_center"
+                            android:paddingTop="15dp"
+                            android:paddingBottom="15dp"
+                            android:text="Pending for\n approval "
+                            android:textAlignment="center"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+                            android:textColor="@color/dark_header_color"
+                            android:textSize="13dp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:visibility="gone"
+                            android:id="@+id/delar_pend_notification"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginRight="30dp"
+                            android:text="20"
+                            android:textColor="#FFDC0707"
+                            android:textSize="13dp"
+                            android:textStyle="bold" />
+
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+
+                &lt;!&ndash;<LinearLayout&ndash;&gt;
+                &lt;!&ndash;android:orientation="vertical"&ndash;&gt;
+
+                &lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;
+                &lt;!&ndash;android:layout_weight=".002"&ndash;&gt;
+                &lt;!&ndash;android:layout_height="match_parent"&ndash;&gt;
+                &lt;!&ndash;&gt;&ndash;&gt;
+
+                &lt;!&ndash;</LinearLayout>&ndash;&gt;
+
+
+                &lt;!&ndash;<LinearLayout&ndash;&gt;
+                &lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;
+                &lt;!&ndash;android:orientation="horizontal"&ndash;&gt;
+                &lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;
+                &lt;!&ndash;android:layout_weight="1"&ndash;&gt;
+                &lt;!&ndash;&gt;&ndash;&gt;
+
+
+                &lt;!&ndash;<RelativeLayout&ndash;&gt;
+                &lt;!&ndash;android:id="@+id/unsync"&ndash;&gt;
+
+                &lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;
+                &lt;!&ndash;android:layout_height="match_parent"&ndash;&gt;
+
+                &lt;!&ndash;android:layout_marginLeft="3dp">&ndash;&gt;
+
+
+                &lt;!&ndash;<TextView&ndash;&gt;
+                &lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;
+                &lt;!&ndash;android:layout_height="match_parent"&ndash;&gt;
+                &lt;!&ndash;android:drawableTop="@mipmap/close_complaint"&ndash;&gt;
+                &lt;!&ndash;android:paddingTop="15dp"&ndash;&gt;
+                &lt;!&ndash;android:paddingBottom="15dp"&ndash;&gt;
+                &lt;!&ndash;android:textAppearance="?android:attr/textAppearanceLarge"&ndash;&gt;
+                &lt;!&ndash;android:text="Closed \nComplaint"&ndash;&gt;
+                &lt;!&ndash;android:textColor="@color/dark_header_color"&ndash;&gt;
+                &lt;!&ndash;android:textSize="13dp"&ndash;&gt;
+                &lt;!&ndash;android:background="@layout/rounded_corner"&ndash;&gt;
+
+                &lt;!&ndash;android:id="@+id/close_complaint"&ndash;&gt;
+                &lt;!&ndash;android:layout_gravity="right|center"&ndash;&gt;
+                &lt;!&ndash;android:layout_weight="1"&ndash;&gt;
+                &lt;!&ndash;android:textAlignment="center"&ndash;&gt;
+                &lt;!&ndash;android:textStyle="bold"&ndash;&gt;
+                &lt;!&ndash;android:layout_alignParentLeft="true"&ndash;&gt;
+                &lt;!&ndash;android:layout_alignParentStart="true"&ndash;&gt;
+                &lt;!&ndash;android:layout_alignParentRight="true"&ndash;&gt;
+                &lt;!&ndash;android:layout_alignParentEnd="true" />&ndash;&gt;
+
+                &lt;!&ndash;<TextView&ndash;&gt;
+                &lt;!&ndash;android:textSize="13dp"&ndash;&gt;
+                &lt;!&ndash;android:id="@+id/close_complaint_notification"&ndash;&gt;
+
+                &lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;
+                &lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;
+                &lt;!&ndash;android:text="20"&ndash;&gt;
+                &lt;!&ndash;android:layout_alignParentRight="true"&ndash;&gt;
+                &lt;!&ndash;android:textColor="#FFDC0707"&ndash;&gt;
+                &lt;!&ndash;android:textStyle="bold"&ndash;&gt;
+                &lt;!&ndash;android:layout_marginRight="30dp"&ndash;&gt;
+                &lt;!&ndash;android:layout_marginTop="10dp" />&ndash;&gt;
+
+                &lt;!&ndash;</RelativeLayout>&ndash;&gt;
+
+                &lt;!&ndash;</LinearLayout>&ndash;&gt;
+
+
+            </LinearLayout>-->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="35dp"
+                android:layout_marginTop="14dp"
+                android:layout_marginRight="35dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_100sdp"
+                    android:layout_marginRight="4dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+
+                    <RelativeLayout
+                        android:id="@+id/visiting_layout"
+
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+
+                        android:layout_marginLeft="3dp">
+
+                        <TextView
+                            android:gravity="center"
+                            android:id="@+id/pendingVisit"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentRight="true"
+                            android:layout_gravity="right|center"
+                            android:layout_weight="1"
+                            android:background="@layout/rounded_corner"
+
+                            android:drawableTop="@mipmap/route"
+                            android:paddingTop="15dp"
+                            android:paddingBottom="15dp"
+                            android:text="Pending Site to Visit"
+                            android:textAlignment="center"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+                            android:textColor="@color/dark_header_color"
+                            android:textSize="13dp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/pending_visit_notification"
+                            android:layout_width="wrap_content"
+                            android:visibility="gone"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginRight="30dp"
+                            android:text="20"
+                            android:textColor="#FFDC0707"
+                            android:textSize="13dp"
+                            android:textStyle="bold" />
+
+                    </RelativeLayout>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+
+                    android:layout_height="match_parent"
+                    android:layout_weight=".002"
+                    android:orientation="vertical" />
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_100sdp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+
+                    <RelativeLayout
+                        android:id="@+id/unsync3"
+
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+
+                        android:layout_marginLeft="3dp">
+
+
+                        <TextView
+                            android:gravity="center"
+                            android:id="@+id/visitedSite"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentRight="true"
+                            android:layout_gravity="right|center"
+                            android:layout_weight="1"
+                            android:background="@layout/rounded_corner"
+                            android:drawableTop="@mipmap/route"
+
+                            android:paddingTop="15dp"
+                            android:paddingBottom="15dp"
+                            android:text="Visited Site"
+                            android:textAlignment="center"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+                            android:textColor="@color/dark_header_color"
+                            android:textSize="13dp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:visibility="gone"
+                            android:id="@+id/visited_notification"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginRight="30dp"
+                            android:text="20"
+                            android:textColor="#FFDC0707"
+                            android:textSize="13dp"
+                            android:textStyle="bold" />
+
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+
+
+            <LinearLayout
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="35dp"
+                android:layout_marginTop="14dp"
+                android:layout_marginRight="35dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <RelativeLayout
+                    android:id="@+id/complaint_review"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/review_complaint"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_gravity="right|center"
+                        android:layout_weight="1"
+                        android:background="@layout/rounded_corner"
+
+                        android:drawableTop="@mipmap/close_complaint"
+                        android:paddingTop="15dp"
+                        android:paddingBottom="15dp"
+                        android:text="Review Complaint"
+                        android:textAlignment="center"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/dark_header_color"
+                        android:textSize="13dp"
+                        android:textStyle="bold" />
+
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="35dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="35dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/local_conv_txt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginRight="3dp"
+                    android:background="@drawable/top_left_right_rounded"
+                    android:gravity="center"
+                    android:padding="@dimen/space_mid6"
+                    android:text="Local Conveyance"
+                    android:textColor="@color/white"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_30sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginRight="@dimen/_30sdp"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:weightSum="3">
+
+                <Button
+                    android:id="@+id/start"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@layout/rounded_corner"
+                    android:drawableTop="@drawable/play"
+                    android:padding="@dimen/_10sdp"
+                    android:text="@string/start_travel"
+                    android:textAlignment="center"
+                    android:layout_marginRight="@dimen/_2sdp"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/dark_header_color"
+                    android:textSize="@dimen/_11sdp"
+                    android:textStyle="bold" />
+
+
+                <Button
+                    android:visibility="gone"
+                    android:id="@+id/end"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@layout/rounded_corner"
+                    android:drawableTop="@drawable/pause"
+                    android:padding="@dimen/_10sdp"
+                    android:text="@string/end_travel"
+                    android:layout_marginRight="@dimen/_2sdp"
+                    android:layout_marginLeft="@dimen/_2sdp"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/dark_header_color"
+                    android:textSize="@dimen/_11sdp"
+                    android:textStyle="bold"  />
+
+
+                <Button
+                    android:id="@+id/offlinedata"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@layout/rounded_corner"
+                    android:drawableTop="@drawable/offline"
+                    android:padding="@dimen/_10sdp"
+                    android:text="@string/offline_data"
+                    android:layout_marginLeft="@dimen/_2sdp"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/dark_header_color"
+                    android:textSize="@dimen/_11sdp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+</LinearLayout>

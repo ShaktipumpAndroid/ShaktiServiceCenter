@@ -18,15 +18,15 @@
             android:layout_height="match_parent"
             android:src="@drawable/icn_back"
             android:padding="@dimen/_12sdp"
-        />
+            />
 
 
         <TextView
-            android:layout_centerInParent="true"
             android:id="@+id/txtHeaderID"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Pending Complain"
+            android:layout_centerInParent="true"
+            android:text="Visited Complain"
             android:textColor="@color/white"
             android:textSize="@dimen/_14ssp"
             android:textStyle="bold"
@@ -69,15 +69,15 @@
             android:layout_margin="10dp"
             android:spinnerMode="dialog" />
 
-      <!--  <ListView
-            android:id="@+id/listview"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_below="@+id/filter_txt"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="10dp" />-->
+        <!--  <ListView
+              android:id="@+id/listview"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:layout_below="@+id/filter_txt"
+              android:layout_marginLeft="10dp"
+              android:layout_marginTop="10dp"
+              android:layout_marginRight="10dp"
+              android:layout_marginBottom="10dp" />-->
 
         <RelativeLayout
             android:layout_below="@+id/lvlHeaderViewID"

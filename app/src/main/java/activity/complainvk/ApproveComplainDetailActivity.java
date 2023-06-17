@@ -50,6 +50,7 @@ private String textRemarkValue;
     private  String mStatusValue= "";
     private  String mMobileNumber= "";
     private  String mUserID= "";
+    String mobile;
     //private BaseRequest baseRequest;
     public TextView txtBTNActionID, txtBTNPendingID, txtBTNClodeID, txtBTNUploadID;
     private RecyclerView rclyPendingComplainList;
@@ -68,10 +69,10 @@ private String textRemarkValue;
 
     private void initView() {
 
-        mUserID = CustomUtility.getSharedPreferences(mContext,"userID");
+        mUserID = CustomUtility.getSharedPreferences(mContext,"kunnr");
 
         mComplainDetailListResponse = new ArrayList<>();
-
+        mobile = CustomUtility.getSharedPreferences(mContext,"username");
         rclyPendingComplainList = findViewById(R.id.rclyPendingComplainList);
         rclyPendingComplainList.setLayoutManager(new LinearLayoutManager(this));
 
@@ -88,7 +89,7 @@ private String textRemarkValue;
         mStatusValue = mmIntent.getStringExtra("StatusValue");
 
         txtHeaderID.setText(mHeaderTittle);
-        WebURL.EDITTEXTBOX_SHOW_SIZE =0;
+        WebURL.EDITTEXT_SHOW_SIZE =0;
         initClickEvent();
         callgetCompalinAllListAPI();
 
@@ -105,22 +106,14 @@ private String textRemarkValue;
 
     private void initClickEvent() {
 
-        imgBackID.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
+        imgBackID.setOnClickListener(view -> finish());
 
 
-       txtBTNActionID.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+       txtBTNActionID.setOnClickListener(view -> {
 
-               // Toast.makeText(mContext, "Action optiin working commimg soon", Toast.LENGTH_SHORT).show();
-              initRemarkViewBox(view);
-            }
-        });
+          // Toast.makeText(mContext, "Action optiin working commimg soon", Toast.LENGTH_SHORT).show();
+         initRemarkViewBox(view);
+       });
 
 
 
@@ -300,7 +293,7 @@ private String textRemarkValue;
 
                 // jsonObj.put("project_no", projno);
                 jsonObj.put("cmpno",mComplainNO);
-                // jsonObj.put("beneficiary",ben);
+                 jsonObj.put("mobile",mobile);
                 //  jsonObj.put("mobno",mLrInvoiceResponse.get(0).getMobno());
                 jsonObj.put("kunnr", mUserID);
                 jsonObj.put("action", textRemarkValue);
@@ -561,7 +554,7 @@ private String textRemarkValue;
 
                             mComplainDetailListResponse.add(mmComplainDetailListResponse);
 
-                            WebURL.EDITTEXTBOX_SHOW_SIZE = i+1;
+                            WebURL.EDITTEXT_SHOW_SIZE = i+1;
 
                         }
 
@@ -570,7 +563,7 @@ private String textRemarkValue;
                                 // Toast.makeText(mContext, mComplainDetailListResponse.size(), Toast.LENGTH_SHORT).show();
 
                              //   System.out.println("mComplainDetailListResponse.size()==>"+mComplainDetailListResponse.size());
-                                mPendingComplainDetailsListAdapter = new PendingComplainDetailsListAdapter(mContext, mComplainDetailListResponse, mStatusValue, mMobileNumber);
+                                mPendingComplainDetailsListAdapter = new PendingComplainDetailsListAdapter(mContext, mComplainDetailListResponse, mMobileNumber,"");
                                 rclyPendingComplainList.setAdapter(mPendingComplainDetailsListAdapter);
                                 progressDialog.dismiss();
                             }

@@ -53,11 +53,12 @@ private String textRemarkValue;
     private  String mStatusValue= "";
     private  String mMobileNumber= "";
     private  String mUserID= "";
+    String mobile;
     //private BaseRequest baseRequest;
     public TextView txtBTNActionID, txtBTNPendingID, txtBTNClodeID, txtBTNUploadID;
     private RecyclerView rclyPendingComplainList;
     private PendingComplainDetailsListAdapter mPendingComplainDetailsListAdapter;
-
+    String moile;
     private Intent mmIntent;
     private Dialog dialog ;
     @Override
@@ -227,10 +228,10 @@ private String textRemarkValue;
             JSONObject jsonObj = new JSONObject();
 
             try {
-
+                mobile = CustomUtility.getSharedPreferences(mContext,"username");
                 // jsonObj.put("project_no", projno);
                 jsonObj.put("cmpno",mComplainNO);
-                // jsonObj.put("beneficiary",ben);
+                 jsonObj.put("mobile",mobile);
                 //  jsonObj.put("mobno",mLrInvoiceResponse.get(0).getMobno());
                 jsonObj.put("kunnr", mUserID);
                 jsonObj.put("action", textRemarkValue);
@@ -313,19 +314,11 @@ private String textRemarkValue;
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().build();
         StrictMode.setThreadPolicy(policy);
 
-        //   username = inputName.getText().toString();
-        //   password = inputPassword.getText().toString();
         final ArrayList<NameValuePair> param = new ArrayList<NameValuePair>();
         param.clear();
-        param.add(new BasicNameValuePair("cmpno", mComplainNO));//kunur it means user id
-        param.add(new BasicNameValuePair("STATUS", mStatusValue));///Pending Complaint
-        // param.add(new BasicNameValuePair("mobno", mLRMobileValue));
+        param.add(new BasicNameValuePair("cmpno", mComplainNO));
+        param.add(new BasicNameValuePair("STATUS", mStatusValue));
 
-        //  jsonObject.addProperty("lrno", mLRNumberValue);
-        // jsonObject.addProperty("mobno", mLRMobileValue);
-
-        //  param.add(new BasicNameValuePair("pernr", username));
-        // param.add(new BasicNameValuePair("pass", password));
         /******************************************************************************************/
 /*                   server connection
 /******************************************************************************************/
@@ -411,7 +404,7 @@ private String textRemarkValue;
                         runOnUiThread(new Runnable() {
                             public void run() {
                                 // Toast.makeText(mContext, mMessage, Toast.LENGTH_SHORT).show();
-                                mPendingComplainDetailsListAdapter = new PendingComplainDetailsListAdapter(mContext, mComplainDetailListResponse, mStatusValue, mMobileNumber);
+                                mPendingComplainDetailsListAdapter = new PendingComplainDetailsListAdapter(mContext, mComplainDetailListResponse, mMobileNumber,"0");
                                 rclyPendingComplainList.setAdapter(mPendingComplainDetailsListAdapter);
                                 progressDialog.dismiss();
                             }

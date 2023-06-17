@@ -1,4 +1,4 @@
-package com.shaktipumps.shakti.shaktisalesemployee.util;
+package com.shaktipumps.shakti.shaktiServiceCenter.util;
 
 import android.app.ActivityManager;
 import android.app.Notification;
@@ -23,7 +23,7 @@ import androidx.core.app.NotificationCompat;
 
 
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
-import com.shaktipumps.shakti.shaktisalesemployee.app.Config;
+import com.shaktipumps.shakti.shaktiServiceCenter.app.Config;
 
 import java.io.IOException;
 import java.io.InputStream;

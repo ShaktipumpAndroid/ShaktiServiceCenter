@@ -60,7 +60,7 @@
 
     <string name="nav_item_faq"> FAQ </string>
     <string name="nav_item_logout"> Logout </string>
-
+    <string name="nav_time_register">Register SubOrdinate</string>
 
     <!-- navigation drawer item labels  -->
     <!-- <string-array name="nav_drawer_labels">
@@ -89,7 +89,8 @@
         <item>@string/nav_item_home</item>
         <item>@string/nav_item_faq</item>
         <item>@string/nav_item_logout</item>
-
+        <item>@string/nav_time_register</item>
+        <item>@string/nav_time_edit</item>
 
     </string-array>
     <string name="action_signout">Sign Out</string>
@@ -133,6 +134,11 @@
     <string name="customer_category_label">"customer category  : "</string>
     <string name="customer_place_label">"customer place  : "</string>
     <string name="customer_distance_label">"customer distance  : "</string>
+    <string name="Please_select_end">Please Select End Date</string>
+    <string name="Please_select_start">Please Select Start Date</string>
+    <string name="search_doc">Search by mobile no</string>
+    <string name="edit_subordinate">Edit Subordinate</string>
+    <string name="nav_time_edit">Edit Subordinate</string>
 
 
     <string-array name="array_paymnet_by">
@@ -212,4 +218,91 @@
         <item>Other</item>
     </string-array>
 
+    <string name="name_">Name</string>
+    <string name="Submit">Submit</string>
+    <string name="forward">Forword To</string>
+    <string name="select_subordinate">Select atleast one subordinate</string>
+    <string name="start_travel">Start Travel</string>
+    <string name="end_travel">End Travel</string>
+    <string name="offline_data">Offline Data</string>
+    <string name="loading">Loading....</string>
+    <string name="please_wait_">Please Wait...</string>
+    <string name="no_location_found">Download Complaint...!</string>
+    <string name="Current_Location">Current Location</string>
+    <string name="confirm_">Confirm</string>
+    <string name="YourJourney">Your Journey will be Started...</string>
+
+
+    <string name="localconvenience">localconvenience</string>
+    <string name="Pleasewaitcurrentlocation">Please wait for your current location.</string>
+    <string name="gps">Please turn on the GPRS and keep it on while traveling on tour/trip.</string>
+    <string name="localconveniencedetails">Local Conveyance Details</string>
+    <string name="endyourJourney">Press Confirm will end your Journey</string>
+    <string name="all_permission">Please allow all the permission</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="saved_travel_data">Your travel record saved in offline data.</string>
+    <string name="google_API_KEY">AIzaSyAohhwZ11LRwoxsS8lJ0VHGkA4L-cwjWmw</string>
+    <string name="sending_please_wait">Sending Data to server..please wait !</string>
+    <string name="no_connection">No Internet Connection</string>
+    <string name="Please_Enter_Travel_Mode">Please Enter Travel Mode.</string>
+    <string name="ConnecttoInternet">Please Connect to Internet</string>
+    <string name="start_photo">Start Photo</string>
+    <string name="cancel">Cancel</string>
+    <string name="complaint_no">Complaint No.</string>
+    <string name="end_photo">End Photo</string>
+    <string name="Falty_material">Falty Material/Mager meges</string>
+    <string name="Product_Full_Images">Product Full Images</string>
+    <string name="Cust_dealer">Cust./Dealer/JCC Bill Photo</string>
+    <string name="SerciveCC">Sercive Center Challan</string>
+    <string name="Please_Falty_photo">"Please select Falty Material/Mager meges Photo "</string>
+    <string name="Please_Product_photo">Please select Product Full Images</string>
+    <string name="Please_Cust_Dealer_Photo">Please select Cust./Dearler/ JCC Bill Photo</string>
+    <string name="Please_Serial_Photo">Please select Serial Number Images</string>
+    <string name="Please_Sevice_CC">Please Select Service Center Challan</string>
+    <string name="Serial_Number">Serial Number Images</string>
+    <string name="Damage">Damage Parts 1</string>
+    <string name="Damage1">Damage Photo 1</string>
+    <string name="Damage_2">Damage Photo 2</string>
+    <string name="select_image">Please Select Images</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
+    <string name="want_to_perform">What operation do you want to perform?</string>
+    <string name="display">Display</string>
+    <string name="change">Change</string>
+    <string name="photoGallery">Photo Gallery</string>
+    <string name="take_photo">Take Photo</string>
+    <string name="title">Images</string>
+    <string name="Please_Damage">Please Select Damage Part</string>
+    <string name="Please_Damage_1">Please select Damage Photo 1</string>
+    <string name="Please_Damage_2">Please select Damage Photo 2</string>
+    <string name="ConnectToInternet">Please check your internet connection first!</string>
+    <string name="start">Start Date</string>
+    <string name="end">End</string>
+    <string name="pendingSite">Pending Site Complain</string>
+    <string name="visitedSite">Visited Site Complain</string>
+    <string name="borwellInlet">Pump set lifting</string>
+    <string name="borwellOutlet">Pump set lowering</string>
+    <string name="transportLoad">Material Pick Up from Customer</string>
+    <string name="transportUnload">Material dropping to Customer</string>
+    <string name="Please_Pump_set_lifting">Please Select Pumpset Lifting</string>
+    <string name="Please_Pump_set_lowering">Please Select Pumpset Lowering</string>
+    <string name="Please_Transport_Loading">Please Select Transport Loading</string>
+    <string name="Please_Transport_UNLoading">Please Select Transport UNLoading</string>
+    <string name="old_serial_no">Old Product serial no</string>
+    <string name="site_error">Site Error/ Defact Image</string>
+    <string name="discharge_image">Discharge Image</string>
+    <string name="site_images">Site Images/ Farmer Images</string>
+    <string name="fir_field">FIR for field</string>
+    <string name="customer_satisfaction">Customer Satisfaction Form</string>
+    <string name="other">Other</string>
+    <string name="approval">Approval Image</string>
+    <string name="Please_Product_serial_no">Please select old product serail no</string>
+    <string name="Please_site_error">Please select site error/defect</string>
+    <string name="Please_discharge">Please select Discharge Images</string>
+    <string name="Please_site_images">"Please select site /farmer mages "</string>
+    <string name="Please_fir_field">Please select fir for field</string>
+    <string name="Please_customer">Please select customer satisfaction Form</string>
+    <string name="Please_approval">Please select approval images</string>
+    <string name="Please_other">Please select other images</string>
 </resources>

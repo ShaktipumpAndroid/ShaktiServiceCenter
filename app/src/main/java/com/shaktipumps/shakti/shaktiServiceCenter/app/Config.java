@@ -1,4 +1,4 @@
-package com.shaktipumps.shakti.shaktisalesemployee.app;
+package com.shaktipumps.shakti.shaktiServiceCenter.app;
 
 /**
  * Created by shakti on 7/29/2017.

@@ -1,6 +1,5 @@
 package activity.complaint;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -278,7 +277,7 @@ public class PendingComplaintActivity extends AppCompatActivity {
 
                     int fdate1 = 0;
                     if (!TextUtils.isEmpty(fdate)) {
-                        fdate1 = Integer.parseInt(CustomUtility.formateDate(fdate));
+                        fdate1 = Integer.parseInt(CustomUtility.formatDate(fdate));
                     }
 
                     if(fdate1 > tdDate || !TextUtils.isEmpty(save)) {
@@ -366,7 +365,7 @@ public class PendingComplaintActivity extends AppCompatActivity {
                     String save = cursor.getString(cursor.getColumnIndex("save_by"));
                     int fdate1 = 0;
                     if (!TextUtils.isEmpty(fdate)) {
-                        fdate1 = Integer.parseInt(CustomUtility.formateDate(fdate));
+                        fdate1 = Integer.parseInt(CustomUtility.formatDate(fdate));
                     }
 
                     int penday= Integer.parseInt(cursor.getString(cursor.getColumnIndex("penday")));

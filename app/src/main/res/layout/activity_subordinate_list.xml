@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/toolbar" />
+
+    <EditText
+        android:id="@+id/search"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="10dp"
+        android:hint="@string/search_doc"
+        android:textSize="15sp"
+        android:textStyle="bold">
+
+        <requestFocus />
+    </EditText>
+
+    <ListView
+        android:id="@+id/subordinate_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/space_mid10"
+        android:layout_marginTop="@dimen/space_mid10"
+        android:layout_marginRight="@dimen/space_mid10"
+        android:divider="@null"
+        android:dividerHeight="@dimen/space_mid10"/>
+</LinearLayout>

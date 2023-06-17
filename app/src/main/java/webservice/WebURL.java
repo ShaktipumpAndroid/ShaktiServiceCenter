@@ -5,15 +5,16 @@ import bean.LoginBean;
 /**
  * Created by shakti on 10/6/2016.
  */
+
+
 public class WebURL {
 
-    public static final String SEARCH_PAGE = "https://spdevsrvr1.shaktipumps.com:8423/sap(bD1lbiZjPTkwMA==)/bc/bsp/sap/zjson/search.htm";
     public static  String mViewPhotoGraph = "";
 
 // ************ Developments server *************
 
     public static  String STATUS_CHECK_FOR_COMPLAIN= "";
-    public static  int EDITTEXTBOX_SHOW_SIZE;
+    public static  int EDITTEXT_SHOW_SIZE;
     public static final String BASE_URL_VK= "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmap_srv_center/";
 
     public static final String LOGIN_VK_PAGE = BASE_URL_VK +"login.htm";
@@ -24,8 +25,6 @@ public class WebURL {
     public static final String PENDING_COMPLAIN_APPROVED_PHOTO_VK_PAGE = BASE_URL_VK +"save_approved_complaint.htm";
 
     /// All old service
-    public static final String LOGIN_PAGE = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmapp_sales_emp/login.htm";
-    public static final String APP_VERSION = "https://spprdsrvr1.shaktipumps.com:8423/sap(bD1lbiZjPTkwMA==)/bc/bsp/sap/zmapp_sales_emp/app_version.htm";
     public static final String ATTENDANCE_PAGE = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmapp_sales_emp/attendance.htm";
     public static final String TARGET_PAGE = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmapp_sales_emp/sales_target.htm";
     public static final String VISIT_HISTORY_PAGE = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmapp_sales_emp/visit_history.htm";
@@ -39,25 +38,16 @@ public class WebURL {
     public static final String IMAGE_DIRECTORY_NAME = "Shakti App Image";
 
     public static final String MATERIAL_ANALYSIS = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmapp_sales_emp/material_analysis.htm";
-    public static final String MATERIAL_STOCK = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmapp_sales_emp/material_stock.htm";
     public static final String CUSTOMER_COMPLAINT = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmapp_sales_emp/get_customer_complaint.htm";
 
     public static final String CUSTOMER_COMPLAINT_SERIAL_NUMBER = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmapp_sales_emp/get_serial_number_complaint.htm";
-    public static final String CABLE_SELECTION = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zcable1/cable_selection.htm";
-    public static final String SOLAR_CABLE_SELECTION = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zcable/cable_selection.htm";
-
-    public static final String PIPE_SELECTION = "https://www.shaktipumps.com/pipes_selector.php";
     public static final String SERVICE_CENTER_LIST = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmapp_sales_emp/get_service_center.htm";
     public static final String LOCATION_HELP = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmapp_sales_emp/location_data.htm";
 
-    public static final String MOU_BILL = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmapp_sales_emp/mou_tgt_ach.htm";
     public static final String FORWARD_TO = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmapp_sales_emp/forward_to.htm";
     public static final String COMPLAINT_ATTACHMENT = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmapp_sales_emp/attach_cmpln_image.htm";
 
-    public static final String REVIEW_COMPLAINT = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmapp_sales_emp/get_pending_cmp_review.htm";
-    public static final String SAVE_REVIEW_COMPLAINT = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmapp_sales_emp/save_cmp_review.htm";
-    public static final String IMAGES_REVIEW_COMPLAINT = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmapp_sales_emp/get_cmp_attachment.htm";
-    public static final String NORMS_MATERIAL_LIST = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmapp_sales_emp/material_norms_stock.htm";
+     public static final String NORMS_MATERIAL_LIST = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmapp_sales_emp/material_norms_stock.htm";
     public static final String NORM_DATA_ENTRY = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmapp_sales_emp/norms_data_entry.htm";
 
     static String str = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zemp_hr_portal/file_folder.htm" + "?id=" + LoginBean.userid;
@@ -65,12 +55,16 @@ public class WebURL {
     static String dashboard_url = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zapp_page/registration.htm" + "?=" + LoginBean.userid;
 
     public static final String DASHBOARD = dashboard_url;
-    public static final String LOCAL_CONVENIENVCE = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zhr_emp_app_1/start_end_location.htm";
+    public static final String LOCAL_CONVENIENVCE = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zhr_emp_app_1/start_end_location1.htm";
     public static final String DEVICE_DETAILS = "https://solar10.shaktisolarrms.com/Home/SAPOnlineDeviceDetails" ;
 
-     public static final String GOODS_RECP = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmapp_sales_emp/service_grn.htm";
-    public static final String STOCK_ISSUE = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmapp_sales_emp/service_stock_issue.htm";
-    public static final String STOCK_RECEIVER = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmapp_sales_emp/service_stock_receiver.htm";
-    public static final String TRANS_ENTRY = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmapp_sales_emp/service_transport_entry.htm";
     public static final String CMPLN_ATTACHMENT = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmapp_sales_emp/get_cmp_attachment.htm";
+    public static final String STATE_DATA = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmapp_solar/state_data.htm";
+    public static final String GET_SUORDINATE = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmap_srv_center/get_subordinate.htm";
+    public static final String SAVEEDITDETAIL = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmap_srv_center/subordinate_edit.htm";
+    public static final String ASSGINCOMPLAINlIST = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmap_srv_center/assign_complains_details.htm?";
+    public static final String VISITEDCOMPLAINLIST = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmap_srv_center/subordinate_visited.htm";
+    public static final String VISITED_COMPLAIN_VK_PAGE = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmap_srv_center/get_visited_api.htm?";
+    public static final String SAVE_SUB_IMAGES = "https://spprdsrvr1.shaktipumps.com:8423/sap/bc/bsp/sap/zmap_srv_center/save_sub_ord_complaint.htm";
+
 }

@@ -117,8 +117,6 @@ public class SearchPendingComplaintListViewAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) view.getTag();
         }
-        // Set the results into TextViews
-
 
         str_cmp_no = "Comp.No : " + complaintSearchlist.get(position).getCmpno();
 
