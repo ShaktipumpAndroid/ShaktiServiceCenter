@@ -32,6 +32,7 @@ import model.NavDrawerItem;
 public class FragmentDrawer extends Fragment {
 
     private static String[] titles = null;
+    private static String[] heading = null;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
     private View containerView;
@@ -53,9 +54,9 @@ public class FragmentDrawer extends Fragment {
                 data.add(navItem);
             }
         }else {
-            for (int i = 0; i < 3; i++) {
+            for (String title : heading) {
                 NavDrawerItem navItem = new NavDrawerItem();
-                navItem.setTitle(titles[i]);
+                navItem.setTitle(title);
                 data.add(navItem);
             }
         }
@@ -73,6 +74,8 @@ public class FragmentDrawer extends Fragment {
 
         // drawer labels
         titles = Objects.requireNonNull(getActivity()).getResources().getStringArray(R.array.nav_drawer_labels);
+
+        heading = Objects.requireNonNull(getActivity()).getResources().getStringArray(R.array.nav_subordinate_labels);
 
         userType = activity.CustomUtility.getSharedPreferences(getActivity(),"userType");
         Log.e("userType", "Fragment" + userType);

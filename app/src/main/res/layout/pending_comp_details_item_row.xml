@@ -194,6 +194,7 @@ android:singleLine="true"
                     android:textSize="@dimen/_10ssp"
                     android:textColor="@color/white"
                     android:fontFamily="@font/open_sans_regular"
+                    android:visibility="gone"
                     />
             </RelativeLayout>
 

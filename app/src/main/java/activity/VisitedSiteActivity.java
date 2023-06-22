@@ -103,7 +103,7 @@ public class VisitedSiteActivity extends AppCompatActivity {
 
                     visited_list.setOnItemClickListener((parent, view, position, id) -> {
                         Intent intent = new Intent(context, SubordinateVisitedListActivity.class);
-                        intent.putExtra("heading", "New Complaint");
+                        intent.putExtra("heading", "Pending Complaint");
                         intent.putExtra("complaint",pendingSiteComplainResponse.response.get(position).cmpno );
                         startActivity(intent);
                     });

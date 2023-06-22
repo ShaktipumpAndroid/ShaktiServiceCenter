@@ -204,11 +204,7 @@ import webservice.WebURL;
 
     @Override
     public void onResume() {
-
-        // get unsync data count
-        super.onResume();
-
-
+         super.onResume();
     }
 
 

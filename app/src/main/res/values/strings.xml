@@ -88,16 +88,23 @@
     <string-array name="nav_drawer_labels">
         <item>@string/nav_item_home</item>
         <item>@string/nav_item_faq</item>
-        <item>@string/nav_item_logout</item>
         <item>@string/nav_time_register</item>
         <item>@string/nav_time_edit</item>
+        <item>@string/nav_item_logout</item>
 
     </string-array>
+
+    <string-array name="nav_subordinate_labels">
+    <item>@string/nav_item_home</item>
+    <item>@string/nav_item_faq</item>
+    <item>@string/nav_item_logout</item>
+    </string-array>
+
     <string name="action_signout">Sign Out</string>
     <string name="action_download_all">Download Data</string>
     <string name="action_sync_offline">Sync Offline Data</string>
 
-    <string name="crash_toast_text">Ooooops ! App crashed, but a report will be sent to developer to help fix the issue !</string>
+    <string name="crash_toast_text">Oops ! App crashed, but a report will be sent to developer to help fix the issue !</string>
 
     <string name="action_video_download">Download Video List</string>
     <string name="action_unsync_menu">Sync Offline Data</string>

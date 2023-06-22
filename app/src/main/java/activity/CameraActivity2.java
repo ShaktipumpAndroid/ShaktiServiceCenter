@@ -56,7 +56,7 @@ public class CameraActivity2 extends AppCompatActivity implements SurfaceHolder.
     LinearLayout layoutpreview;
     TextView display ;
     FusedLocationProviderClient location;
-    String latitudetxt,longitudetxt,addresstxt,state,country,postalcode,customer_name;
+    String latitudetxt,longitudetxt,addresstxt,state,country,postalcode,CmpNo;
     SimpleDateFormat getDate,getTime;
     Bitmap bitmap;
     File save;
@@ -71,7 +71,7 @@ public class CameraActivity2 extends AppCompatActivity implements SurfaceHolder.
         layoutpreview = findViewById(R.id.layoutPreview);
         display = findViewById(R.id.display);
         Bundle bundle = getIntent().getExtras();
-        customer_name = bundle.getString("cust_name");
+        CmpNo = bundle.getString("cmpNo");
 
         location = LocationServices.getFusedLocationProviderClient(this);
         getlastLocation();
@@ -99,8 +99,8 @@ public class CameraActivity2 extends AppCompatActivity implements SurfaceHolder.
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
             location.getLastLocation()
                     .addOnSuccessListener(location -> {
-                        if(location != null)
-                        {
+                        if(location != null) {
+
                             Geocoder geocoder = new Geocoder(CameraActivity2.this,Locale.getDefault());
                             try {
                                 List<Address> addresses = geocoder.getFromLocation(location.getLatitude(),location.getLongitude(),1);
@@ -117,7 +117,7 @@ public class CameraActivity2 extends AppCompatActivity implements SurfaceHolder.
 
                                 display.setText(" Latitude : " + latitudetxt + "\n" + " Longitude : " + longitudetxt+ "\n" + " Address : " + addresstxt +","
                                         + state+ " " + postalcode+ "," +country +"\n"+"Date: " + getDate.format(new Date()) + "\n" + "Time: " + getTime.format(new Date())
-                                +"\n" + "Customer: " + customer_name);
+                                +"\n" + "Customer: " + CmpNo);
 
                             } catch (IOException e) {
                                 throw new RuntimeException(e);
@@ -248,7 +248,7 @@ public class CameraActivity2 extends AppCompatActivity implements SurfaceHolder.
     public void onPictureTaken(byte[] bytes, android.hardware.Camera camera) {
 
         bitmap = saveImageWithTimeStamp(bytes);
-        save = saveFile(bitmap,customer_name.trim(),customer_name.trim());
+        save = saveFile(bitmap,CmpNo.trim(),CmpNo.trim());
         onBackPressed();
     }
 
@@ -291,7 +291,7 @@ public class CameraActivity2 extends AppCompatActivity implements SurfaceHolder.
         String text2 = "Date: "+date;
         String text3 = "Time: "+time;
 
-        String text4 = "Customer Name: "+customer_name;
+        String text4 = "Customer Name: "+CmpNo;
 
         canvas.drawText(text , startXPosition - 1250, startYPosition - 600, paint);
         canvas.drawText(text1, startXPosition - 1250, startYPosition - 450, paint);

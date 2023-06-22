@@ -10,6 +10,8 @@ import android.os.Message;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -102,6 +104,7 @@ private String textRemarkValue;
         if(mStatusValue.equalsIgnoreCase("01"))
         {
             rlvBottomViewID.setVisibility(View.VISIBLE);
+
         }
         else
         {
@@ -123,7 +126,7 @@ private String textRemarkValue;
        txtBTNActionID.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               // Toast.makeText(mContext, "Action optiin working commimg soon", Toast.LENGTH_SHORT).show();
+               // Toast.makeText(mContext, "Action option working coming soon", Toast.LENGTH_SHORT).show();
               initRemarkViewBox(view);
             }
         });
@@ -136,7 +139,7 @@ private String textRemarkValue;
 
                 Intent intent = new Intent(mContext, InstReportImageActivity.class);
                 intent.putExtra("inst_id", mComplainDetailListResponse.get(0).getCmpno());
-                intent.putExtra("cust_name", mComplainDetailListResponse.get(0).getCloserReason());
+                //intent.putExtra("cust_name", mComplainDetailListResponse.get(0).getCloserReason());
                 intent.putExtra("StatusCheck", mStatusValue);
 
                 mContext.startActivity(intent);
@@ -152,8 +155,17 @@ private String textRemarkValue;
 
         EditText editText;
         TextView txtBTNRemarkID;
-          dialog = new Dialog(mContext);
+        dialog = new Dialog(mContext);
+
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
         dialog.setContentView(R.layout.dialog_remark_as_complain);
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        dialog.getWindow().setAttributes(lp);
+
 
         editText = dialog.findViewById(R.id.edtRemarkViewIDD);
         txtBTNRemarkID = dialog.findViewById(R.id.txtBTNRemarkID);
@@ -170,9 +182,6 @@ private String textRemarkValue;
         AlertDialog alertDialog = builder.create();
         alertDialog.setCancelable(true);
         alertDialog.show();*/
-
-
-
 
         txtBTNRemarkID.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -217,8 +226,7 @@ private String textRemarkValue;
 
         @Override
         protected String doInBackground(String... params) {
-            String docno_sap = null;
-            String invc_done = null;
+
             String obj2 = null;
 
             JSONArray ja_invc_data = new JSONArray();
@@ -227,10 +235,8 @@ private String textRemarkValue;
 
             try {
 
-                // jsonObj.put("project_no", projno);
                 jsonObj.put("cmpno",mComplainNO);
-                 jsonObj.put("mobile",mobile);
-                //  jsonObj.put("mobno",mLrInvoiceResponse.get(0).getMobno());
+                jsonObj.put("mobile",mobile);
                 jsonObj.put("kunnr", mUserID);
                 jsonObj.put("action", textRemarkValue);
 

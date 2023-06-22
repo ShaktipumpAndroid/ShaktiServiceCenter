@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +48,8 @@ public class PendingComplainListActivity extends AppCompatActivity {
     private Intent mmIntent;
     private PendingComplainListAdapter mPendingComplainListAdapter;
 
+    LinearLayout data , dataNotfound;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,6 +67,8 @@ public class PendingComplainListActivity extends AppCompatActivity {
         mStatusValue = mmIntent.getStringExtra("StatusValue");
 
         mComplainAllResponse = new ArrayList<>();
+        data = findViewById(R.id.data);
+        dataNotfound = findViewById(R.id.no_data);
         imgBackID = findViewById(R.id.imgBackID);
         txtHeaderID = findViewById(R.id.txtHeaderID);
         rclyPendingComplainList = findViewById(R.id.rclyPendingComplainList);
@@ -177,6 +183,8 @@ public class PendingComplainListActivity extends AppCompatActivity {
                     } else {
                         runOnUiThread(() -> {
                             Toast.makeText(mContext, mMessage, Toast.LENGTH_SHORT).show();
+                            data.setVisibility(View.GONE);
+                            dataNotfound.setVisibility(View.VISIBLE);
                             progressDialog.dismiss();
                         });
                         progressDialog.dismiss();
@@ -191,11 +199,5 @@ public class PendingComplainListActivity extends AppCompatActivity {
         }.start();
 
     }
-
-
-
-
-
-
 
 }

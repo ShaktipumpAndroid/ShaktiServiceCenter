@@ -149,12 +149,12 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
 
         displayView(0);
 
-        if(userType.equalsIgnoreCase("1")){
+       /* if(userType.equalsIgnoreCase("1")){
             syncState();
         }
         else {
             downloadSubordinateData();
-        }
+        }*/
     }
 
     private void downloadSubordinateData() {
@@ -322,8 +322,6 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
     private void displayView(int position) {
         Fragment fragment = null;
         switch (position) {
-
-
             case 0:
 
                 if(userType.equalsIgnoreCase("1"))
@@ -362,21 +360,31 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
                 break;
 
             case 2:
+                if(userType.equalsIgnoreCase("1")){
+                    Intent i = new Intent(MainActivity1.this,Register.class);
+                    startActivity(i);
+                }else {
+                    if(userType.equalsIgnoreCase("1"))
+                        logOut();
+                    else
+                        Logout();
+                }
+
+                break;
+
+            case 3:
+
+                Intent intent = new Intent(MainActivity1.this,SubordinateList.class);
+                startActivity(intent);
+
+                break;
+
+            case 4:
                 if(userType.equalsIgnoreCase("1"))
                     logOut();
                 else
                     Logout();
 
-                break;
-
-            case 3:
-                Intent i = new Intent(MainActivity1.this,Register.class);
-                startActivity(i);
-                break;
-
-            case 4:
-                Intent intent = new Intent(MainActivity1.this,SubordinateList.class);
-                startActivity(intent);
 
             default:
                 break;

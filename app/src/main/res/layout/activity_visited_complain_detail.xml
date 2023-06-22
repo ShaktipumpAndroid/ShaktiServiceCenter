@@ -25,15 +25,15 @@
                 />
 
             <TextView
-                android:visibility="visible"
                 android:id="@+id/txtHeaderID"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Complain Details"
                 android:layout_centerInParent="true"
+                android:text="Complain Details"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_14ssp"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:visibility="visible" />
 
         </RelativeLayout>
 

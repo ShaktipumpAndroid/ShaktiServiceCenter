@@ -195,8 +195,8 @@ public class ApproveReportImageActivity extends AppCompatActivity implements Eas
 
 
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar.setTitle("Complaint:- "+enq_docno);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
@@ -210,6 +210,7 @@ public class ApproveReportImageActivity extends AppCompatActivity implements Eas
         photo7 = (TextView) findViewById(R.id.photo7);
         photo8 = (TextView) findViewById(R.id.photo8);
         photo9 = (TextView) findViewById(R.id.photo9);*/
+
         edtAmountId1 = findViewById(R.id.edtAmountId1);
         edtAmountId2 = findViewById(R.id.edtAmountId2);
         edtAmountId3 = findViewById(R.id.edtAmountId3);
@@ -245,16 +246,13 @@ public class ApproveReportImageActivity extends AppCompatActivity implements Eas
         }
 
 
-        recyclerView = (RecyclerView) findViewById(R.id.file_list);
+        recyclerView =  findViewById(R.id.file_list);
 
         txtBTNApproveSaveID.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-             //   mListSize = Integer.parseInt(mListSize1);
                 mRMK =edtRemarkAMTID.getText().toString().trim();
-
-
 
                 if(activity.CustomUtility.getSharedPreferences(mContext, enq_docno + "PHOTO_10")!=null && !activity.CustomUtility.getSharedPreferences(mContext, enq_docno + "PHOTO_10").equalsIgnoreCase(""))
                 {
@@ -286,14 +284,12 @@ public class ApproveReportImageActivity extends AppCompatActivity implements Eas
             @Override
             public void onClick(View view) {
 
-              //  showConfirmationGallery(DatabaseHelper.KEY_PHOTO10, "PHOTO_10");
                 if (photo10_text == null || photo10_text.isEmpty()) {
                     showConfirmationGallery(DatabaseHelper.KEY_PHOTO10, "PHOTO_10");
                 } else {
                     showConfirmationAlert(DatabaseHelper.KEY_PHOTO10, photo10_text, "PHOTO_10");
 
                 }
-
             }
         });
 
@@ -301,14 +297,11 @@ public class ApproveReportImageActivity extends AppCompatActivity implements Eas
             @Override
             public void onClick(View view) {
 
-                //showConfirmationGallery(DatabaseHelper.KEY_PHOTO11, "PHOTO_11");
                 if (photo11_text == null || photo11_text.isEmpty()) {
                     showConfirmationGallery(DatabaseHelper.KEY_PHOTO11, "PHOTO_11");
                 } else {
                     showConfirmationAlert(DatabaseHelper.KEY_PHOTO11, photo11_text, "PHOTO_11");
-
                 }
-
             }
         });
 
@@ -341,8 +334,6 @@ public class ApproveReportImageActivity extends AppCompatActivity implements Eas
 
             }
         });
-
-
 
     }
 
@@ -379,8 +370,6 @@ public class ApproveReportImageActivity extends AppCompatActivity implements Eas
             mAMT1 =edtAmountId1.getText().toString().trim();
             mAMT2 =edtAmountId2.getText().toString().trim();
             mAMT3 =edtAmountId3.getText().toString().trim();
-
-
 
             if(!mAMT1.equalsIgnoreCase(""))
             {

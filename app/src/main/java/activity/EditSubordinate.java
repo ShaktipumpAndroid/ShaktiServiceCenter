@@ -370,7 +370,6 @@ public class EditSubordinate extends AppCompatActivity {
                     Message msg = new Message();
                     msg.obj = "Data Submitted Successfully...";
                     mHandler.sendMessage(msg);
-
                     progressDialog.dismiss();
                     finish();
 

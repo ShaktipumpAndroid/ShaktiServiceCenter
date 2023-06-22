@@ -65,8 +65,8 @@ public class PendingComplainDetailsListAdapter extends RecyclerView.Adapter<Pend
        holder.imgShareID.setOnClickListener(view -> {
 
            String shareData = "Complain No.: "+mComplainDetailListResponse.get(position).getCmpno()+"\n\nMaterial Code: "+mComplainDetailListResponse.get(position).getMatnr()+"\n\nWarranty : "+mComplainDetailListResponse.get(position).getWarrantee()+"\n\nWarranty condition: "
-                   +mComplainDetailListResponse.get(position).getWarrantyCondition()+"\n\nSerial no.:"+mComplainDetailListResponse.get(position).getSernr()+"\n\nMaterial Desc.: "
-                   +mComplainDetailListResponse.get(position).getMaktx()+"\n\nReason: "+mComplainDetailListResponse.get(position).getReason();
+                   +mComplainDetailListResponse.get(position).getWarrantyCondition()+"\n\nSerial no.:"+ mComplainDetailListResponse.get(position).getSernr()+"\n\nMaterial Desc.: "
+                   +mComplainDetailListResponse.get(position).getMaktx()+"\n\nReason: "+ mComplainDetailListResponse.get(position).getReason();
 
            Intent sendIntent = new Intent();
            sendIntent.setAction(Intent.ACTION_SEND);
@@ -78,19 +78,18 @@ public class PendingComplainDetailsListAdapter extends RecyclerView.Adapter<Pend
 
        });
 
-       if (status == "02"){
+       if (status.equals("02") || status.equals("03") || status.equals("")){
            holder.txtForwordID.setVisibility(View.GONE);
        }else {
            holder.txtForwordID.setVisibility(View.VISIBLE);
+
+           holder.txtForwordID.setOnClickListener(v -> {
+               Intent mIntent = new Intent(mContext, ForwardList.class);
+               mIntent.putExtra("comNo",mComplainDetailListResponse.get(position).getCmpno());
+               mIntent.putExtra("status","01");
+               mContext.startActivity(mIntent);
+           });
        }
-
-       holder.txtForwordID.setOnClickListener(v -> {
-           Intent mIntent = new Intent(mContext, ForwardList.class);
-           mIntent.putExtra("comNo",mComplainDetailListResponse.get(position).getCmpno());
-           mIntent.putExtra("status","01");
-           mContext.startActivity(mIntent);
-       });
-
     }
 
     @Override
@@ -105,9 +104,7 @@ public class PendingComplainDetailsListAdapter extends RecyclerView.Adapter<Pend
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-public TextView txtwarranteeValueID, txtMaterialDescValueID,txtComplainDateValueID,txtMaterialNoValueID, txtComplainnoValueID, txtMOBNumberValueID, txtsernrValueID, txtReasonValueID, txtWarrenteeConditionsValueID,txtForwordID;
-
-
+        public TextView txtwarranteeValueID, txtMaterialDescValueID,txtComplainDateValueID,txtMaterialNoValueID, txtComplainnoValueID, txtMOBNumberValueID, txtsernrValueID, txtReasonValueID, txtWarrenteeConditionsValueID,txtForwordID;
         public LinearLayout lvlMainItemViewID;
         public ImageView imgShareID;
 

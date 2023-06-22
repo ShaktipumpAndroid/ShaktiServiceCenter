@@ -3,7 +3,9 @@ package activity.complainvk.Freelauncer;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,6 +28,7 @@ public class PendingComplainListFreelancerActivity extends AppCompatActivity {
     PendingAssginComplainListAdapter assignComplainListAdapter;
     private Intent mmIntent;
     private ImageView imgBackID;
+    LinearLayout no_data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +42,14 @@ public class PendingComplainListFreelancerActivity extends AppCompatActivity {
         // Database
         subordinateBeanList = db.getSubordinateAssginComplainList();
 
-        assignComplainListAdapter = new PendingAssginComplainListAdapter(mContext, subordinateBeanList);
-        relyPendingComplainList.setAdapter(assignComplainListAdapter);
+        if (subordinateBeanList.size() >0 ){
+            assignComplainListAdapter = new PendingAssginComplainListAdapter(mContext, subordinateBeanList);
+            relyPendingComplainList.setAdapter(assignComplainListAdapter);
+        }else{
+            no_data.setVisibility(View.VISIBLE);
+        }
+
+
 
     }
 
@@ -52,7 +61,7 @@ public class PendingComplainListFreelancerActivity extends AppCompatActivity {
         relyPendingComplainList = findViewById(R.id.rclyPendingComplainList);
         relyPendingComplainList.setLayoutManager(new LinearLayoutManager(this));
         txtHeaderID.setText(mHeaderTittle);
-
+        no_data = findViewById(R.id.no_data);
         initClickEvent();
     }
 
