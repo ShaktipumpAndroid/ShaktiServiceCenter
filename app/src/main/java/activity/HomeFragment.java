@@ -1,9 +1,5 @@
 package activity;
 
-// /**
-// * Created by shakti on 10/3/2016.
-// */
-
 import static androidx.core.content.ContextCompat.checkSelfPermission;
 
 import android.Manifest;

@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -40,8 +41,12 @@ public class VisitedComplainListActivity extends AppCompatActivity {
         mmIntent = getIntent();
         initView();
         db = new DatabaseHelper(mContext);
+
+        if (!CustomUtility.isOnline(mContext)){
+            Toast.makeText(mContext, "Check internet connection", Toast.LENGTH_SHORT).show();
+        }
+
         // Database
-       // subordinateBeanList = db.getSubordinateAssginComplainList();
         subordinateBeanList = db.getSubordinateVsitedComplainList();
 
         Log.e("SIZE====>", ""+subordinateBeanList.size());

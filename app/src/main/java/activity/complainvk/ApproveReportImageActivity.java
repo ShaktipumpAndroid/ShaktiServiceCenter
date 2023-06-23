@@ -1,5 +1,9 @@
 package activity.complainvk;
 
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.os.Environment.getExternalStorageDirectory;
+import static android.os.Environment.getExternalStoragePublicDirectory;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -58,6 +62,7 @@ import java.util.List;
 import activity.AdaperVk.ImageAdapter;
 import activity.BeanVk.ComplainDetailListResponse;
 import activity.GPSTracker;
+import activity.MainActivity1;
 import activity.utility.CameraUtils;
 import activity.utility.CustomUtility;
 import database.DatabaseHelper;
@@ -66,10 +71,6 @@ import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 import webservice.CustomHttpClient;
 import webservice.WebURL;
-
-import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
-import static android.os.Environment.getExternalStorageDirectory;
-import static android.os.Environment.getExternalStoragePublicDirectory;
 
 
 public class ApproveReportImageActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
@@ -194,35 +195,23 @@ public class ApproveReportImageActivity extends AppCompatActivity implements Eas
         }
 
 
-        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar mToolbar =  findViewById(R.id.toolbar);
         mToolbar.setTitle("Complaint:- "+enq_docno);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-
-      /*  photo1 = (TextView) findViewById(R.id.photo1);
-        photo2 = (TextView) findViewById(R.id.photo2);
-        photo3 = (TextView) findViewById(R.id.photo3);
-        photo4 = (TextView) findViewById(R.id.photo4);
-        photo5 = (TextView) findViewById(R.id.photo5);
-        photo6 = (TextView) findViewById(R.id.photo6);
-
-        photo7 = (TextView) findViewById(R.id.photo7);
-        photo8 = (TextView) findViewById(R.id.photo8);
-        photo9 = (TextView) findViewById(R.id.photo9);*/
 
         edtAmountId1 = findViewById(R.id.edtAmountId1);
         edtAmountId2 = findViewById(R.id.edtAmountId2);
         edtAmountId3 = findViewById(R.id.edtAmountId3);
         edtRemarkAMTID = findViewById(R.id.edtRemarkAMTID);
-        txtBTNApproveSaveID = (TextView) findViewById(R.id.txtBTNApproveSaveID);
-        photo10 = (TextView) findViewById(R.id.photo10);
-        photo11 = (TextView) findViewById(R.id.photo11);
-        photo12 = (TextView) findViewById(R.id.photo12);
-        photo13 = (TextView) findViewById(R.id.photo13);
-
+        txtBTNApproveSaveID =  findViewById(R.id.txtBTNApproveSaveID);
+        photo10 =  findViewById(R.id.photo10);
+        photo11 =  findViewById(R.id.photo11);
+        photo12 =  findViewById(R.id.photo12);
+        photo13 =  findViewById(R.id.photo13);
 
         mListSize= WebURL.EDITTEXT_SHOW_SIZE;
+
         System.out.println("mListSize==>>"+mListSize);
 
         if(mListSize==1)
@@ -1333,19 +1322,18 @@ else if(mListSize == 3)
                         deleteDirectory(new File(getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath() + "/" + GALLERY_DIRECTORY_NAME + "/SKAPP/SERVICE/" + enq_docno));
 
                         activity.CustomUtility.setSharedPreference(mContext, "INSTSYNC"+enq_docno, "");
-                          /*   activity.CustomUtility.setSharedPreference(context,"borewellstatus"+enq_docno, "");
-                            activity.CustomUtility.setSharedPreference(context,"borewellstatus", "");*/
+
 
                         activity.CustomUtility.setSharedPreference(mContext, enq_docno + "PHOTO_10", "");
-
-
                         activity.CustomUtility.setSharedPreference(mContext, "SYNCLIST", "1");
 
                         progressDialog.dismiss();
+
+                        Intent intent = new Intent(ApproveReportImageActivity.this, MainActivity1.class);
+                        startActivity(intent);
                         finish();
 
-                        progressDialog.dismiss();
-                        //  finish();
+
                     }
                     else
                     {

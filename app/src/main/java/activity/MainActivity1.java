@@ -149,12 +149,18 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
 
         displayView(0);
 
-       /* if(userType.equalsIgnoreCase("1")){
-            syncState();
+        if(CustomUtility.isOnline(mContext)){
+            if(userType.equalsIgnoreCase("1")){
+                if (!pref.getString("key_download_complaint", "date").equalsIgnoreCase(CustomUtility.getCurrentDate())) {
+                    syncState();
+                }
+            }
+            else {
+                downloadSubordinateData();
+            }
+        }else {
+            Toast.makeText(mContext, "Check In internet connection", Toast.LENGTH_SHORT).show();
         }
-        else {
-            downloadSubordinateData();
-        }*/
     }
 
     private void downloadSubordinateData() {
@@ -207,9 +213,13 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
         progressBar.show();
         progressBarStatus = 0;
 
+
         new Thread(() -> {
             while (progressBarStatus < 100) {
                 try {
+
+                    editor.putString("key_download_complaint", new CustomUtility().getCurrentDate());
+                    editor.commit(); //
                         progressBarStatus = 30;
                         progressBarHandler.post(() -> progressBar.setProgress(progressBarStatus));
                         con.getStateData(MainActivity1.this);
@@ -218,7 +228,7 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
                         progressBarHandler.post(() -> progressBar.setProgress(progressBarStatus));
                         con.getSubordinateData(MainActivity1.this);
 
-                    progressBarStatus = 100;
+                        progressBarStatus = 100;
                         progressBarHandler.post(() -> progressBar.setProgress(progressBarStatus));
 
                 } catch (Exception e) {

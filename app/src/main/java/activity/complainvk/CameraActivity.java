@@ -90,8 +90,8 @@ public class CameraActivity extends Activity {
         }
 
 
-        txtData = (TextView) findViewById(R.id.txtDate);
-        image = (ImageView) findViewById(R.id.sw);
+        txtData =  findViewById(R.id.txtDate);
+        image =  findViewById(R.id.sw);
         sdf = new SimpleDateFormat(Config.TIME_STAMP_FORMAT_DATE, Locale.getDefault());
         sdf1 = new SimpleDateFormat(Config.TIME_STAMP_FORMAT_TIME, Locale.getDefault());
         txtData.setText("Latitude: "+lat+"\n"+"Longitude: "+lng+"\n"+"Date: "+sdf.format(new Date())+" "+"Time: "+sdf1.format(new Date())+"\n"+"Complaint no.: "+enq_docno);
@@ -307,7 +307,6 @@ public class CameraActivity extends Activity {
                     }.execute(data);
                 }
             });
-
     }
 
 

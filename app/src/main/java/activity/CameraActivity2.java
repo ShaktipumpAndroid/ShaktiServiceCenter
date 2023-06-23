@@ -43,20 +43,19 @@ import java.util.Locale;
 
 @SuppressWarnings("deprecation")
 public class CameraActivity2 extends AppCompatActivity implements SurfaceHolder.Callback, android.hardware.Camera.PictureCallback {
+
     private static final String TIME_STAMP_FORMAT_DATE = "dd.MM.yyyy";
     private static final String TIME_STAMP_FORMAT_TIME = "h:mm a";
     private static final String GALLERY_DIRECTORY_NAME_COMMON = "SurfaceCamera";
     private SurfaceHolder surfaceHolder;
     private android.hardware.Camera camera;
-
-
     public static final int REQUEST_CODE = 100;
     private final static int RESULT_CODE = 100;
     private SurfaceView surfaceView;
     LinearLayout layoutpreview;
     TextView display ;
     FusedLocationProviderClient location;
-    String latitudetxt,longitudetxt,addresstxt,state,country,postalcode,CmpNo;
+    String latitudetxt,longitudetxt,addresstxt,state,country,postalcode,compNo;
     SimpleDateFormat getDate,getTime;
     Bitmap bitmap;
     File save;
@@ -66,16 +65,18 @@ public class CameraActivity2 extends AppCompatActivity implements SurfaceHolder.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera2);
+
         surfaceView = findViewById(R.id.surfaceView);
 
         layoutpreview = findViewById(R.id.layoutPreview);
         display = findViewById(R.id.display);
         Bundle bundle = getIntent().getExtras();
-        CmpNo = bundle.getString("cmpNo");
+        compNo = bundle.getString("cmpNo");
 
         location = LocationServices.getFusedLocationProviderClient(this);
         getlastLocation();
         setupSurfaceHolder();
+
 
     }
 
@@ -93,39 +94,59 @@ public class CameraActivity2 extends AppCompatActivity implements SurfaceHolder.
         super.onBackPressed();
     }
 
+
     @SuppressLint("SetTextI18n")
     private void getlastLocation() {
 
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             location.getLastLocation()
                     .addOnSuccessListener(location -> {
-                        if(location != null) {
-
-                            Geocoder geocoder = new Geocoder(CameraActivity2.this,Locale.getDefault());
+                        if (location != null && !String.valueOf(location.getLatitude()).isEmpty() && !String.valueOf(location.getLongitude()).isEmpty()) {
+                            Geocoder geocoder = new Geocoder(CameraActivity2.this, Locale.getDefault());
                             try {
-                                List<Address> addresses = geocoder.getFromLocation(location.getLatitude(),location.getLongitude(),1);
+                                if (CustomUtility.isOnline(getApplicationContext())) {
+                                    List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                                    if (!addresses.isEmpty()) {
+                                        latitudetxt = String.valueOf(addresses.get(0).getLatitude());
+                                        longitudetxt = String.valueOf(addresses.get(0).getLongitude());
+                                        addresstxt = addresses.get(0).getAddressLine(0).substring(0, 35);
+                                        state = addresses.get(0).getAdminArea();
+                                        postalcode = addresses.get(0).getPostalCode();
+                                        country = addresses.get(0).getCountryName();
+                                        getDate = new SimpleDateFormat(TIME_STAMP_FORMAT_DATE, Locale.getDefault());
+                                        getTime = new SimpleDateFormat(TIME_STAMP_FORMAT_TIME, Locale.getDefault());
 
-                                latitudetxt = String.valueOf(addresses.get(0).getLatitude());
-                                longitudetxt = String.valueOf(addresses.get(0).getLongitude());
-                                addresstxt = addresses.get(0).getAddressLine(0).substring(0,35);
-                                state = addresses.get(0).getAdminArea();
-                                postalcode = addresses.get(0).getPostalCode();
-                                country = addresses.get(0).getCountryName();
-                                getDate = new SimpleDateFormat(TIME_STAMP_FORMAT_DATE, Locale.getDefault());
-                                getTime = new SimpleDateFormat(TIME_STAMP_FORMAT_TIME, Locale.getDefault());
+                                        if (compNo != null && !compNo.isEmpty()) {
+                                            display.setText(" Latitude : " + latitudetxt + "\n" + " Longitude : " + longitudetxt + "\n" + " Address : " + addresstxt + ","
+                                                    + state + " " + postalcode + "," + country + "\n" + "Date: " + getDate.format(new Date()) + "\n" + "Time: " + getTime.format(new Date())
+                                                    + "\n" + "Complaint No: " + compNo);
+                                        } else {
+                                            display.setText(" Latitude : " + latitudetxt + "\n" + " Longitude : " + longitudetxt + "\n" + " Address : " + addresstxt + ","
+                                                    + state + " " + postalcode + "," + country + "\n" + "Date: " + getDate.format(new Date()) + "\n" + "Time: " + getTime.format(new Date())
+                                                    + "\n" + "Complaint No: " + compNo);
+                                        }
+                                    }
+                                } else {
+                                    latitudetxt = String.valueOf(location.getLatitude());
+                                    longitudetxt = String.valueOf(location.getLongitude());
+                                    getDate = new SimpleDateFormat(TIME_STAMP_FORMAT_DATE, Locale.getDefault());
+                                    getTime = new SimpleDateFormat(TIME_STAMP_FORMAT_TIME, Locale.getDefault());
 
+                                    if (compNo != null && !compNo.isEmpty()) {
+                                        display.setText(" Latitude : " + latitudetxt + "\n" + " Longitude : " + longitudetxt + "Date: " + getDate.format(new Date()) + "\n" + "Time: " + getTime.format(new Date())
+                                                + "\n" + "Complaint No: " + compNo);
+                                    } else {
+                                        display.setText(" Latitude : " + latitudetxt + "\n" + " Longitude : " + longitudetxt + "Date: " + getDate.format(new Date()) + "\n" + "Time: " + getTime.format(new Date())
+                                                + "\n" + "Complaint No: " + compNo);
+                                    }
 
-                                display.setText(" Latitude : " + latitudetxt + "\n" + " Longitude : " + longitudetxt+ "\n" + " Address : " + addresstxt +","
-                                        + state+ " " + postalcode+ "," +country +"\n"+"Date: " + getDate.format(new Date()) + "\n" + "Time: " + getTime.format(new Date())
-                                +"\n" + "Customer: " + CmpNo);
-
+                                }
                             } catch (IOException e) {
                                 throw new RuntimeException(e);
                             }
                         }
                     });
-        } else
-        {
+        } else {
             askpermission();
         }
     }
@@ -161,6 +182,9 @@ public class CameraActivity2 extends AppCompatActivity implements SurfaceHolder.
 
         surfaceHolder = surfaceView.getHolder();
         surfaceHolder.addCallback(this);
+        surfaceView.setFocusableInTouchMode(true);
+        surfaceView.setFocusable(true);
+        surfaceView.requestFocus();
         setBtnClick();
     }
 
@@ -180,7 +204,7 @@ public class CameraActivity2 extends AppCompatActivity implements SurfaceHolder.
     }
 
     @Override
-    public void surfaceCreated(SurfaceHolder surfaceHolder) {
+    public void surfaceCreated(@NonNull SurfaceHolder surfaceHolder) {
         startCamera();
     }
 
@@ -199,7 +223,7 @@ public class CameraActivity2 extends AppCompatActivity implements SurfaceHolder.
     }
 
     @Override
-    public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
+    public void surfaceChanged(@NonNull SurfaceHolder surfaceHolder, int i, int i1, int i2) {
         resetCamera();
     }
 
@@ -218,7 +242,7 @@ public class CameraActivity2 extends AppCompatActivity implements SurfaceHolder.
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            // Start the camera preview...
+
             camera.startPreview();
         }
     }
@@ -228,6 +252,7 @@ public class CameraActivity2 extends AppCompatActivity implements SurfaceHolder.
     public void surfaceDestroyed(@NonNull SurfaceHolder surfaceHolder) {
         releaseCamera();
     }
+
     @Override
     protected void onPause()
     {
@@ -237,18 +262,18 @@ public class CameraActivity2 extends AppCompatActivity implements SurfaceHolder.
             camera.release();
         }
     }
+
     private void releaseCamera() {
         if (camera != null) {
-            camera.stopPreview();
             camera.release();
+            camera.stopPreview();
         }
     }
 
     @Override
     public void onPictureTaken(byte[] bytes, android.hardware.Camera camera) {
-
         bitmap = saveImageWithTimeStamp(bytes);
-        save = saveFile(bitmap,CmpNo.trim(),CmpNo.trim());
+        save = saveFile(bitmap,compNo.trim(),compNo.trim());
         onBackPressed();
     }
 
@@ -257,7 +282,6 @@ public class CameraActivity2 extends AppCompatActivity implements SurfaceHolder.
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inMutable = true;
         Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length, options);
-
         bmp = rotateBitmap(bmp);
         SimpleDateFormat sdf = new SimpleDateFormat(TIME_STAMP_FORMAT_DATE, Locale.getDefault());
         SimpleDateFormat sdf1 = new SimpleDateFormat(TIME_STAMP_FORMAT_TIME, Locale.getDefault());
@@ -266,7 +290,6 @@ public class CameraActivity2 extends AppCompatActivity implements SurfaceHolder.
 
         float scale = this.getResources().getDisplayMetrics().density;
         Canvas canvas = new Canvas(bmp);
-
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setTextSize(110);
         int color = ContextCompat.getColor(CameraActivity2.this, R.color.colorPrimaryDark);
@@ -291,7 +314,7 @@ public class CameraActivity2 extends AppCompatActivity implements SurfaceHolder.
         String text2 = "Date: "+date;
         String text3 = "Time: "+time;
 
-        String text4 = "Customer Name: "+CmpNo;
+        String text4 = "Customer Name: "+compNo;
 
         canvas.drawText(text , startXPosition - 1250, startYPosition - 600, paint);
         canvas.drawText(text1, startXPosition - 1250, startYPosition - 450, paint);
@@ -338,7 +361,6 @@ public class CameraActivity2 extends AppCompatActivity implements SurfaceHolder.
             e.printStackTrace();
         }
 
-        // Create a media file name
         return dir.getPath() + File.separator + "IMG_"+  String.valueOf(Calendar.getInstance().getTimeInMillis()) +".jpg";
     }
 }

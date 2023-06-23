@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -16,6 +17,7 @@ import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
 import java.util.List;
 
+import activity.CustomUtility;
 import adapter.PendingAssginComplainListAdapter;
 import bean.SubordinateAssginComplainBean;
 import database.DatabaseHelper;
@@ -39,8 +41,13 @@ public class PendingComplainListFreelancerActivity extends AppCompatActivity {
         mmIntent = getIntent();
         initView();
         db = new DatabaseHelper(mContext);
+
         // Database
         subordinateBeanList = db.getSubordinateAssginComplainList();
+
+        if (!CustomUtility.isOnline(mContext)){
+            Toast.makeText(mContext, "Check internet connection", Toast.LENGTH_SHORT).show();
+        }
 
         if (subordinateBeanList.size() >0 ){
             assignComplainListAdapter = new PendingAssginComplainListAdapter(mContext, subordinateBeanList);

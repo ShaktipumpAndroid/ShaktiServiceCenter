@@ -729,7 +729,7 @@ public class SubordinateImageActivity extends AppCompatActivity implements Image
     public void openCamera() {
 
         camraLauncher.launch(new Intent(SubordinateImageActivity.this, CameraActivity2.class)
-                .putExtra("cust_name", cust_nm));
+                .putExtra("cmpNo", enq_docno));
     }
 
     ActivityResultLauncher<Intent> camraLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),

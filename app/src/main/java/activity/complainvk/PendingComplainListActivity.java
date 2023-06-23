@@ -77,7 +77,12 @@ public class PendingComplainListActivity extends AppCompatActivity {
         txtHeaderID.setText(mHeaderTittle);
 
         initClickEvent();
-        callgetCompalinAllListAPI();
+        if (CustomUtility.isOnline(mContext)){
+            callgetCompalinAllListAPI();
+        }else {
+            Toast.makeText(mContext, "Check your internet connection..", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     private void initClickEvent() {

@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,7 +42,7 @@ public class SubordinateVisitedListActivity extends AppCompatActivity {
     private  String mHeaderTittle = "";
     private  String mStatusValue = "";
     private String mUserID;
-
+    LinearLayout no_data;
     private Intent mmIntent;
     private SubordinateVisitedListAdapter mPendingComplainListAdapter;
 
@@ -57,7 +59,7 @@ public class SubordinateVisitedListActivity extends AppCompatActivity {
     private void initView() {
 
         mUserID = CustomUtility.getSharedPreferences(mContext,"userID");
-
+        no_data = findViewById(R.id.no_data);
         mHeaderTittle = mmIntent.getStringExtra("heading");
         mStatusValue = mmIntent.getStringExtra("complaint");
 
@@ -178,6 +180,7 @@ public class SubordinateVisitedListActivity extends AppCompatActivity {
                     } else {
                         runOnUiThread(() -> {
                             Toast.makeText(mContext, mMessage, Toast.LENGTH_SHORT).show();
+                            no_data.setVisibility(View.VISIBLE);
                             progressDialog.dismiss();
                         });
                         progressDialog.dismiss();
