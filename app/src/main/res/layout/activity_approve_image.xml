@@ -169,11 +169,32 @@
                 android:textColor="@color/black"
                 android:textSize="@dimen/_14ssp" />
 
+            <RelativeLayout
 
+                android:layout_marginBottom="@dimen/_5sdp"
+                android:layout_alignParentBottom="true"
+                android:id="@+id/rlvButtonViewID"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_35sdp"
+                android:background="@color/white">
 
+                <TextView
+                    android:id="@+id/txtBTNApproveSaveID"
+                    android:layout_marginEnd="@dimen/_70sdp"
+                    android:layout_marginStart="@dimen/_70sdp"
+                    android:background="@drawable/btn_shape_rounded_corner"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Save"
 
+                    android:fontFamily="@font/open_sans_bold"
+                    android:textColor="@color/white"
+                    android:gravity="center"
+                    android:textSize="@dimen/_16sdp"
+                    />
 
-
+            </RelativeLayout>
 
 
         </LinearLayout>
@@ -184,31 +205,5 @@
     </LinearLayout>
 
 
-    <RelativeLayout
-
-        android:layout_marginBottom="@dimen/_5sdp"
-        android:layout_alignParentBottom="true"
-        android:id="@+id/rlvButtonViewID"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_35sdp"
-        android:background="@color/white">
-
-        <TextView
-            android:id="@+id/txtBTNApproveSaveID"
-            android:layout_marginEnd="@dimen/_70sdp"
-            android:layout_marginStart="@dimen/_70sdp"
-            android:background="@drawable/btn_shape_rounded_corner"
-            android:layout_weight="1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Save"
-
-            android:fontFamily="@font/open_sans_bold"
-            android:textColor="@color/white"
-            android:gravity="center"
-            android:textSize="@dimen/_16sdp"
-            />
-
-    </RelativeLayout>
 
 </RelativeLayout>

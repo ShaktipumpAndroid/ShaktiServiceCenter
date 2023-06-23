@@ -189,6 +189,7 @@
             android:textSize="12sp"
             android:textColor="@color/black"
             android:inputType="textMultiLine"
+            android:visibility="gone"
             />
     </com.google.android.material.textfield.TextInputLayout>
 

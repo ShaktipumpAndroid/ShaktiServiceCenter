@@ -66,6 +66,7 @@ import java.util.Objects;
 
 import activity.CameraActivity2;
 import activity.GPSTracker;
+import activity.MainActivity1;
 import activity.PhotoViewerActivity;
 import activity.services.LocationUpdateService;
 import activity.utility.Constant;
@@ -156,23 +157,26 @@ public class SubordinateImageActivity extends AppCompatActivity implements Image
 
         recyclerview = findViewById(R.id.recyclerview);
         edtRemarkAMTID = findViewById(R.id.edtRemarkAMTID);
-        mToolbar = findViewById(R.id.toolbar);
+
         borewellInCheckBox = findViewById(R.id.borewellInCheckBox);
         borewellOutCheckBox = findViewById(R.id.borewellOutCheckBox);
         transportLoadCheckBox = findViewById(R.id.transportLoadCheckBox);
         transportUnloadCheckBox = findViewById(R.id.transportUnloadCheckBox);
 
-        setSupportActionBar(mToolbar);
-        Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        mToolbar.setTitle(getResources().getString(R.string.title));
-
-        CustomUtility.setSharedPreference(mContext, "AUDSYNC" + enq_docno, "");
-
         Bundle bundle = getIntent().getExtras();
         assert bundle != null;
         enq_docno = bundle.getString("inst_id");
         cust_nm = bundle.getString("cust_name");
+
+        mToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Complaint:- "+enq_docno);
+
+        CustomUtility.setSharedPreference(mContext, "AUDSYNC" + enq_docno, "");
+
+
 
         Log.e("Values===>", enq_docno + "  " + cust_nm);
 
@@ -518,8 +522,6 @@ public class SubordinateImageActivity extends AppCompatActivity implements Image
         } else if (!imageArrayList.get(5).isImageSelected()) {
             Toast.makeText(this, getResources().getString(R.string.Please_customer), Toast.LENGTH_SHORT).show();
         }else if (!imageArrayList.get(6).isImageSelected()) {
-            Toast.makeText(this, getResources().getString(R.string.Please_approval), Toast.LENGTH_SHORT).show();
-        }else if (!imageArrayList.get(7).isImageSelected()) {
             Toast.makeText(this, getResources().getString(R.string.Please_other), Toast.LENGTH_SHORT).show();
         }else {
             CustomUtility.setSharedPreference(mContext, "AUDSYNC" + enq_docno, "1");
@@ -537,12 +539,11 @@ public class SubordinateImageActivity extends AppCompatActivity implements Image
         itemNameList.add(getResources().getString(R.string.site_images));
         itemNameList.add(getResources().getString(R.string.fir_field));
         itemNameList.add(getResources().getString(R.string.customer_satisfaction));
-        itemNameList.add(getResources().getString(R.string.approval));
         itemNameList.add(getResources().getString(R.string.other));
 
 
         DatabaseHelper db = new DatabaseHelper(this);
-        imageList = db.getAllImages();
+        imageList = db.getAllImages(enq_docno);
 
         if (itemNameList.size() > 0 && imageList != null && imageList.size() > 0) {
 
@@ -561,7 +562,6 @@ public class SubordinateImageActivity extends AppCompatActivity implements Image
                     transportUnloadCheckBox.setChecked(true);
                     itemNameList.add(getResources().getString(R.string.transportUnload));
                 }
-
             }
         }
 
@@ -729,7 +729,7 @@ public class SubordinateImageActivity extends AppCompatActivity implements Image
     public void openCamera() {
 
         camraLauncher.launch(new Intent(SubordinateImageActivity.this, CameraActivity2.class)
-                .putExtra("cust_name", cust_nm));
+                .putExtra("cmpNo", enq_docno));
     }
 
     ActivityResultLauncher<Intent> camraLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
@@ -907,15 +907,14 @@ public class SubordinateImageActivity extends AppCompatActivity implements Image
                         mHandler2.sendMessage(msg);
                         progressDialog.dismiss();
                         dataHelper.deleteTableData(DatabaseHelper.TABLE_IMAGES);
-                        finish();
 
-                        //  finish();
+                        Intent intent = new Intent(SubordinateImageActivity.this, MainActivity1.class);
+                        startActivity(intent);
+                        finish();
                     } else {
 
                         msg.obj = "Data Not Submitted, Please try After Sometime.";
                         mHandler2.sendMessage(msg);
-
-                        //  finish();
                     }
                     progressDialog.dismiss();
 
@@ -1077,7 +1076,7 @@ public class SubordinateImageActivity extends AppCompatActivity implements Image
                     final TextInputEditText etendlatlng = dialog.findViewById(R.id.tiet_end_lat_lng);
                     final TextInputEditText etendlocadd = dialog.findViewById(R.id.tiet_end_loc_add);
                     final TextInputEditText ettotdis = dialog.findViewById(R.id.tiet_tot_dis);
-                    final TextInputEditText ettrvlmod = dialog.findViewById(R.id.tiet_trvl_mod);
+                    //final TextInputEditText ettrvlmod = dialog.findViewById(R.id.tiet_trvl_mod);
                     final TextInputEditText tiet_complaintNo = dialog.findViewById(R.id.tiet_complaintNo);
                     final TextView etcncl = dialog.findViewById(R.id.btn_cncl);
                     final TextView etconfm = dialog.findViewById(R.id.btn_cnfrm);
@@ -1105,7 +1104,7 @@ public class SubordinateImageActivity extends AppCompatActivity implements Image
                     etconfm.setOnClickListener(v -> {
 
                         if (activity.CustomUtility.isOnline(getApplicationContext())) {
-                            if (!Objects.requireNonNull(ettrvlmod.getText()).toString().isEmpty()) {
+                          //  if (!Objects.requireNonNull(ettrvlmod.getText()).toString().isEmpty()) {
                                 new SubordinateImageActivity.savePendingPhotoDataAPI().execute();
 
                                 new Thread(() -> runOnUiThread(() -> {
@@ -1132,14 +1131,12 @@ public class SubordinateImageActivity extends AppCompatActivity implements Image
                                             current_start_time,
                                             current_end_time, wayPoints.getWayPoints());
                                     dataHelper.updateWayPointData1(wp1);
-                                    SyncLocalConveneinceDataToSap(ettrvlmod.getText().toString(), current_end_date, current_end_time, distance1, allLatLong);
+                                    SyncLocalConveneinceDataToSap("", current_end_date, current_end_time, distance1, allLatLong);
                                 })).start();
 
                                 dialog.dismiss();
 
-                            } else {
-                                Toast.makeText(getApplicationContext(), getResources().getString(R.string.Please_Enter_Travel_Mode), Toast.LENGTH_SHORT).show();
-                            }
+
                         } else {
                             Toast.makeText(getApplicationContext(), getResources().getString(R.string.ConnectToInternet), Toast.LENGTH_SHORT).show();
                         }

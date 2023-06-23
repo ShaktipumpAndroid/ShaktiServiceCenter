@@ -149,11 +149,17 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
 
         displayView(0);
 
-        if(userType.equalsIgnoreCase("1")){
-            syncState();
-        }
-        else {
-            downloadSubordinateData();
+        if(CustomUtility.isOnline(mContext)){
+            if(userType.equalsIgnoreCase("1")){
+                if (!pref.getString("key_download_complaint", "date").equalsIgnoreCase(CustomUtility.getCurrentDate())) {
+                    syncState();
+                }
+            }
+            else {
+                downloadSubordinateData();
+            }
+        }else {
+            Toast.makeText(mContext, "Check In internet connection", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -207,9 +213,13 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
         progressBar.show();
         progressBarStatus = 0;
 
+
         new Thread(() -> {
             while (progressBarStatus < 100) {
                 try {
+
+                    editor.putString("key_download_complaint", new CustomUtility().getCurrentDate());
+                    editor.commit(); //
                         progressBarStatus = 30;
                         progressBarHandler.post(() -> progressBar.setProgress(progressBarStatus));
                         con.getStateData(MainActivity1.this);
@@ -218,7 +228,7 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
                         progressBarHandler.post(() -> progressBar.setProgress(progressBarStatus));
                         con.getSubordinateData(MainActivity1.this);
 
-                    progressBarStatus = 100;
+                        progressBarStatus = 100;
                         progressBarHandler.post(() -> progressBar.setProgress(progressBarStatus));
 
                 } catch (Exception e) {
@@ -322,8 +332,6 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
     private void displayView(int position) {
         Fragment fragment = null;
         switch (position) {
-
-
             case 0:
 
                 if(userType.equalsIgnoreCase("1"))
@@ -362,21 +370,31 @@ public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.F
                 break;
 
             case 2:
+                if(userType.equalsIgnoreCase("1")){
+                    Intent i = new Intent(MainActivity1.this,Register.class);
+                    startActivity(i);
+                }else {
+                    if(userType.equalsIgnoreCase("1"))
+                        logOut();
+                    else
+                        Logout();
+                }
+
+                break;
+
+            case 3:
+
+                Intent intent = new Intent(MainActivity1.this,SubordinateList.class);
+                startActivity(intent);
+
+                break;
+
+            case 4:
                 if(userType.equalsIgnoreCase("1"))
                     logOut();
                 else
                     Logout();
 
-                break;
-
-            case 3:
-                Intent i = new Intent(MainActivity1.this,Register.class);
-                startActivity(i);
-                break;
-
-            case 4:
-                Intent intent = new Intent(MainActivity1.this,SubordinateList.class);
-                startActivity(intent);
 
             default:
                 break;

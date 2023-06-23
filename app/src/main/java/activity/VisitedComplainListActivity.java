@@ -4,8 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -27,6 +30,7 @@ public class VisitedComplainListActivity extends AppCompatActivity {
     VisitedAssignComplainListAdapter visitedComplainListAdapter;
     private Intent mmIntent;
     private ImageView imgBackID;
+    LinearLayout no_data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,14 +41,23 @@ public class VisitedComplainListActivity extends AppCompatActivity {
         mmIntent = getIntent();
         initView();
         db = new DatabaseHelper(mContext);
+
+        if (!CustomUtility.isOnline(mContext)){
+            Toast.makeText(mContext, "Check internet connection", Toast.LENGTH_SHORT).show();
+        }
+
         // Database
-       // subordinateBeanList = db.getSubordinateAssginComplainList();
         subordinateBeanList = db.getSubordinateVsitedComplainList();
 
         Log.e("SIZE====>", ""+subordinateBeanList.size());
 
-        visitedComplainListAdapter = new VisitedAssignComplainListAdapter(mContext, subordinateBeanList);
-        relyPendingComplainList.setAdapter(visitedComplainListAdapter);
+        if (subordinateBeanList.size()>0) {
+            visitedComplainListAdapter = new VisitedAssignComplainListAdapter(mContext, subordinateBeanList);
+            relyPendingComplainList.setAdapter(visitedComplainListAdapter);
+        }
+        else{
+            no_data.setVisibility(View.VISIBLE);
+        }
     }
 
     private void initView() {
@@ -55,7 +68,7 @@ public class VisitedComplainListActivity extends AppCompatActivity {
         relyPendingComplainList = findViewById(R.id.rclyPendingComplainList);
         relyPendingComplainList.setLayoutManager(new LinearLayoutManager(this));
         txtHeaderID.setText(mHeaderTittle);
-
+        no_data = findViewById(R.id.no_data);
         initClickEvent();
     }
 

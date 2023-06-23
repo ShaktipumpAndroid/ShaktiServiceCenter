@@ -1356,6 +1356,7 @@ public class SAPWebService {
 
         @SuppressWarnings("resource") DatabaseHelper dataHelper = new DatabaseHelper(context);
         final ArrayList<NameValuePair> param = new ArrayList<>();
+
         try {
             String obj = CustomHttpClient.executeHttpPost1(WebURL.STATE_DATA, param);
             JSONArray ja_state = new JSONArray(obj);

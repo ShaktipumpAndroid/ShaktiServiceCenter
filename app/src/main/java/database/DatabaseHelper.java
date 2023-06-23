@@ -4575,11 +4575,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-    public List<ImageModel> getAllImages()  {
-        ArrayList<ImageModel> siteAuditImages = new ArrayList<ImageModel>();
-        SQLiteDatabase  database = this.getWritableDatabase();
+    public List<ImageModel> getAllImages(String billNo)  {
+        ArrayList<ImageModel> siteAuditImages = new ArrayList<>();
+        SQLiteDatabase database = this.getWritableDatabase();
         if(CustomUtility.doesTableExist(database,TABLE_IMAGES)) {
-            Cursor mcursor = database.rawQuery(" SELECT * FROM " + TABLE_IMAGES, null);
+         /*   DatabaseHelper.KEY_CATEGORY + cmp_category + "'";
+            cursor = db.rawQuery(selectQuery, null);*/
+
+            Cursor mcursor = database.rawQuery(" SELECT * FROM " + TABLE_IMAGES +  " WHERE " + KEY_IMAGES_BILL_NO + " = '"  + billNo + "'", null);
             ImageModel imageModel;
 
             if (mcursor.getCount() > 0) {
@@ -4635,7 +4638,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_MATERIAL_UNLOAD,transportUnLoading);
 
         // update Row
-        db.update(TABLE_IMAGES,values,"imagesName = '"+name+"'",null);
+        db.update(TABLE_IMAGES,values,"imagesName = '"+ name +"'",null);
         db.close();
     }
 

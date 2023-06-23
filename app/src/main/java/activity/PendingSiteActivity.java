@@ -6,7 +6,9 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,6 +45,8 @@ public class PendingSiteActivity extends AppCompatActivity {
     ListView pending_list;
     PendingSiteAdapter adapter;
 
+    LinearLayout no_data;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,7 +63,7 @@ public class PendingSiteActivity extends AppCompatActivity {
         end_date = findViewById(R.id.end_date);
         save = findViewById(R.id.save);*/
         pending_list = findViewById(R.id.pending_list);
-
+        no_data = findViewById(R.id.no_data);
   /*      start_date.setFocusable(false);
         end_date.setFocusable(false);*/
 
@@ -148,8 +152,13 @@ public class PendingSiteActivity extends AppCompatActivity {
                         pendingSiteBeanArrayList.add(pendingSiteBean);
                     }
 
-                    adapter = new PendingSiteAdapter(context, pendingSiteBeanArrayList);
-                    pending_list.setAdapter(adapter);
+                    if (pendingSiteBeanArrayList.size() > 0) {
+                        adapter = new PendingSiteAdapter(context, pendingSiteBeanArrayList);
+                        pending_list.setAdapter(adapter);
+
+                    }else {
+                        no_data.setVisibility(View.VISIBLE);
+                    }
 
                     progress.dismiss();
                     Toast.makeText(PendingSiteActivity.this, response.body().message, Toast.LENGTH_SHORT).show();

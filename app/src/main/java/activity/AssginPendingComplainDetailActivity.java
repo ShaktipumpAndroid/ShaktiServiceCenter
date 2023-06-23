@@ -10,6 +10,8 @@ import android.os.Message;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -150,7 +152,14 @@ public class AssginPendingComplainDetailActivity extends AppCompatActivity {
         EditText editText;
         TextView txtBTNRemarkID;
         dialog = new Dialog(mContext);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
         dialog.setContentView(R.layout.dialog_remark_as_complain);
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        dialog.getWindow().setAttributes(lp);
 
         editText = dialog.findViewById(R.id.edtRemarkViewIDD);
         txtBTNRemarkID = dialog.findViewById(R.id.txtBTNRemarkID);
@@ -260,15 +269,18 @@ public class AssginPendingComplainDetailActivity extends AppCompatActivity {
 
                         activity.CustomUtility.setSharedPreference(getApplicationContext(), Constant.LocalConveyance, "0");
 
-
+                        Intent intent = new Intent(AssginPendingComplainDetailActivity.this , MainActivity1.class);
+                        startActivity(intent);
 
                     } else if (invc_done.equalsIgnoreCase("E")) {
 
                         if ((progressDialog != null) && progressDialog.isShowing()) {
                             progressDialog.dismiss();
                             progressDialog = null;
+                            activity.CustomUtility.setSharedPreference(getApplicationContext(), Constant.LocalConveyance, "0");
+
                         }
-                        ;
+
                         Message msg = new Message();
                         msg.obj = docno_sap;
                         mHandler.sendMessage(msg);
@@ -352,6 +364,8 @@ public class AssginPendingComplainDetailActivity extends AppCompatActivity {
                         msg.obj = "Data Submitted Successfully...";
                         mHandler.sendMessage(msg);
                         dialog.dismiss();
+                        activity.CustomUtility.setSharedPreference(getApplicationContext(), Constant.LocalConveyance, "0");
+
                         progressDialog.dismiss();
                         //  finish();
                     }
@@ -360,6 +374,7 @@ public class AssginPendingComplainDetailActivity extends AppCompatActivity {
 
                         Message msg = new Message();
                         msg.obj = "Data Not Submitted, Please try After Sometime.";
+                        activity.CustomUtility.setSharedPreference(getApplicationContext(), Constant.LocalConveyance, "0");
                         mHandler.sendMessage(msg);
                         dialog.dismiss();
                         progressDialog.dismiss();

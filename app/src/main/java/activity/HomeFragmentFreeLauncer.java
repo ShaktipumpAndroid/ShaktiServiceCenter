@@ -371,6 +371,13 @@ import webservice.WebURL;
                 }
             }
 
+            if (CustomUtility.getSharedPreferences(context,Constant.LocalConveyance).equalsIgnoreCase("1")){
+                changeButtonVisibility(false, 0.5f, start);
+                changeButtonVisibility(true, 1f, end);
+            }else {
+                changeButtonVisibility(false, 0.5f, end);
+                changeButtonVisibility(true, 1f, start);
+            }
 
 
         }

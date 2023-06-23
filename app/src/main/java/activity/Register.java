@@ -355,6 +355,7 @@ public class Register extends AppCompatActivity {
                 if (response.body().status.equalsIgnoreCase("true"))
                 {
                     Toast.makeText(Register.this, response.body().message, Toast.LENGTH_SHORT).show();
+                    finish();
                 }
                 else{
                     Toast.makeText(Register.this,  response.body().message, Toast.LENGTH_SHORT).show();

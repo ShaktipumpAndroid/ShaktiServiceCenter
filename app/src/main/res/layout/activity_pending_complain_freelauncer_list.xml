@@ -35,7 +35,19 @@
 
     </RelativeLayout>
 
+    <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+        android:visibility="gone"
+    android:gravity="center"
+    android:id="@+id/no_data">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No data found"
+        android:textSize="@dimen/_15sdp"/>
 
+</LinearLayout>
 
     <LinearLayout
         android:background="@color/whitesade"
@@ -96,4 +108,5 @@
         </RelativeLayout>
 
     </LinearLayout>
+
 </LinearLayout>
