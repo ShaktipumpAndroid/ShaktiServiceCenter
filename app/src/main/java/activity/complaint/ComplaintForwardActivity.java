@@ -7,9 +7,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Message;
 import android.os.StrictMode;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
@@ -19,6 +16,7 @@ import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.appcompat.widget.Toolbar;
 
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
@@ -32,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import activity.BaseActivity;
 import activity.CustomUtility;
 import adapter.ExpandableListAdapter;
 import bean.ComplaintForward;
@@ -39,7 +38,7 @@ import searchlist.complaint.SearchForwardComplaintListViewAdapter;
 import webservice.CustomHttpClient;
 import webservice.WebURL;
 
-public class ComplaintForwardActivity extends AppCompatActivity {
+public class ComplaintForwardActivity extends BaseActivity {
     Context mContext;
     String cmp_no,cmp_epc;
     ProgressDialog progressDialog;

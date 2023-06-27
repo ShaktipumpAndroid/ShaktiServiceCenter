@@ -44,7 +44,7 @@ import webservice.CustomHttpClient;
 import webservice.WebURL;
 
 @SuppressWarnings("deprecation")
-public class EditSubordinate extends AppCompatActivity {
+public class EditSubordinate extends BaseActivity {
 
     private SubordinateBean subordinateBean;
     AlertDialog dialog;

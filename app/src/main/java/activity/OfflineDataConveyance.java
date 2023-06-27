@@ -17,7 +17,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.multidex.BuildConfig;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -37,7 +36,7 @@ import bean.LocalConvenienceBean;
 import database.DatabaseHelper;
 
 
-public class OfflineDataConveyance extends AppCompatActivity {
+public class OfflineDataConveyance extends BaseActivity {
 
     private static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 100;
     public static final int BITMAP_SAMPLE_SIZE = 8;

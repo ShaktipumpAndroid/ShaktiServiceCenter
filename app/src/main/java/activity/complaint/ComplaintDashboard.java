@@ -11,11 +11,7 @@ import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Message;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.os.StrictMode;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,6 +19,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.widget.Toolbar;
 
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
@@ -36,14 +33,14 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import activity.BaseActivity;
 import activity.CustomUtility;
 import bean.LoginBean;
 import database.DatabaseHelper;
-import syncdata.SyncDataToSAP_New;
 import webservice.CustomHttpClient;
 import webservice.SAPWebService;
 
-public class ComplaintDashboard extends AppCompatActivity {
+public class ComplaintDashboard extends BaseActivity {
     TextView open_complaint, btn_review_complaint, btn_close_complaint, btn_new_servie_center, btn_old_servie_center,btn_cmpln_approved,
             btn_new_complaint_notification, btn_delar_pend_notification, btn_pending_complaint_notification,
             btn_closure_notification, btn_closer_request,btn_pending_for_app,btn_await_for_app, btn_pending_complaint,

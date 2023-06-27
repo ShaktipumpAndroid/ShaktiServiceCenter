@@ -7,9 +7,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -18,18 +15,20 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.appcompat.widget.Toolbar;
 
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
 import java.util.ArrayList;
 import java.util.Locale;
 
+import activity.BaseActivity;
 import database.DatabaseHelper;
 import searchlist.complaint.SearchClouserComplaintListViewAdapter;
 import searchlist.complaint.SearchComplaint;
 import webservice.SAPWebService;
 
-public class ClosureComplaintActivity extends AppCompatActivity {
+public class ClosureComplaintActivity extends BaseActivity {
 
     EditText editsearch;
     ListView list;

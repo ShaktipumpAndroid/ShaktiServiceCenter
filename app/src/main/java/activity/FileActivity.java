@@ -4,11 +4,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.DownloadListener;
@@ -19,12 +14,13 @@ import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.appcompat.widget.Toolbar;
 
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
 import webservice.WebURL;
 
-public class FileActivity extends AppCompatActivity {
+public class FileActivity extends BaseActivity {
     ImageView my_image;
     //  PhotoViewAttacher mAttacher;
     String file_type = null;

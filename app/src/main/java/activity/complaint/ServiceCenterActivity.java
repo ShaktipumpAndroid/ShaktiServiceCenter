@@ -8,9 +8,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.os.Message;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -20,19 +17,21 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.appcompat.widget.Toolbar;
 
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
 import java.util.ArrayList;
 import java.util.Locale;
 
+import activity.BaseActivity;
 import activity.CustomUtility;
 import database.DatabaseHelper;
 import searchlist.complaint.SearchServiceCenter;
 import searchlist.complaint.SearchServiceCenterListViewAdapter;
 import webservice.SAPWebService;
 
-public class ServiceCenterActivity extends AppCompatActivity {
+public class ServiceCenterActivity extends BaseActivity {
     Context mContex;
     EditText editsearch;
     ListView list;

@@ -48,7 +48,6 @@
     <application
         android:name="adapter.Controller"
         android:allowBackup="true"
-        android:appComponentFactory="whateverString"
         android:configChanges="orientation"
         android:fullBackupContent="@xml/backup_descriptor"
         android:hardwareAccelerated="true"
@@ -58,12 +57,13 @@
         android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
         android:theme="@style/MyMaterialTheme"
-        android:usesCleartextTraffic="true"
-        tools:ignore="GoogleAppIndexingWarning,RtlEnabled"
-        tools:replace="android:appComponentFactory"
-        tools:targetApi="q">
+        android:usesCleartextTraffic="true">
 
 
+        <activity
+            android:name="activity.SwVersionCheckActivity"
+            android:screenOrientation="portrait"
+            android:exported="false" />
         <activity
             android:name="activity.SubordinateVisitedListActivity"
             android:exported="false" />
@@ -311,11 +311,27 @@
         </provider>
 
         <service
-            android:name="activity.services.LocationUpdateService"
+            android:name="service.LocationUpdateService"
             android:enabled="true"
             android:exported="true"
             android:foregroundServiceType="location"
             android:stopWithTask="false" />
+
+
+        <service
+            android:name="service.RetrieveFirestoreData"
+            android:enabled="true"
+            android:exported="false"
+            android:stopWithTask="true" />
+
+        <receiver
+            android:name="receiver.FirestoreBroadcastReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

@@ -312,4 +312,6 @@
     <string name="Please_customer">Please select customer satisfaction Form</string>
     <string name="Please_approval">Please select approval images</string>
     <string name="Please_other">Please select other images</string>
+    <string name="kusum_app_updation">Latest Shakti Service Center App are available please update first and enjoy</string>
+    <string name="zxing_button_ok">OK</string>
 </resources>

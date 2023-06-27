@@ -14,9 +14,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
 
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
@@ -27,7 +25,7 @@ import webservice.WebURL;
 import webservice.dialog4;
 
 
-public class DeviceStatusActivity extends AppCompatActivity {
+public class DeviceStatusActivity extends BaseActivity {
 
     Context mContext;
     dialog4 yourDialog;

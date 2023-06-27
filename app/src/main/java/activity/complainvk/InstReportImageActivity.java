@@ -30,7 +30,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -50,11 +49,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import activity.BaseActivity;
 import activity.CameraActivity2;
 import activity.GPSTracker;
 import activity.MainActivity1;
 import activity.PhotoViewerActivity;
-import activity.services.LocationUpdateService;
 import activity.utility.Constant;
 import activity.utility.CustomUtility;
 import activity.utility.Utility;
@@ -69,12 +68,13 @@ import rest.RestUtil;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import service.LocationUpdateService;
 import webservice.CustomHttpClient;
 import webservice.WebURL;
 
 
 @SuppressWarnings("deprecation")
-public class InstReportImageActivity extends AppCompatActivity implements ImageSelectionAdapter.ImageSelectionListener {
+public class InstReportImageActivity extends BaseActivity implements ImageSelectionAdapter.ImageSelectionListener {
 
 
     LocalConvenienceBean localConvenienceBean;

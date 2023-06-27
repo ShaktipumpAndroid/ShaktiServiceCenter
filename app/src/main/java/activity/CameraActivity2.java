@@ -23,7 +23,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -42,7 +41,7 @@ import java.util.List;
 import java.util.Locale;
 
 @SuppressWarnings("deprecation")
-public class CameraActivity2 extends AppCompatActivity implements SurfaceHolder.Callback, android.hardware.Camera.PictureCallback {
+public class CameraActivity2 extends BaseActivity implements SurfaceHolder.Callback, android.hardware.Camera.PictureCallback {
 
     private static final String TIME_STAMP_FORMAT_DATE = "dd.MM.yyyy";
     private static final String TIME_STAMP_FORMAT_TIME = "h:mm a";

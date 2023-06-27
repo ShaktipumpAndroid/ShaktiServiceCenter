@@ -19,8 +19,6 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.material.textfield.TextInputLayout;
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
@@ -46,7 +44,7 @@ import webservice.SAPWebService;
 import webservice.WebURL;
 
 @SuppressWarnings("deprecation")
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseActivity {
 
     private RadioGroup radioSexGroup;
     Intent mIntent ;

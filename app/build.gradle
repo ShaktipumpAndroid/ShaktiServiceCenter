@@ -1,25 +1,21 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
-// Apply the Crashlytics Gradle plugin
-//apply plugin: 'com.google.firebase.crashlytics'
+
 
 android {
 
     compileSdkVersion 33
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
+
 
     defaultConfig {
         applicationId "com.shaktipumps.shakti.shaktiServiceCenter"
         minSdkVersion 21
         targetSdkVersion 33
         vectorDrawables.useSupportLibrary = true
-        versionCode 4
-        versionName "1.4"
+        versionCode 1
+        versionName "1.0"
         multiDexEnabled true
         resConfigs "en"
         useLibrary 'org.apache.http.legacy'
@@ -40,7 +36,6 @@ android {
         }
     }
 
-
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/NOTICE'
@@ -48,12 +43,11 @@ android {
         exclude 'META-INF/NOTICE.txt'
         exclude 'META-INF/LICENSE.txt'
     }
-
-    lintOptions {
-        checkReleaseBuilds false
-        abortOnError false
-        ignoreWarnings true
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
+   
     
 }
 
@@ -76,10 +70,7 @@ dependencies {
     implementation "androidx.cardview:cardview:1.0.0"
     implementation 'com.google.android.gms:play-services-maps:17.0.1'
     implementation 'com.google.android.gms:play-services-location:18.0.0'
-
-
     implementation "androidx.core:core-ktx:1.6.0"
-
     implementation 'com.intuit.ssp:ssp-android:1.0.5'
     implementation 'com.intuit.sdp:sdp-android:1.0.5'
 
@@ -89,7 +80,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-jackson:2.2.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.6.0'
     implementation 'com.google.firebase:firebase-core:19.0.0'
-
+    implementation 'com.google.firebase:firebase-firestore:24.1.1'
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.squareup.retrofit2:retrofit:2.6.2'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.2'

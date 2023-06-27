@@ -6,26 +6,25 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import androidx.appcompat.widget.Toolbar;
 
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
 import java.util.ArrayList;
 
+import activity.BaseActivity;
 import bean.ComplaintImage;
 import database.DatabaseHelper;
 import other.PathUtil;
 import searchlist.complaint.Complaint_Image_ListViewAdapter;
 import searchlist.complaint.Complaint_Image_Name;
 
-public class ComplaintImageActivity extends AppCompatActivity {
+public class ComplaintImageActivity extends BaseActivity {
     private static final int GALLERY_IMAGE_REQUEST_CODE = 101;
     private static final int FILE_SELECT_CODE = -1;
     Context mContext;

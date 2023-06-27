@@ -41,7 +41,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -64,11 +63,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import activity.BaseActivity;
 import activity.CameraActivity2;
 import activity.GPSTracker;
 import activity.MainActivity1;
 import activity.PhotoViewerActivity;
-import activity.services.LocationUpdateService;
 import activity.utility.Constant;
 import activity.utility.CustomUtility;
 import activity.utility.Utility;
@@ -83,11 +82,12 @@ import rest.RestUtil;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import service.LocationUpdateService;
 import webservice.CustomHttpClient;
 import webservice.WebURL;
 
 @SuppressWarnings({"deprecation", "resource", "StringConcatenationInLoop"})
-public class SubordinateImageActivity extends AppCompatActivity implements ImageSelectionAdapter.ImageSelectionListener {
+public class SubordinateImageActivity extends BaseActivity implements ImageSelectionAdapter.ImageSelectionListener {
 
 
     LocalConvenienceBean localConvenienceBean;

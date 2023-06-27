@@ -9,7 +9,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,12 +16,13 @@ import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
 import java.util.List;
 
+import activity.BaseActivity;
 import activity.CustomUtility;
 import adapter.PendingAssginComplainListAdapter;
 import bean.SubordinateAssginComplainBean;
 import database.DatabaseHelper;
 
-public class PendingComplainListFreelancerActivity extends AppCompatActivity {
+public class PendingComplainListFreelancerActivity extends BaseActivity {
 
     DatabaseHelper db;
     RecyclerView relyPendingComplainList;

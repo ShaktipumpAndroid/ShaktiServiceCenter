@@ -1,5 +1,8 @@
 package activity.complaint;
 
+import static android.Manifest.permission.RECORD_AUDIO;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
@@ -19,14 +22,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Message;
 import android.provider.MediaStore;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
-import com.google.android.material.textfield.TextInputLayout;
-import com.shaktipumps.shakti.shaktiServiceCenter.R;
-
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
@@ -41,7 +36,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import com.google.android.material.textfield.TextInputLayout;
+import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -57,6 +57,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
+import activity.BaseActivity;
 import activity.CustomUtility;
 import activity.GPSTracker;
 import backgroundservice.SyncDataService;
@@ -66,10 +67,7 @@ import other.CameraUtils;
 import other.PathUtil;
 import webservice.WebURL;
 
-import static android.Manifest.permission.RECORD_AUDIO;
-import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
-
-public class ComplaintDetailActivity extends AppCompatActivity {
+public class ComplaintDetailActivity extends BaseActivity {
     public static final int RequestPermissionCode = 1;
     public static final int BITMAP_SAMPLE_SIZE = 8;
     public static final int MEDIA_TYPE_IMAGE = 1;

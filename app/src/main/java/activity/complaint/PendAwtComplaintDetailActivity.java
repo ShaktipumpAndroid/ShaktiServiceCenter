@@ -1,11 +1,9 @@
 package activity.complaint;
 
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -24,27 +22,22 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
-
 import java.util.HashSet;
 
+import activity.BaseActivity;
 import activity.CustomUtility;
-import activity.SplashActivity;
-import activity.UpdateActivity;
 import backgroundservice.SyncDataService;
-import bean.LocalConvenienceBean;
 import bean.LoginBean;
 import database.DatabaseHelper;
 import other.PathUtil;
-import searchlist.complaint.Complaint_Attachment_Name;
 import webservice.SAPWebService;
 
-public class PendAwtComplaintDetailActivity extends AppCompatActivity {
+public class PendAwtComplaintDetailActivity extends BaseActivity {
     String userid;
     Context mContext;
     HashSet<String> hashSet = null;

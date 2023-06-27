@@ -12,7 +12,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,7 +30,7 @@ import activity.BeanVk.ComplainAllResponse;
 import webservice.CustomHttpClient;
 import webservice.WebURL;
 
-public class SubordinateVisitedListActivity extends AppCompatActivity {
+public class SubordinateVisitedListActivity extends BaseActivity {
 
     private Context mContext;
     private ProgressDialog progressDialog;

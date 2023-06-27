@@ -14,19 +14,18 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
 
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
 import java.util.HashSet;
 
+import activity.BaseActivity;
 import backgroundservice.SyncDataService;
 import bean.LoginBean;
 import database.DatabaseHelper;
 
-public class DisplayAwaitingCompDtlActivity extends AppCompatActivity {
+public class DisplayAwaitingCompDtlActivity extends BaseActivity {
     String userid;
     Context mContext;
     HashSet<String> hashSet = null;

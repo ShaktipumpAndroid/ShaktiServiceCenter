@@ -17,9 +17,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
 
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
@@ -27,12 +25,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import activity.BaseActivity;
 import database.DatabaseHelper;
 import searchlist.complaint.SearchComplaint;
 import searchlist.complaint.SearchPendingComplaintListViewAdapter;
 import webservice.SAPWebService;
 
-public class ApprovedCompActivity extends AppCompatActivity {
+public class ApprovedCompActivity extends BaseActivity {
 
     EditText editsearch;
     ListView list;

@@ -1,30 +1,27 @@
 package activity.complaint;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
+import androidx.appcompat.widget.Toolbar;
 
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
 import java.util.ArrayList;
 
+import activity.BaseActivity;
 import database.DatabaseHelper;
 import searchlist.complaint.SearchComplaintAction;
 import searchlist.complaint.SearchComplaintActionListViewAdapter;
 
-public class ComplaintActionDisplayActivity extends AppCompatActivity {
+public class ComplaintActionDisplayActivity extends BaseActivity {
     Context mContex;
     ListView list;
     String cmp_no,pendingid;

@@ -10,7 +10,6 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
@@ -23,7 +22,7 @@ import adapter.SubordinateAdapter;
 import bean.SubordinateBean;
 import database.DatabaseHelper;
 
-public class SubordinateList extends AppCompatActivity {
+public class SubordinateList extends BaseActivity {
 
     Toolbar toolbar;
     Context context;

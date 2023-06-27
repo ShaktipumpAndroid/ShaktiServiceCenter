@@ -35,7 +35,7 @@ import other.CameraUtils;
 import static android.os.Environment.getExternalStoragePublicDirectory;
 
 
-public class OtherImgActivity extends AppCompatActivity {
+public class OtherImgActivity extends BaseActivity {
 
     public static final int BITMAP_SAMPLE_SIZE = 8;
 

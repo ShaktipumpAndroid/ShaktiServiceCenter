@@ -4,15 +4,9 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -23,19 +17,21 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.appcompat.widget.Toolbar;
 
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
 import java.util.ArrayList;
 import java.util.Locale;
 
+import activity.BaseActivity;
 import activity.CustomUtility;
 import database.DatabaseHelper;
 import searchlist.complaint.SearchComplaint;
 import searchlist.complaint.SearchSerailNoHistoryListViewAdapter;
 import webservice.SAPWebService;
 
-public class SerailNoHistoryActivity extends AppCompatActivity {
+public class SerailNoHistoryActivity extends BaseActivity {
     String lv_download = "null", cmp_matnr = "", cmp_no = "", cmp_sernr = "";
     EditText editsearch;
     ListView list;

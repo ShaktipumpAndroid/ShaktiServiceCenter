@@ -18,7 +18,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -40,7 +39,7 @@ import database.DatabaseHelper;
 import webservice.CustomHttpClient;
 import webservice.WebURL;
 
-public class AssginPendingComplainDetailActivity extends AppCompatActivity {
+public class AssginPendingComplainDetailActivity extends BaseActivity {
 
     private Context mContext;
     private List<SubordinateAssginComplainBean> mComplainDetailListResponse;

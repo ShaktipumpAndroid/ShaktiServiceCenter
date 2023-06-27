@@ -25,7 +25,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -48,7 +47,7 @@ import database.DatabaseHelper;
 import webservice.SAPWebService;
 
 
-public class MainActivity2 extends AppCompatActivity implements FragmentDrawer.FragmentDrawerListener, SharedPreferences.OnSharedPreferenceChangeListener {
+public class MainActivity2 extends BaseActivity implements FragmentDrawer.FragmentDrawerListener, SharedPreferences.OnSharedPreferenceChangeListener {
     //Alarm Request Code
     private static final int ALARM_REQUEST_CODE = 133;
     private static final String TAG = MainActivity2.class.getSimpleName();

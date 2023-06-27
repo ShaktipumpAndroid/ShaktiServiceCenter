@@ -290,7 +290,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String KEY_CALL_TYPE = "call_type";
     public static final String KEY_CALL_DURATION = "call_duration";
     public static final String KEY_HISTORY = "sernr_history";
+    public static final String KEY_USERID = "userid";
     public static final String KEY_USERNAME = "username";
+    public static final String KEY_USERTYPE = "usertype";
     public static final String KEY_PASSWORD = "password";
     public static final String KEY_API = "api";
     public static final String KEY_GROUP_ID = "group_id";
@@ -1089,6 +1091,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public void deleteLoginData() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        if(CustomUtility.doesTableExist(db,TABLE_LOGIN)) {
+            db.delete(TABLE_LOGIN, null, null);
+        }
+    }
 
     /**********************  insert login detail ************************************/
     public void insertLoginData(
@@ -4984,4 +4992,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return subordinateBeanList;
     }
+
+    @SuppressLint("Range")
+    public boolean getLogin() {
+        LoginBean loginBean = new LoginBean();
+        SQLiteDatabase db = null;
+        String selectQuery = null;
+        Cursor cursor = null;
+        try {
+            db = this.getReadableDatabase();
+            selectQuery = "SELECT  * FROM " + TABLE_LOGIN;
+            cursor = db.rawQuery(selectQuery, null);
+            if (cursor.getCount() > 0) {
+                if (cursor.moveToFirst()) {
+                    loginBean.setUserid(cursor.getString(cursor.getColumnIndex(KEY_USERID)));
+                    loginBean.setUsername(cursor.getString(cursor.getColumnIndex(KEY_USERNAME)));
+                    loginBean.setUsertype(cursor.getString(cursor.getColumnIndex(KEY_USERTYPE)));
+                    return true;
+                }
+            }
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db != null) {
+                db.close();
+            }
+        }
+        return false;
+    }
+
 }

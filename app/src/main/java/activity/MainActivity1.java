@@ -23,7 +23,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
@@ -41,15 +40,15 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import activity.services.LocationUpdateService;
 import activity.utility.Constant;
 import bean.LoginBean;
 import database.DatabaseHelper;
+import service.LocationUpdateService;
 import webservice.SAPWebService;
 
 
 @SuppressWarnings({"deprecation", "InstantiationOfUtilityClass"})
-public class MainActivity1 extends AppCompatActivity implements FragmentDrawer.FragmentDrawerListener, SharedPreferences.OnSharedPreferenceChangeListener {
+public class MainActivity1 extends BaseActivity implements FragmentDrawer.FragmentDrawerListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = MainActivity1.class.getSimpleName();
     private int progressBarStatus = 0;

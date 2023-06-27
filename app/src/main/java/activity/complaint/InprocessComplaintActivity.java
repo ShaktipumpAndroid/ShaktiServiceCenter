@@ -11,12 +11,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
-import com.google.android.material.textfield.TextInputLayout;
-import com.shaktipumps.shakti.shaktiServiceCenter.R;
-
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
@@ -32,7 +26,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.widget.Toolbar;
 
+import com.google.android.material.textfield.TextInputLayout;
+import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -40,16 +37,16 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 
+import activity.BaseActivity;
 import activity.CustomUtility;
 import activity.GPSTracker;
 import backgroundservice.SyncDataService;
 import bean.LoginBean;
 import database.DatabaseHelper;
-import searchlist.complaint.PendingReason;
 import searchlist.complaint.SearchComplaintAction;
 import searchlist.complaint.SearchComplaintActionListViewAdapter;
 
-public class InprocessComplaintActivity extends AppCompatActivity {
+public class InprocessComplaintActivity extends BaseActivity {
 
 
     EditText editText_action, editText_follow_up_date;

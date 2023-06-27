@@ -10,41 +10,32 @@ import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.os.Message;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
 
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import activity.BaseActivity;
 import activity.CustomUtility;
-import bean.LoginBean;
 import database.DatabaseHelper;
 import searchlist.complaint.PendAppComplaintListViewAdapter;
 import searchlist.complaint.SearchComplaint;
-import searchlist.complaint.SearchComplaintListViewAdapter;
 import webservice.SAPWebService;
 
-public class AwaitingForApprovalActivity extends AppCompatActivity {
+public class AwaitingForApprovalActivity extends BaseActivity {
     EditText editsearch;
     ListView list;
     SharedPreferences pref;

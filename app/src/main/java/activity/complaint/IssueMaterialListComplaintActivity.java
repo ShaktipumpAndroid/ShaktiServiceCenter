@@ -8,22 +8,18 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
-
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -33,17 +29,16 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import activity.BaseActivity;
 import activity.CustomUtility;
 import bean.LoginBean;
-import searchlist.complaint.SearchClouserComplaintListViewAdapter;
-import searchlist.complaint.SearchComplaint;
 import searchlist.complaint.SearchComplaint1;
 import searchlist.complaint.SearchIssueMaterialListViewAdapter;
 import webservice.CustomHttpClient;
 import webservice.SAPWebService;
 import webservice.WebURL;
 
-public class IssueMaterialListComplaintActivity extends AppCompatActivity {
+public class IssueMaterialListComplaintActivity extends BaseActivity {
 
     EditText editsearch;
     RecyclerView list;

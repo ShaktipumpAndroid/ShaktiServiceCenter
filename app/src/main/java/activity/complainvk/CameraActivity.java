@@ -19,7 +19,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
 import java.io.File;
@@ -27,9 +26,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import activity.BaseActivity;
 import activity.GPSTracker;
 
-public class CameraActivity extends Activity {
+public class CameraActivity extends BaseActivity {
 
     private static final int REQUEST_CODE_CHANGE_SETTING = 1;
 

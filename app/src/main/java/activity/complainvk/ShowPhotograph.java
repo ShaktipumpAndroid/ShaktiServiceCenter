@@ -9,19 +9,18 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
 import java.util.Arrays;
 
-import activity.utility.CustomUtility;
+import activity.BaseActivity;
 import bean.CmpReviewImageBean;
 import database.DatabaseHelper;
 import webservice.WebURL;
 
-public class ShowPhotograph extends AppCompatActivity {
+public class ShowPhotograph extends BaseActivity {
 
     Context context;
     String string_image = "";

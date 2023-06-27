@@ -34,7 +34,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -60,6 +59,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import activity.AdaperVk.ImageAdapter;
+import activity.BaseActivity;
 import activity.BeanVk.ComplainDetailListResponse;
 import activity.GPSTracker;
 import activity.MainActivity1;
@@ -73,7 +73,7 @@ import webservice.CustomHttpClient;
 import webservice.WebURL;
 
 
-public class ApproveReportImageActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
+public class ApproveReportImageActivity extends BaseActivity implements EasyPermissions.PermissionCallbacks {
     public static final int RC_FILE_PICKER_PERM = 321;
     public static final int BITMAP_SAMPLE_SIZE = 4 ;
     public static final int MEDIA_TYPE_IMAGE = 1;

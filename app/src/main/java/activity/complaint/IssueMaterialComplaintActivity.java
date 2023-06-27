@@ -18,9 +18,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
 
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
@@ -32,12 +30,13 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import activity.BaseActivity;
 import activity.CustomUtility;
 import database.DatabaseHelper;
 import webservice.CustomHttpClient;
 import webservice.WebURL;
 
-public class IssueMaterialComplaintActivity extends AppCompatActivity {
+public class IssueMaterialComplaintActivity extends BaseActivity {
 
 
     Context mContex;

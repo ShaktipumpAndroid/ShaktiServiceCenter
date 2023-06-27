@@ -79,7 +79,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import activity.complainvk.Freelauncer.PendingComplainListFreelancerActivity;
-import activity.services.LocationUpdateService;
+import service.LocationUpdateService;
 import activity.utility.Constant;
 import activity.utility.Utility;
 import bean.LatLongBeanVK;

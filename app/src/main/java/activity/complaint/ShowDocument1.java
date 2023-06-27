@@ -7,24 +7,21 @@ import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
 
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
+import activity.BaseActivity;
 import database.DatabaseHelper;
 import searchlist.complaint.Complaint_Attachment_Name;
 
 
-public class ShowDocument1 extends AppCompatActivity {
+public class ShowDocument1 extends BaseActivity {
 
     Context context;
     String string_image = "";

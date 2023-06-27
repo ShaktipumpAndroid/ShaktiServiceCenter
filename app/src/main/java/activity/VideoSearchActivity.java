@@ -31,7 +31,7 @@ import searchlist.VideoGallery;
 import searchlist.VideoGalleryListViewAdapter;
 import webservice.SAPWebService;
 
-public class VideoSearchActivity extends AppCompatActivity {
+public class VideoSearchActivity extends BaseActivity {
     EditText editsearch;
     ListView list;
     Context mContex;

@@ -13,27 +13,23 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
 
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
 import java.util.ArrayList;
 
+import activity.BaseActivity;
 import activity.CustomUtility;
-import bean.ComplaintImage;
 import database.DatabaseHelper;
 import other.PathUtil;
 import searchlist.complaint.Complaint_Attachment_Name;
 import webservice.SAPWebService;
 
-public class ComplaintAttachmentActivity extends AppCompatActivity {
+public class ComplaintAttachmentActivity extends BaseActivity {
 
     Context mContext;
     ArrayList<Complaint_Attachment_Name> arraylist = new ArrayList<Complaint_Attachment_Name>();

@@ -7,20 +7,20 @@ import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.Toolbar;
 
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
+import activity.BaseActivity;
 import database.DatabaseHelper;
 
-public class DisplayComplaintImageActivity extends AppCompatActivity {
+public class DisplayComplaintImageActivity extends BaseActivity {
     Context mContext;
     String cmp_no = "", cmp_posnr = "", image_name = "", cmp_category = "";
     ImageView complaintImage;

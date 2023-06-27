@@ -1,4 +1,4 @@
-package activity.services;
+package service;
 
 
 import static com.google.android.gms.location.LocationServices.FusedLocationApi;

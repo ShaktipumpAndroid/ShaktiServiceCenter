@@ -18,23 +18,19 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.textfield.TextInputLayout;
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
-import activity.CustomUtility;
+import activity.BaseActivity;
 import backgroundservice.SyncDataService;
-import bean.ForwardForAppEntryBean;
 import bean.LoginBean;
-import database.DatabaseHelper;
 
-public class ComplaintFrwdAprActivity extends AppCompatActivity {
+public class ComplaintFrwdAprActivity extends BaseActivity {
     Context mContext;
     String cmp_no;
     ProgressDialog progressDialog;

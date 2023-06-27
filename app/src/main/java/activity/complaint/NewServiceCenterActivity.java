@@ -10,12 +10,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.os.Message;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
-import com.google.android.material.textfield.TextInputLayout;
-import com.shaktipumps.shakti.shaktiServiceCenter.R;
-
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -29,13 +23,17 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.appcompat.widget.Toolbar;
 
+import com.google.android.material.textfield.TextInputLayout;
+import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import activity.BaseActivity;
 import activity.CustomUtility;
 import activity.GPSTracker;
 import backgroundservice.SyncDataService;
@@ -43,7 +41,7 @@ import bean.LoginBean;
 import database.DatabaseHelper;
 import webservice.SAPWebService;
 
-public class NewServiceCenterActivity extends AppCompatActivity {
+public class NewServiceCenterActivity extends BaseActivity {
     Spinner spinner_customer_type,
             spinner_country,
             spinner_state,

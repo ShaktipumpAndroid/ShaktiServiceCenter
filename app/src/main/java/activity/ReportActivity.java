@@ -1,21 +1,18 @@
 package activity;
 
 import android.os.Bundle;
-
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
 
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
 import java.text.DecimalFormat;
 
-public class ReportActivity extends AppCompatActivity {
+public class ReportActivity extends BaseActivity {
     Button btnShowLocation;
     // GPSTracker class
     GPSTracker gps;

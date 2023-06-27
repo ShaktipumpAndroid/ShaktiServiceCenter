@@ -8,30 +8,32 @@ import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.READ_MEDIA_IMAGES;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.os.Build.VERSION.SDK_INT;
+import static activity.complainvk.Config.TAG;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.shaktipumps.shakti.shaktiServiceCenter.BuildConfig;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.shaktipumps.shakti.shaktiServiceCenter.R;
 
 import org.apache.http.NameValuePair;
@@ -39,21 +41,15 @@ import org.apache.http.NameValuePair;
 import java.io.File;
 import java.util.ArrayList;
 
-import model.VersionResponse;
-import rest.ApiClient;
-import rest.ApiInterface;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import activity.utility.Constant;
+import bean.AppConfig;
 
 
-public class SplashActivity extends Activity implements AnimationListener {
+public class SplashActivity extends BaseActivity  {
 
-    // Splash screen timer
     private static final int REQUEST_CODE_PERMISSION = 2;
     private static int SPLASH_TIME_OUT = 3000;
-    final ArrayList<NameValuePair> param = new ArrayList<NameValuePair>();
-    // DatabaseHelper databaseHelper;
+    final ArrayList<NameValuePair> param = new ArrayList<>();
     Intent i;
     ImageView imageView;
     SharedPreferences pref;
@@ -65,45 +61,24 @@ public class SplashActivity extends Activity implements AnimationListener {
     String versionName = "0.0";
     String newVersion = "0.0";
     String userType = "" ,username= "";
+    public static DocumentReference appConfigRef;
 
     @Override
-    /** Called when the activity is first created. */
-    protected void onCreate(Bundle savedInstanceState) {
-
-        //Remove title bar
-        //this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
+        FirebaseApp.initializeApp(this);
         mContex = this;
-        /******* Create SharedPreferences *******/
-
         pref = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
         editor = pref.edit();
 
-        versionName = BuildConfig.VERSION_NAME;
-
-        if(versionName.equalsIgnoreCase(""))
-        {
-            versionName = "1.1";
-        }
         deleteCache(mContex);
 
-        new Worker1().execute();
-
-
-
-        if(checkPermission()){
-            openNextActivity();
-        }
-        else {
-            requestPermission();
-        }
 
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     private boolean checkPermission() {
         int FineLocation = ContextCompat.checkSelfPermission(getApplicationContext(), ACCESS_FINE_LOCATION);
         int CoarseLocation = ContextCompat.checkSelfPermission(getApplicationContext(), ACCESS_COARSE_LOCATION);
@@ -177,8 +152,6 @@ public class SplashActivity extends Activity implements AnimationListener {
         }
     }
 
-
-
     private void openNextActivity() {
         new Handler().postDelayed(() -> {
 
@@ -235,90 +208,54 @@ public class SplashActivity extends Activity implements AnimationListener {
     }
 
     @Override
-    public void onAnimationEnd(Animation animation) {
-        // Take any action after completing the animation
-
-
-    }
-
-    @Override
-    public void onAnimationRepeat(Animation animation) {
-        // TODO Auto-generated method stub
+    protected void onResume() {
+        super.onResume();
+        retriveFirestoreData();
 
     }
 
-    @Override
-    public void onAnimationStart(Animation animation) {
-        // TODO Auto-generated method stub
+    private void retriveFirestoreData() {
 
-    }
+        if(CustomUtility.isInternetOn(getApplicationContext())) {
+            appConfigRef = FirebaseFirestore.getInstance().collection("Setting").document("AppConfig");
+            appConfigRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    if (documentSnapshot != null && documentSnapshot.exists()) {
+                        AppConfig appConfig = documentSnapshot.toObject(AppConfig.class);
+                        Log.e("AppConfig====>",appConfig.getServiceCenterAppURL());
 
+                        if (appConfig != null) {
+                            try {
+                                PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+                                if (pInfo != null && appConfig.getServiceCenterAppVersion() != null
+                                        && !appConfig.getServiceCenterAppVersion().isEmpty()) {
 
-    public void getVersion() {
+                                    if (pInfo.versionCode < Integer.parseInt(appConfig.getServiceCenterAppVersion())) {
+                                        CustomUtility.setSharedPreference(getApplicationContext(), Constant.APPURL, appConfig.getServiceCenterAppURL());
+                                        Intent intent = new Intent(SplashActivity.this, SwVersionCheckActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    } else {
+                                        if(checkPermission()){
+                                            openNextActivity();
+                                        }
+                                        else {
+                                            requestPermission();
+                                        }
 
-        ApiInterface apiService = ApiClient.getClientversion().create(ApiInterface.class);
+                                    }
+                                }
+                            } catch (Exception exception) {
+                                exception.printStackTrace();
+                            }
+                        }
 
-        Call<VersionResponse> call = apiService.getVersionCode();
-        call.enqueue(new Callback<VersionResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<VersionResponse> call, @NonNull Response<VersionResponse> response) {
-                try {
-                    VersionResponse dashResponse = response.body();
-                    if (dashResponse != null) {
-
-                        newVersion = dashResponse.getVersion();
-                        Log.e("VERSION", "&&&&" + newVersion);
-
-                       // Toast.makeText(SplashActivity.this, "Success...", Toast.LENGTH_SHORT).show();
-
-
+                    } else {
+                        Log.d(TAG, "Current data: null");
                     }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<VersionResponse> call, @NonNull Throwable t) {
-
-                Toast.makeText(SplashActivity.this, "FAILED...", Toast.LENGTH_SHORT).show();
-
-            }
-        });
-    }
-
-    private class Worker1 extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected String doInBackground(Void... arg0) {
-
-            String data = null;
-
-            try {
-
-
-                if (CustomUtility.isOnline(mContex)) {
-
-                    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-
-                    StrictMode.setThreadPolicy(policy);
-
-                    getVersion();
-
-
-                }
-
-            } catch (Exception e) {
-            }
-            return data;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
+            });
         }
     }
-
-
 }
